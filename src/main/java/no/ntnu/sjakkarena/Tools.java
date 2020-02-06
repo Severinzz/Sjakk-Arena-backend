@@ -18,10 +18,9 @@ public class Tools {
                 throw new IllegalArgumentException();
             } else if (argument instanceof Boolean) {
                 databaseString += (Boolean) argument ? 1 : 0;
-            } else if (argument instanceof String){
+            } else if (argument instanceof String) {
                 databaseString += "\"" + argument.toString() + "\"";
-            }
-            else{
+            } else {
                 databaseString += argument;
             }
             databaseString += ", ";
