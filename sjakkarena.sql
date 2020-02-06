@@ -19,95 +19,71 @@ CREATE SCHEMA IF NOT EXISTS sjakkarena DEFAULT CHARACTER SET utf8 ;
 USE sjakkarena ;
 
 -- -----------------------------------------------------
--- Table `sjakkarena`.`Result`
+-- Table `sjakkarena`.`game`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS sjakkarena.`Result` ;
+DROP TABLE IF EXISTS sjakkarena.`game` ;
 
-CREATE TABLE IF NOT EXISTS sjakkarena.`Result`(
-  `points` DECIMAL(1,1) UNSIGNED NULL,
-  `Round_Id` INT NOT NULL,
-  `Round_Tournament_idTournament` INT NOT NULL,
-  `Round_User_Id` INT NOT NULL,
-  PRIMARY KEY (`Round_Id`, `Round_Tournament_idTournament`, `Round_User_Id`),
-  CONSTRAINT `fk_Result_Round1`
-    FOREIGN KEY (`Round_Id` , `Round_Tournament_idTournament` , `Round_User_Id`)
-    REFERENCES sjakkarena.`Round` (`Id` , `Tournament_idTournament` , `User_Id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `sjakkarena`.`Round`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS sjakkarena.`Round` ;
-
-CREATE TABLE IF NOT EXISTS sjakkarena.`Round`(
-  `Id` INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS sjakkarena.`game`(
+  `game_id` INT NOT NULL AUTO_INCREMENT,
   `table` TINYINT UNSIGNED NULL,
   `start` TIME NULL,
   `end` TIME NULL,
-  `Tournament_idTournament` INT NOT NULL,
-  `User_Id` INT NOT NULL,
-  `User_Id1` INT NOT NULL,
-  PRIMARY KEY (`Id`, `Tournament_idTournament`, `User_Id`, `User_Id1`),
-  INDEX `fk_Round_Tournament1_idx` (`Tournament_idTournament` ASC) VISIBLE,
-  INDEX `fk_Round_User1_idx` (`User_Id` ASC) VISIBLE,
-  INDEX `fk_Round_User2_idx` (`User_Id1` ASC) VISIBLE,
-  CONSTRAINT `fk_Round_Tournament1`
-    FOREIGN KEY (`Tournament_idTournament`)
-    REFERENCES sjakkarena.`Tournament` (`idTournament`)
+  `white` INT NOT NULL,
+  `black` INT NOT NULL,
+  `result` VARCHAR(3) NULL,
+  PRIMARY KEY (`game_id`),
+  INDEX `fk_game_white_idx` (`white` ASC) VISIBLE,
+  INDEX `fk_game_black_idx` (`black` ASC) VISIBLE,
+  CONSTRAINT `fk_game_white`
+    FOREIGN KEY (`white`)
+    REFERENCES sjakkarena.`user` (`user_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Round_User1`
-    FOREIGN KEY (`User_Id`)
-    REFERENCES sjakkarena.`User` (`Id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Round_User2`
-    FOREIGN KEY (`User_Id1`)
-    REFERENCES sjakkarena.`User` (`Id`)
+  CONSTRAINT `fk_game_black`
+    FOREIGN KEY (`black`)
+    REFERENCES sjakkarena.`user` (`user_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `sjakkarena`.`Tournament`
+-- Table `sjakkarena`.`tournament`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS sjakkarena.`Tournament` ;
+DROP TABLE IF EXISTS sjakkarena.`tournament` ;
 
-CREATE TABLE IF NOT EXISTS sjakkarena.`Tournament`(
-  `idTournament` INT NOT NULL,
+CREATE TABLE IF NOT EXISTS sjakkarena.`tournament`(
+  `tournament_id` INT NOT NULL AUTO_INCREMENT,
+  `tournament_name` VARCHAR(255),
+  `admin_email` VARCHAR(255),
   `start` TIME NULL,
   `end` TIME NULL,
   `tables` TINYINT UNSIGNED NULL,
   `max_rounds` SMALLINT UNSIGNED NULL,
-  `pause_length` TIME NULL,
-  `admin_uuid` INT UNSIGNED NULL,
-  PRIMARY KEY (`idTournament`))
+  `active` TINYINT(1),
+  `admin_uuid` VARCHAR(255) NULL,
+  PRIMARY KEY (`tournament_id`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `sjakkarena`.`User`
+-- Table `sjakkarena`.`user`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS sjakkarena.`User` ;
+DROP TABLE IF EXISTS sjakkarena.`user` ;
 
-CREATE TABLE IF NOT EXISTS sjakkarena.`User`(
-  `Id` INT NOT NULL,
+CREATE TABLE IF NOT EXISTS sjakkarena.`user`(
+  `user_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
-  `pause` TINYINT(1) UNSIGNED NULL,
   `active` TINYINT(1) UNSIGNED NULL,
   `points` DECIMAL(1,1) UNSIGNED NULL,
   `rounds` SMALLINT UNSIGNED NULL,
-  `Tournament_idTournament` INT NOT NULL,
-  PRIMARY KEY (`Id`, `Tournament_idTournament`),
-  UNIQUE INDEX `Id_UNIQUE` (`Id` ASC) VISIBLE,
-  INDEX `fk_User_Tournament1_idx` (`Tournament_idTournament` ASC) VISIBLE,
-  CONSTRAINT `fk_User_Tournament1`
-    FOREIGN KEY (`Tournament_idTournament`)
-    REFERENCES sjakkarena.`Tournament` (`idTournament`)
+  `tournament` INT NOT NULL,
+  PRIMARY KEY (`user_id`),
+  UNIQUE INDEX `Id_UNIQUE` (`user_id` ASC) VISIBLE,
+  INDEX `fk_user_tournament_idx` (`tournament` ASC) VISIBLE,
+  CONSTRAINT `fk_user_tournament`
+    FOREIGN KEY (`tournament`)
+    REFERENCES sjakkarena.`tournament` (`tournament_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
