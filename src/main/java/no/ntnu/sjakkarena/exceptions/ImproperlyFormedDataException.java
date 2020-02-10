@@ -1,4 +1,4 @@
-package no.ntnu.sjakkarena.Exceptions;
+package no.ntnu.sjakkarena.exceptions;
 
 /**
  * Exception thrown when data is not properly formed.
