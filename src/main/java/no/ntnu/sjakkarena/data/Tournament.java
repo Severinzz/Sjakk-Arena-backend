@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class Tournament {
 
-    private String tournamentId;
+    private int tournamentId;
 
     @SerializedName("tournament_name")
     private String tournamentName;
@@ -38,11 +38,11 @@ public class Tournament {
         this.adminUUID = adminUUID;
     }
 
-    public String getTournamentId() {
+    public int getTournamentId() {
         return tournamentId;
     }
 
-    public void setTournamentId(String tournamentId) {
+    public void setTournamentId(int tournamentId) {
         this.tournamentId = tournamentId;
     }
 
