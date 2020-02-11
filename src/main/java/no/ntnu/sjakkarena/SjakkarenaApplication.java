@@ -4,7 +4,6 @@ import no.ntnu.sjakkarena.utils.Security;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-
 @SpringBootApplication
 public class SjakkarenaApplication {
 
