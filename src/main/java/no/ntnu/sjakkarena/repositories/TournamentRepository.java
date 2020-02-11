@@ -1,6 +1,7 @@
 package no.ntnu.sjakkarena.repositories;
 
-import no.ntnu.sjakkarena.Exceptions.NotAbleToInsertIntoDBException;
+import no.ntnu.sjakkarena.exceptions.NotAbleToInsertIntoDBException;
+
 import no.ntnu.sjakkarena.utils.DBInteractionHelper;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.mappers.TournamentRowMapper;

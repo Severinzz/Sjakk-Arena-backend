@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS sjakkarena.`user`(
   `active` TINYINT(1) UNSIGNED NULL,
   `points` DECIMAL(1,1) UNSIGNED NULL,
   `rounds` SMALLINT UNSIGNED NULL,
-  `tournament` INT NOT NULL,
+  `tournament` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE INDEX `Id_UNIQUE` (`user_id` ASC) VISIBLE,
   INDEX `fk_user_tournament_idx` (`tournament` ASC) VISIBLE,

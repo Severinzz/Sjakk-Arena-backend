@@ -1,16 +1,21 @@
 package no.ntnu.sjakkarena.controllers;
 
 import com.google.gson.Gson;
-import no.ntnu.sjakkarena.Exceptions.ImproperlyFormedDataException;
-import no.ntnu.sjakkarena.Exceptions.NotAbleToInsertIntoDBException;
-import no.ntnu.sjakkarena.utils.IDGenerator;
-import no.ntnu.sjakkarena.utils.Validator;
+
 import no.ntnu.sjakkarena.data.Tournament;
+import no.ntnu.sjakkarena.exceptions.ImproperlyFormedDataException;
+import no.ntnu.sjakkarena.exceptions.NotAbleToInsertIntoDBException;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
+import no.ntnu.sjakkarena.utils.JWTHelper;
+import no.ntnu.sjakkarena.utils.Validator;
+import no.ntnu.sjakkarena.utils.IDGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TournamentController {

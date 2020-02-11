@@ -1,6 +1,7 @@
 package no.ntnu.sjakkarena.utils;
 
-import no.ntnu.sjakkarena.Exceptions.ImproperlyFormedDataException;
+import no.ntnu.sjakkarena.exceptions.ImproperlyFormedDataException;
+
 import no.ntnu.sjakkarena.data.Tournament;
 
 import java.time.LocalTime;
