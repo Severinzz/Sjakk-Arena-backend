@@ -1,7 +1,7 @@
 package no.ntnu.sjakkarena.repositories;
 
-import no.ntnu.sjakkarena.Exceptions.NotAbleToInsertIntoDBException;
-import no.ntnu.sjakkarena.Tools;
+import no.ntnu.sjakkarena.exceptions.NotAbleToInsertIntoDBException;
+import no.ntnu.sjakkarena.utils.DBInteractionHelper;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.mappers.TournamentRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +25,12 @@ public class TournamentRepository {
      * Adds a new tournament to the database
      * @param tournament the tournament to be added
      */
-    public void addNewTournament(Tournament tournament){
-        String queryString = Tools.inputToDatabaseUpdateString(tournament.getTournamentName(), tournament.getAdminEmail(),
+    public void addNewTournament(Tournament tournament, String UUID){
+        String queryString = DBInteractionHelper.inputToDatabaseUpdateString(UUID, tournament.getTournamentName(), tournament.getAdminEmail(),
                 tournament.getStart(), tournament.getEnd(), tournament.getTables(), tournament. getMaxRounds(),
-                tournament.isActive(), tournament.getAdminUUID());
+                tournament.isActive());
     try{
-            jdbcTemplate.update("INSERT INTO sjakkarena.tournament (tournament_name, admin_email, " +
-                    "start, end, tables, max_rounds, active, admin_uuid) VALUES (" + queryString + ")");
+            jdbcTemplate.update("INSERT INTO sjakkarena.tournament VALUES (" + queryString + ")");
         }
         catch(DataAccessException e){
             throw new NotAbleToInsertIntoDBException("Couldn't insert tournament into db");

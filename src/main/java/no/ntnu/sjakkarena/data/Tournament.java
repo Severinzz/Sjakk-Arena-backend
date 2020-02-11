@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class Tournament {
 
-    private int tournamentId;
+    private String tournamentId;
 
     @SerializedName("tournament_name")
     private String tournamentName;
@@ -19,11 +19,8 @@ public class Tournament {
     private int maxRounds; // maximum number of rounds in the tournament
     private boolean active; // true if tournament isn't paused
 
-    @SerializedName("admin_uuid")
-    private String adminUUID; // an unique id given to the admin of tournament
-
-    public Tournament(int tournamentId, String tournamentName, String adminEmail, String start, String end,
-                      int tables, int maxRounds, boolean active, String adminUUID) {
+    public Tournament(String tournamentId, String tournamentName, String adminEmail, String start, String end,
+                      int tables, int maxRounds, boolean active) {
         this.tournamentId = tournamentId;
         this.tournamentName = tournamentName;
         this.adminEmail = adminEmail;
@@ -32,14 +29,13 @@ public class Tournament {
         this.tables = tables;
         this.maxRounds = maxRounds;
         this.active = active;
-        this.adminUUID = adminUUID;
     }
 
-    public int getTournamentId() {
+    public String getTournamentId() {
         return tournamentId;
     }
 
-    public void setTournamentId(int tournamentId) {
+    public void setTournamentId(String tournamentId) {
         this.tournamentId = tournamentId;
     }
 
@@ -97,13 +93,5 @@ public class Tournament {
 
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    public String getAdminUUID() {
-        return adminUUID;
-    }
-
-    public void setAdminUUID(String adminUUID) {
-        this.adminUUID = adminUUID;
     }
 }

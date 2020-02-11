@@ -1,9 +1,9 @@
-package no.ntnu.sjakkarena;
+package no.ntnu.sjakkarena.utils;
 
 /**
  * Collection of miscellaneous useful methods
  */
-public class Tools {
+public class DBInteractionHelper {
 
     /**
      * Takes the input and returns a string that can be used in database update queries.

@@ -53,7 +53,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS sjakkarena.`tournament` ;
 
 CREATE TABLE IF NOT EXISTS sjakkarena.`tournament`(
-  `tournament_id` INT NOT NULL AUTO_INCREMENT,
+  `tournament_id` VARCHAR(255),
   `tournament_name` VARCHAR(255),
   `admin_email` VARCHAR(255),
   `start` TIME NULL,
@@ -61,7 +61,6 @@ CREATE TABLE IF NOT EXISTS sjakkarena.`tournament`(
   `tables` TINYINT UNSIGNED NULL,
   `max_rounds` SMALLINT UNSIGNED NULL,
   `active` TINYINT(1),
-  `admin_uuid` VARCHAR(255) NULL,
   PRIMARY KEY (`tournament_id`))
 ENGINE = InnoDB;
 
@@ -77,7 +76,7 @@ CREATE TABLE IF NOT EXISTS sjakkarena.`user`(
   `active` TINYINT(1) UNSIGNED NULL,
   `points` DECIMAL(1,1) UNSIGNED NULL,
   `rounds` SMALLINT UNSIGNED NULL,
-  `tournament` INT NOT NULL,
+  `tournament` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE INDEX `Id_UNIQUE` (`user_id` ASC) VISIBLE,
   INDEX `fk_user_tournament_idx` (`tournament` ASC) VISIBLE,
