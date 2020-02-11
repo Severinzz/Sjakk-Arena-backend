@@ -25,15 +25,16 @@ public class TournamentController {
      */
     @RequestMapping(value="/new-tournament",
             method = RequestMethod.PUT)
-    public ResponseEntity<String> registerTournament(@RequestBody String tournamentJSON) {
+    public Object registerTournament(@RequestBody String tournamentJSON) {
         Gson gson = new Gson();
         Tournament tournament = gson.fromJson(tournamentJSON, Tournament.class);
         try {
             Validator.validateTournament(tournament);
-            tournament.setTournamentId(IDGenerator.generateTournamentID());
+            int tournamentID = IDGenerator.generateTournamentID();
+            tournament.setTournamentId(tournamentID);
             tournament.setAdminUUID(IDGenerator.generateAdminUUID());
             tournamentRepository.addNewTournament(tournament);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return tournamentID;
         } catch (NotAbleToInsertIntoDBException | ImproperlyFormedDataException e) {
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
