@@ -22,6 +22,9 @@ public class Tournament {
     @SerializedName("admin_uuid")
     private String adminUUID; // an unique id given to the admin of tournament
 
+    public Tournament() {
+    }
+
     public Tournament(int tournamentId, String tournamentName, String adminEmail, String start, String end,
                       int tables, int maxRounds, boolean active, String adminUUID) {
         this.tournamentId = tournamentId;

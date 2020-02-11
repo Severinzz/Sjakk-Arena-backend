@@ -3,7 +3,8 @@ package no.ntnu.sjakkarena.controllers;
 import com.google.gson.Gson;
 import no.ntnu.sjakkarena.Exceptions.ImproperlyFormedDataException;
 import no.ntnu.sjakkarena.Exceptions.NotAbleToInsertIntoDBException;
-import no.ntnu.sjakkarena.Validator;
+import no.ntnu.sjakkarena.utils.IDGenerator;
+import no.ntnu.sjakkarena.utils.Validator;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,15 +25,16 @@ public class TournamentController {
      */
     @RequestMapping(value="/new-tournament",
             method = RequestMethod.PUT)
-    public ResponseEntity<String> registerTournament(@RequestBody String tournamentJSON){
+    public ResponseEntity<String> registerTournament(@RequestBody String tournamentJSON) {
         Gson gson = new Gson();
         Tournament tournament = gson.fromJson(tournamentJSON, Tournament.class);
         try {
             Validator.validateTournament(tournament);
+            tournament.setTournamentId(IDGenerator.generateTournamentID());
+            tournament.setAdminUUID(IDGenerator.generateAdminUUID());
             tournamentRepository.addNewTournament(tournament);
             return new ResponseEntity<>(HttpStatus.OK);
-        }
-        catch (NotAbleToInsertIntoDBException | ImproperlyFormedDataException e){
+        } catch (NotAbleToInsertIntoDBException | ImproperlyFormedDataException e) {
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
