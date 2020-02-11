@@ -28,7 +28,7 @@ public class TournamentRepository {
      * @param tournament the tournament to be added
      */
     public void addNewTournament(Tournament tournament) {
-        String queryString = DBInteractionHelper.inputToDatabaseUpdateString(tournament.getTournamentId(),
+        String queryString = DBInteractionHelper.toDatabaseUpdateString(tournament.getTournamentId(),
                 tournament.getTournamentName(), tournament.getAdminEmail(), tournament.getStart(), tournament.getEnd(),
                 tournament.getTables(), tournament.getMaxRounds(),
                 tournament.isActive(), tournament.getAdminUUID());
