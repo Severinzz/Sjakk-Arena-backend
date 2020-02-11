@@ -2,6 +2,7 @@ package no.ntnu.sjakkarena.controllers;
 
 import com.google.gson.Gson;
 
+import no.ntnu.sjakkarena.EmailSender;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.exceptions.ImproperlyFormedDataException;
 import no.ntnu.sjakkarena.exceptions.NotAbleToInsertIntoDBException;
@@ -40,6 +41,10 @@ public class TournamentController {
             tournament.setAdminUUID(IDGenerator.generateAdminUUID());
             tournamentRepository.addNewTournament(tournament);
             String jwt = JWTHelper.createJWT("tournament", ""+tournamentID);
+            EmailSender emailSender = new EmailSender();
+            emailSender.sendEmail(tournament.getAdminEmail(), tournament.getTournamentName(),
+                    "Her er din turneringsID: " + tournament.getAdminUUID() +
+                            ". Bruk denne til å gå til din turneringsside");
             return "{\"jwt\": \"" + jwt + "\", \"tournament_id\":" +
                     tournamentID+ "}";
         } catch (NotAbleToInsertIntoDBException | ImproperlyFormedDataException e) {

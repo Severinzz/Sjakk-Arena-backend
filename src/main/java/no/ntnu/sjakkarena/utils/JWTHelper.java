@@ -9,8 +9,8 @@ import java.security.Key;
 public class JWTHelper {
 
     public static String createJWT(String subject, String id){
-        Key privateKey = Security.getKey();
-        String jws = Jwts.builder().setSubject(subject).setId(id).signWith(privateKey).compact();
+        Key secretKey = Security.getKey();
+        String jws = Jwts.builder().setSubject(subject).setId(id).signWith(secretKey).compact();
         return jws;
     }
 
