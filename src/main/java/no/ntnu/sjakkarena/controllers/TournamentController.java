@@ -40,7 +40,7 @@ public class TournamentController {
             tournament.setAdminUUID(IDGenerator.generateAdminUUID());
             tournamentRepository.addNewTournament(tournament);
             String jwt = JWTHelper.createJWT("tournament", ""+tournamentID);
-            return "{\"jwt\": \"" + jwt + "\", \"tournamentId\":" +
+            return "{\"jwt\": \"" + jwt + "\", \"tournament_id\":" +
                     tournamentID+ "}";
         } catch (NotAbleToInsertIntoDBException | ImproperlyFormedDataException e) {
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
