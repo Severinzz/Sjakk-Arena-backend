@@ -41,7 +41,8 @@ public class UserRepository {
         }
         catch(DataAccessException e){
             throw new NotAbleToInsertIntoDBException("Could not add user to database. Possible reasons: \n" +
-                    "1. User is already registered in database");
+                    "1. User is already registered in database \n" +
+                    "2. Name/value pairs in JSON are missing");
         }
     }
 }
