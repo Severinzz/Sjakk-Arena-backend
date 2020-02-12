@@ -11,7 +11,7 @@ public class DBInteractionHelper {
      *
      * @return databaseString a string that can be used in database update queries
      */
-    public static String inputToDatabaseUpdateString(Object... arguments) {
+    public static String toDatabaseUpdateString(Object... arguments) {
         String databaseString = "";
         for (Object argument : arguments) {
             if (!(argument instanceof Integer || argument instanceof String || argument instanceof Boolean)) {

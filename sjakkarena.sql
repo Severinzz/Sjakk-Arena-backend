@@ -74,12 +74,13 @@ DROP TABLE IF EXISTS sjakkarena.`user` ;
 CREATE TABLE IF NOT EXISTS sjakkarena.`user`(
   `user_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
-  `active` TINYINT(1) UNSIGNED NULL,
-  `points` DECIMAL(1,1) UNSIGNED NULL,
-  `rounds` SMALLINT UNSIGNED NULL,
-  `tournament` VARCHAR(255) NOT NULL,
+  `active` TINYINT(1) UNSIGNED DEFAULT 1,
+  `points` DECIMAL(1,1) UNSIGNED NULL DEFAULT 0,
+  `rounds` SMALLINT UNSIGNED NULL DEFAULT 0,
+  `tournament` INT NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE INDEX `Id_UNIQUE` (`user_id` ASC) VISIBLE,
+  UNIQUE KEY `name_tournament` (`name`, `tournament`),
   INDEX `fk_user_tournament_idx` (`tournament` ASC) VISIBLE,
   CONSTRAINT `fk_user_tournament`
     FOREIGN KEY (`tournament`)

@@ -10,6 +10,7 @@ import no.ntnu.sjakkarena.repositories.TournamentRepository;
 import no.ntnu.sjakkarena.utils.JWTHelper;
 import no.ntnu.sjakkarena.utils.Validator;
 import no.ntnu.sjakkarena.utils.IDGenerator;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,8 @@ public class TournamentController {
     /**
      * Register a tournament
      * @param tournamentJSON tournament description in json format
-     * @return HTTP status 200 ok if successfully added, HTTP status 422 UNPROCESSABLE_ENTITY otherwise
+     * @return HTTP status 200 ok if successfully added + jwt and tournamnetID,
+     * HTTP status 422 UNPROCESSABLE_ENTITY otherwise
      */
     @RequestMapping(value="/new-tournament",
             method = RequestMethod.PUT)
@@ -41,13 +43,17 @@ public class TournamentController {
             tournament.setAdminUUID(IDGenerator.generateAdminUUID());
             tournamentRepository.addNewTournament(tournament);
             String jwt = JWTHelper.createJWT("tournament", ""+tournamentID);
+            /* TODO remove comment to send email when a tournament is registered
             EmailSender emailSender = new EmailSender();
             emailSender.sendEmail(tournament.getAdminEmail(), tournament.getTournamentName(),
                     "Her er din turneringsID: " + tournament.getAdminUUID() +
                             ". Bruk denne til å gå til din turneringsside");
-            return "{\"jwt\": \"" + jwt + "\", \"tournament_id\":" +
-                    tournamentID+ "}";
-        } catch (NotAbleToInsertIntoDBException | ImproperlyFormedDataException e) {
+             */
+            JSONObject jsonResponse = new JSONObject();
+            jsonResponse.put("jwt", jwt);
+            jsonResponse.put("tournament_id", tournamentID);
+            return new ResponseEntity<>(jsonResponse.toString(), HttpStatus.OK);
+        } catch (NotAbleToInsertIntoDBException | ImproperlyFormedDataException | NullPointerException e) {
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }

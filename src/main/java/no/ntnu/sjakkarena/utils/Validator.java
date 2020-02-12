@@ -25,6 +25,7 @@ public class Validator {
      */
     public static void validateTournament(Tournament tournament) {
         boolean validAdminEmail = validateWithRegEx(tournament.getAdminEmail(), EMAIL_REGEX);
+
         boolean validTables = validateNonNegativeInteger(tournament.getTables());
         boolean validMaxRounds = validateNonNegativeInteger(tournament.getMaxRounds());
 
@@ -38,6 +39,14 @@ public class Validator {
         if (!(validAdminEmail && validStart && validEnd && validTables && validMaxRounds)) {
             throw new ImproperlyFormedDataException();
         }
+    }
+
+    /**
+     * Returns true if the provided value is null, otherwise falls
+     * @return true if the provided value is null, otherwise falls
+     */
+    private static boolean notNull(Object o){
+        return o != null;
     }
 
     /**
