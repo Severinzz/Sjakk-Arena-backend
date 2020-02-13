@@ -28,12 +28,15 @@ public class TournamentRepository {
      * @param tournament the tournament to be added
      */
     public void addNewTournament(Tournament tournament) {
-        String queryString = DBInteractionHelper.toDatabaseUpdateString(tournament.getTournamentId(),
+        String queryString = DBInteractionHelper.toDatabaseUpdateString(tournament.getId(),
                 tournament.getTournamentName(), tournament.getAdminEmail(), tournament.getStart(), tournament.getEnd(),
-                tournament.getTables(), tournament.getMaxRounds(),
-                tournament.isActive(), tournament.getAdminUUID());
+                tournament.getTables(), tournament.getMaxRounds(), tournament.getAdminUUID(),
+                tournament.isEarlyStart());
         try {
-            jdbcTemplate.update("INSERT INTO sjakkarena.tournament VALUES (" + queryString + ")");
+            jdbcTemplate.update("INSERT INTO sjakkarena.tournament " +
+                    "(`tournament_id`, `tournament_name`, `admin_email`, `start`, `end`, " +
+                    "`tables`, `max_rounds`, `admin_uuid`, `early_start`) VALUES (" + queryString + ")");
+
         } catch (DataAccessException e) {
             throw new NotAbleToInsertIntoDBException("Couldn't insert tournament into db");
         }

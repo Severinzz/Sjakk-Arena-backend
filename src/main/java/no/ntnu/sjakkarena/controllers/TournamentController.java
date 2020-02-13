@@ -27,18 +27,18 @@ public class TournamentController {
     /**
      * Register a tournament
      * @param tournamentJSON tournament description in json format
-     * @return HTTP status 200 ok if successfully added + jwt and tournamnetID,
+     * @return HTTP status 200 ok if successfully added + jwt and tournamentID,
      * HTTP status 422 UNPROCESSABLE_ENTITY otherwise
      */
     @RequestMapping(value="/new-tournament",
             method = RequestMethod.PUT)
-    public Object registerTournament(@RequestBody String tournamentJSON) {
+    public ResponseEntity<String> registerTournament(@RequestBody String tournamentJSON) {
         Gson gson = new Gson();
         Tournament tournament = gson.fromJson(tournamentJSON, Tournament.class);
         try {
             Validator.validateTournament(tournament);
             int tournamentID = IDGenerator.generateTournamentID();
-            tournament.setTournamentId(tournamentID);
+            tournament.setId(tournamentID);
             tournament.setAdminUUID(IDGenerator.generateAdminUUID());
             tournamentRepository.addNewTournament(tournament);
             String jwt = JWSHelper.createJWS("TOURNAMENT", ""+tournamentID);
@@ -53,7 +53,7 @@ public class TournamentController {
             jsonResponse.put("tournament_id", tournamentID);
             return new ResponseEntity<>(jsonResponse.toString(), HttpStatus.OK);
         } catch (NotAbleToInsertIntoDBException | ImproperlyFormedDataException | NullPointerException e) {
-            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }

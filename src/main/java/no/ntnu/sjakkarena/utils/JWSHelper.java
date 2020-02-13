@@ -23,7 +23,7 @@ public class JWSHelper {
      * @return JWS as a String
      */
     public static String createJWS(String subject, String id){
-        Key secretKey = Security.getKey();
+        Key secretKey = KeyHelper.getKey();
         String jws = Jwts.builder().setSubject(subject).setId(id).signWith(secretKey).compact();
         return jws;
     }
@@ -35,7 +35,7 @@ public class JWSHelper {
      */
     public static boolean validateToken(String jws) {
         try {
-            Jwts.parserBuilder().setSigningKey(Security.getKey()).build().parseClaimsJws(jws);
+            Jwts.parserBuilder().setSigningKey(KeyHelper.getKey()).build().parseClaimsJws(jws);
             return true;
         } catch (SignatureException e) {
             return false;
@@ -48,7 +48,7 @@ public class JWSHelper {
      * @return An authentication.
      */
     public static Authentication getAuthentication(String jws) {
-        Claims claims = Jwts.parserBuilder().setSigningKey(Security.getKey())
+        Claims claims = Jwts.parserBuilder().setSigningKey(KeyHelper.getKey())
                 .build().parseClaimsJws(jws).getBody();
 
         Collection<? extends GrantedAuthority> authorities = Arrays.asList(claims.getSubject()).stream()
