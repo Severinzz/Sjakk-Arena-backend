@@ -21,7 +21,7 @@ public class IDGenerator {
         Random random = new Random();
         int id = random.nextInt(maxNumberOfTournaments);
         int i = 0;
-        while (tournamentRepository.findTournamentById(id).getTournamentId() == id && i < maxNumberOfTournaments){
+        while (tournamentRepository.findTournamentById(id).getId() == id && i < maxNumberOfTournaments){
             i++;
             id = random.nextInt(maxNumberOfTournaments);
         }

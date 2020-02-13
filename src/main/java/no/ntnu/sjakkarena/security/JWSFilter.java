@@ -1,4 +1,4 @@
-package no.ntnu.sjakkarena;
+package no.ntnu.sjakkarena.security;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import no.ntnu.sjakkarena.utils.JWSHelper;

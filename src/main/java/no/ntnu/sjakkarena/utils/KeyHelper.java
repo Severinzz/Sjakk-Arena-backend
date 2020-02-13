@@ -13,7 +13,7 @@ import java.security.Key;
 /**
  * Handles public and private keys
  */
-public class Security {
+public class KeyHelper {
 
     private static SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private static String secretKeyFileName = "secretKey.txt";

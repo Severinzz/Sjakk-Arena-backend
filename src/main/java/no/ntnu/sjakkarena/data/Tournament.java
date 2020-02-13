@@ -2,9 +2,7 @@ package no.ntnu.sjakkarena.data;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Tournament {
-
-    private int tournamentId;
+public class Tournament extends User{
 
     @SerializedName("tournament_name")
     private String tournamentName;
@@ -22,12 +20,16 @@ public class Tournament {
     @SerializedName("admin_uuid")
     private String adminUUID; // an unique id given to the admin of tournament
 
+    @SerializedName("early_start")
+    private boolean earlyStart; //Start when two or more players are enrolled
+
     public Tournament() {
+        super();
     }
 
     public Tournament(int tournamentId, String tournamentName, String adminEmail, String start, String end,
-                      int tables, int maxRounds, boolean active, String adminUUID) {
-        this.tournamentId = tournamentId;
+                      int tables, int maxRounds, boolean active, String adminUUID, boolean earlyStart) {
+        super(tournamentId);
         this.tournamentName = tournamentName;
         this.adminEmail = adminEmail;
         this.start = start;
@@ -36,14 +38,7 @@ public class Tournament {
         this.maxRounds = maxRounds;
         this.active = active;
         this.adminUUID = adminUUID;
-    }
-
-    public int getTournamentId() {
-        return tournamentId;
-    }
-
-    public void setTournamentId(int tournamentId) {
-        this.tournamentId = tournamentId;
+        this.earlyStart = earlyStart;
     }
 
     public String getTournamentName() {
@@ -107,5 +102,13 @@ public class Tournament {
 
     public void setAdminUUID(String adminUUID) {
         this.adminUUID = adminUUID;
+    }
+
+    public boolean isEarlyStart() {
+        return earlyStart;
+    }
+
+    public void setEarlyStart(boolean earlyStart) {
+        this.earlyStart = earlyStart;
     }
 }

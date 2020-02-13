@@ -1,0 +1,451 @@
+{
+	"info": {
+		"_postman_id": "414765aa-c9be-4820-a022-3ac3b1deeed2",
+		"name": "sjakkarena",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add player",
+			"item": [
+				{
+					"name": "New tournament",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "969c89c1-6921-44c6-bfd0-2e4a8e4acb7b",
+								"exec": [
+									"pm.test(\"Successfully add tournament\", function (){",
+									"   pm.response.to.have.status(200); ",
+									"});",
+									"",
+									"pm.test(\"Response should be json\", function(){",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"let jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"tournamentId\", jsonData.tournament_id);",
+									"pm.collectionVariables.set(\"tournamentJwt\", jsonData.jwt);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "51377409-85ea-46a3-b330-4bdc62345155",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"tournament_name\": \"hei\",\n\t\"admin_email\": \"fsad@sfd.com\",\n\t\"start\": \"20:01\",\n\t\"end\": \"22:02\",\n\t\"tables\": 4,\n\t\"max_rounds\": 3,\n\t\"early_start\": \"true\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/new-tournament",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"new-tournament"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New player",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ff0fed8d-2df4-4bc1-91c4-fa8519a6382d",
+								"exec": [
+									"pm.test(\"Successfully add user\", function(){",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test(\"Response should be json\", function(){",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"let jsonData = JSON.parse(responseBody);",
+									"pm.collectionVariables.set(\"playerJwt\", jsonData.jwt);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "dd0776c2-4d8b-4779-aa73-f0054dfe7792",
+								"exec": [
+									"pm.collectionVariables.set(\"playerName\", \"mCarlsen\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": {{playerName}},\n\t\"tournament\": {{tournamentId}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/new-player",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"new-player"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add existing player",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b9db1908-a435-4761-aa17-df31ac11d017",
+								"exec": [
+									"pm.test(\"Add existing user response\", function(){",
+									"    pm.response.to.have.status(400); ",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": {{playerName}},\n\t\"tournament\": {{tournamentId}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/new-player",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"new-player"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add missing name/value pair",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4d703cc0-5a59-4c68-bb26-f313a6c60f20",
+								"exec": [
+									"pm.test(\"Add user missing name/value pair response code\", function(){",
+									"    pm.response.to.have.status(400); ",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": {{playerName}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/new-player",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"new-player"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "JWS",
+			"item": [
+				{
+					"name": "Not authorized tournamnet player names",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bf81644e-1ae2-4a12-a6c4-942965b89936",
+								"exec": [
+									"pm.test(\"JWS correct response code\", function(){",
+									"    pm.response.to.have.status(403);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{playerJwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/tournament/player-names",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"tournament",
+								"player-names"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Tournamen player names",
+			"item": [
+				{
+					"name": "New player",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ff0fed8d-2df4-4bc1-91c4-fa8519a6382d",
+								"exec": [
+									"pm.test(\"Successfully add user\", function(){",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test(\"Response should be json\", function(){",
+									"    pm.response.to.be.json;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "dd0776c2-4d8b-4779-aa73-f0054dfe7792",
+								"exec": [
+									"pm.collectionVariables.set(\"playerName\", \"mCarlsen\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Pål\",\n\t\"tournament\": {{tournamentId}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/new-player",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"new-player"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get playernames",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "417d404f-fb50-47c8-bfdf-b52d2c2b2305",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Your test name\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData[0]).to.eql(\"mCarlsen\");",
+									"    pm.expect(pm.expect(jsonData[1]).to.eql(\"Pål\"));",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tournamentJwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/tournament/player-names",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"tournament",
+								"player-names"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"variable": [
+		{
+			"id": "124b7703-660f-40b6-9b96-ca1f2342f63f",
+			"key": "tournamentId",
+			"value": 692441,
+			"type": "number"
+		},
+		{
+			"id": "de5bba86-ddd9-44b0-af63-da51554e5ed9",
+			"key": "jwt",
+			"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJUT1VSTkFNRU5UIiwianRpIjoiMjA2MTYwIn0.yDz2PB9ij8E5TgWMUaKwyOPaPkrTA25f56D6tW3crPc",
+			"type": "string"
+		},
+		{
+			"id": "b0ca641d-d43f-407a-a09c-c3807cbd4b50",
+			"key": "playerName",
+			"value": "mCarlsen",
+			"type": "string"
+		},
+		{
+			"id": "005b2185-6346-4b8c-867f-006803442e39",
+			"key": "tournamentJwt",
+			"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJUT1VSTkFNRU5UIiwianRpIjoiNjkyNDQxIn0.vg2zZV6bZ1K19PZuWPJMg8MlBvV4FPCqzBCdk7o0dJs",
+			"type": "string"
+		},
+		{
+			"id": "9f5f632b-e24c-409c-9fbd-82a33e4f0535",
+			"key": "playerJwt",
+			"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTEFZRVIiLCJqdGkiOiI0NyJ9.KKm4-GlazIIktKkWYPp5gfV1hl73TuEmUqSuy2b2IZY",
+			"type": "string"
+		}
+	]
+}
