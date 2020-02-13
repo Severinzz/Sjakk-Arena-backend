@@ -2,12 +2,11 @@ package no.ntnu.sjakkarena.controllers;
 
 import com.google.gson.Gson;
 
-import no.ntnu.sjakkarena.EmailSender;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.exceptions.ImproperlyFormedDataException;
 import no.ntnu.sjakkarena.exceptions.NotAbleToInsertIntoDBException;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
-import no.ntnu.sjakkarena.utils.JWTHelper;
+import no.ntnu.sjakkarena.utils.JWSHelper;
 import no.ntnu.sjakkarena.utils.Validator;
 import no.ntnu.sjakkarena.utils.IDGenerator;
 import org.json.JSONObject;
@@ -42,7 +41,7 @@ public class TournamentController {
             tournament.setTournamentId(tournamentID);
             tournament.setAdminUUID(IDGenerator.generateAdminUUID());
             tournamentRepository.addNewTournament(tournament);
-            String jwt = JWTHelper.createJWT("tournament", ""+tournamentID);
+            String jwt = JWSHelper.createJWS("TOURNAMENT", ""+tournamentID);
             /* TODO remove comment to send email when a tournament is registered
             EmailSender emailSender = new EmailSender();
             emailSender.sendEmail(tournament.getAdminEmail(), tournament.getTournamentName(),

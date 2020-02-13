@@ -13,6 +13,10 @@ public class User {
     private int rounds;
     private int tournament;
 
+    public User(int userId){
+        this.userId = userId;
+    }
+
     public User(int userId, String name, boolean active, int points, int rounds, int tournament) {
         this.userId = userId;
         this.name = name;
