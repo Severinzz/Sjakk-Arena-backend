@@ -7,6 +7,7 @@ import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.mappers.TournamentRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -67,9 +68,9 @@ public class TournamentRepository {
     public Tournament findTournamentByAdminUUID(String adminUUID) {
         try {
             return jdbcTemplate.queryForObject("SELECT * FROM sjakkarena.tournament WHERE " +
-                    "admin_uuid = " + adminUUID, Tournament.class);
+                    "admin_uuid = \"" + adminUUID + "\"", rowMapper);
         }
-        catch(NullPointerException e){
+        catch(NullPointerException| EmptyResultDataAccessException e){
             return new Tournament();
         }
     }
