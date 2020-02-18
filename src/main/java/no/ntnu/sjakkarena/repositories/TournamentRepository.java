@@ -22,21 +22,42 @@ public class TournamentRepository {
     private JdbcTemplate jdbcTemplate;
 
     private RowMapper<Tournament> rowMapper = new TournamentRowMapper();
-
     /**
      * Adds a new tournament to the database
      *
      * @param tournament the tournament to be added
      */
     public void addNewTournament(Tournament tournament) {
-        String queryString = DBInteractionHelper.toDatabaseUpdateString(tournament.getId(),
-                tournament.getTournamentName(), tournament.getAdminEmail(), tournament.getStart(), tournament.getEnd(),
-                tournament.getTables(), tournament.getMaxRounds(), tournament.getAdminUUID(),
-                tournament.isEarlyStart());
+        String values = "";
+        String attributes = "";
+        if(tournament.getEnd() == null){
+            values = DBInteractionHelper.toValuesString(tournament.getId(),
+                    tournament.getTournamentName(), tournament.getAdminEmail(), tournament.getStart(),
+                    tournament.getTables(), tournament.getMaxRounds(), tournament.getAdminUUID(),
+                    tournament.isEarlyStart());
+            attributes = DBInteractionHelper.toAttributeString("tournament_id", "tournament_name", "admin_email", "start",
+                    "tables", "max_rounds", "admin_uuid", "early_start");
+        }
+        else{
+            values = DBInteractionHelper.toValuesString(tournament.getId(),
+                    tournament.getTournamentName(), tournament.getAdminEmail(), tournament.getStart(), tournament.getEnd(),
+                    tournament.getTables(), tournament.getMaxRounds(), tournament.getAdminUUID(),
+                    tournament.isEarlyStart());
+            attributes = DBInteractionHelper.toAttributeString("tournament_id", "tournament_name", "admin_email", "start", "end",
+                    "tables", "max_rounds", "admin_uuid", "early_start");
+        }
+        executeUpdateQuery(attributes, values);
+    }
+
+    /**
+     * Execute the a update query with the given attributes and values
+     * @param attributes
+     * @param values
+     */
+    private void executeUpdateQuery(String attributes, String values) {
         try {
             jdbcTemplate.update("INSERT INTO sjakkarena.tournament " +
-                    "(`tournament_id`, `tournament_name`, `admin_email`, `start`, `end`, " +
-                    "`tables`, `max_rounds`, `admin_uuid`, `early_start`) VALUES (" + queryString + ")");
+                    attributes + " VALUES " +  values);
 
         } catch (DataAccessException e) {
             throw new NotAbleToUpdateDBException("Couldn't insert tournament into db");
