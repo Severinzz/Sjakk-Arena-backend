@@ -52,7 +52,7 @@ public class TournamentRepository {
     public Tournament findTournamentById(int id) {
         try {
             return jdbcTemplate.queryForObject("SELECT * FROM sjakkarena.tournament WHERE " +
-                    "tournament_id = " + id, Tournament.class);
+                    "tournament_id = " + id, rowMapper);
         }
         catch(NullPointerException e){
             return new Tournament();
