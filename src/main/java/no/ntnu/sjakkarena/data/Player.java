@@ -1,12 +1,20 @@
 package no.ntnu.sjakkarena.data;
 
+import com.google.gson.annotations.Expose;
+
 public class Player extends User{
 
+    @Expose
     private String name;
     private boolean active;
     private int points;
     private int rounds;
     private int tournament;
+
+    public Player(int playerId, String name){
+        super(playerId);
+        this.name = name;
+    }
 
     public Player(int playerId, String name, boolean active, int points, int rounds, int tournament){
         super(playerId);

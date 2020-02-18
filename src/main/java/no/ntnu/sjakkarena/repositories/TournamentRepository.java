@@ -1,6 +1,6 @@
 package no.ntnu.sjakkarena.repositories;
 
-import no.ntnu.sjakkarena.exceptions.NotAbleToInsertIntoDBException;
+import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 
 import no.ntnu.sjakkarena.utils.DBInteractionHelper;
 import no.ntnu.sjakkarena.data.Tournament;
@@ -39,7 +39,7 @@ public class TournamentRepository {
                     "`tables`, `max_rounds`, `admin_uuid`, `early_start`) VALUES (" + queryString + ")");
 
         } catch (DataAccessException e) {
-            throw new NotAbleToInsertIntoDBException("Couldn't insert tournament into db");
+            throw new NotAbleToUpdateDBException("Couldn't insert tournament into db");
         }
     }
 
