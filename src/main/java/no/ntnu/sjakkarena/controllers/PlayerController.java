@@ -1,19 +1,17 @@
 package no.ntnu.sjakkarena.controllers;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import no.ntnu.sjakkarena.Session;
 import no.ntnu.sjakkarena.data.Player;
-import no.ntnu.sjakkarena.exceptions.NotAbleToInsertIntoDBException;
+import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.utils.JWSHelper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
@@ -38,15 +36,34 @@ public class PlayerController {
             JSONObject jsonResponse = new JSONObject();
             jsonResponse.put("jwt", JWSHelper.createJWS("PLAYER", "" + userId));
             return new ResponseEntity<>(jsonResponse.toString(), HttpStatus.OK);
-        } catch (NotAbleToInsertIntoDBException e) {
+        } catch (NotAbleToUpdateDBException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
+    /**
+     * Returns all the names of the players in the tournament
+     * @return A json with the player ids mapped to their names
+     */
     @RequestMapping(value="/tournament/player-names", method=RequestMethod.GET)
     public ResponseEntity<String> getPlayerNames(){
         int tournamentId = Session.getUserId();
-        Collection<String> playerNames = playerRepository.getAllPlayerNamesInTournament(tournamentId);
-        return new ResponseEntity<>(new Gson().toJson(playerNames), HttpStatus.OK);
+        Collection<Player> players = playerRepository.getAllPlayerNamesInTournament(tournamentId);
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        return new ResponseEntity<>(gson.toJson(players), HttpStatus.OK);
+    }
+
+    /**
+     * Deletes the player with the given ID
+     * @return 200 OK if successfully deleted, otherwise 400 BAD REQUEST
+     */
+    @RequestMapping(value="/tournament/delete-player/{id}", method=RequestMethod.DELETE)
+    public ResponseEntity<String> deletePlayer(@PathVariable(name="id") int id) {
+        try {
+            playerRepository.deletePlayer(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NotAbleToUpdateDBException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

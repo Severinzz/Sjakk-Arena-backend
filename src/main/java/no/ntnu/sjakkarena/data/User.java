@@ -1,9 +1,10 @@
 package no.ntnu.sjakkarena.data;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class User {
-
+    @Expose
     @SerializedName("id")
     private int userId;
 

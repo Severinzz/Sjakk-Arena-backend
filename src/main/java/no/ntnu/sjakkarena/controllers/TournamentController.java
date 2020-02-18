@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.exceptions.ImproperlyFormedDataException;
-import no.ntnu.sjakkarena.exceptions.NotAbleToInsertIntoDBException;
+import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
 import no.ntnu.sjakkarena.utils.JWSHelper;
 import no.ntnu.sjakkarena.utils.Validator;
@@ -49,7 +49,7 @@ public class TournamentController {
             jsonObject.put("jwt", jws);
             jsonObject.put("tournament_id", tournamentID);
             return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
-        } catch (NotAbleToInsertIntoDBException | ImproperlyFormedDataException | NullPointerException e) {
+        } catch (NotAbleToUpdateDBException | ImproperlyFormedDataException | NullPointerException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
