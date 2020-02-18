@@ -2,6 +2,7 @@ package no.ntnu.sjakkarena.controllers;
 
 import com.google.gson.Gson;
 
+import no.ntnu.sjakkarena.Session;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.exceptions.ImproperlyFormedDataException;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
@@ -72,5 +73,17 @@ public class TournamentController {
             jsonObject.put("tournament", tournamentJson);
             return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
         }
+    }
+
+    /**
+     * Get tournament information by providing token
+     * @return JSON with tournament information
+     */
+    @RequestMapping(value="/tournament/information", method=RequestMethod.GET)
+    public ResponseEntity<String> getTournamentInformationByToken(){
+        int tournamentId = Session.getUserId();
+        Tournament tournament = tournamentRepository.findTournamentById(tournamentId);
+        Gson gson = new Gson();
+        return new ResponseEntity<>(gson.toJson(tournament), HttpStatus.OK);
     }
 }
