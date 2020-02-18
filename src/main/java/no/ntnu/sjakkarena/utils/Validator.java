@@ -19,7 +19,7 @@ public class Validator {
             Pattern.compile("([01]?[0-9]|2[0-3]):[0-5][0-9]"); // regex from https://mkyong.com/regular-expressions/how-to-validate-time-in-24-hours-format-with-regular-expression/
 
     /**
-     * Checks if the tournament fields has the correct syntax
+     * Checks if the tournament fields are correct
      *
      * @param tournament the tournament to be validated
      */
@@ -28,17 +28,34 @@ public class Validator {
 
         boolean validTables = validateNonNegativeInteger(tournament.getTables());
         boolean validMaxRounds = validateNonNegativeInteger(tournament.getMaxRounds());
-
-        boolean validStart = validateWithRegEx(tournament.getStart(), TIME_REGEX);
-        boolean validEnd = validateWithRegEx(tournament.getEnd(), TIME_REGEX);
-        if (validStart && validEnd) {
-            boolean endLaterThanStart = LocalTime.parse(tournament.getStart()).isBefore(
-                    LocalTime.parse(tournament.getEnd()));
-            validEnd = validEnd && endLaterThanStart;
+        boolean validTimes;
+        if (tournament.getEnd() == null){
+            validTimes = validateWithRegEx(tournament.getStart(), TIME_REGEX);
         }
-        if (!(validAdminEmail && validStart && validEnd && validTables && validMaxRounds)) {
+        else{
+            validTimes = validateTimes(tournament.getStart(), tournament.getEnd());
+        }
+
+        if (!(validAdminEmail && validTimes && validTables && validMaxRounds)) {
             throw new ImproperlyFormedDataException();
         }
+    }
+
+    /**
+     * Validates the start and end times
+     * @param start
+     * @param end
+     * @return true if start and end times is
+     */
+    private static boolean validateTimes(String start, String end){
+        boolean validStart = validateWithRegEx(start, TIME_REGEX);
+        boolean validEnd = validateWithRegEx(end, TIME_REGEX);
+        if (validStart && validEnd) {
+            boolean endLaterThanStart = LocalTime.parse(start).isBefore(
+                    LocalTime.parse(end));
+            return validEnd && endLaterThanStart;
+        }
+        return false;
     }
 
     /**
