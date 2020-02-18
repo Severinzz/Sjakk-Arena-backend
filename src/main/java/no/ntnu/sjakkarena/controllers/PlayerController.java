@@ -7,6 +7,7 @@ import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.utils.JWSHelper;
+import no.ntnu.sjakkarena.utils.PlayerIconHelper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,12 +32,14 @@ public class PlayerController {
     public ResponseEntity<String> registerUser(@RequestBody String userJSON) {
         Gson gson = new Gson();
         Player player = gson.fromJson(userJSON, Player.class);
+        player.setIcon(PlayerIconHelper.getRandomFontAwesomeIcon());
         try {
             int userId = playerRepository.addNewPlayer(player);
             JSONObject jsonResponse = new JSONObject();
             jsonResponse.put("jwt", JWSHelper.createJWS("PLAYER", "" + userId));
             return new ResponseEntity<>(jsonResponse.toString(), HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -45,7 +48,7 @@ public class PlayerController {
      * Returns all the names of the players in the tournament
      * @return A json with the player ids mapped to their names
      */
-    @RequestMapping(value="/tournament/player-names", method=RequestMethod.GET)
+    @RequestMapping(value="/tournament/player-lobby-information", method=RequestMethod.GET)
     public ResponseEntity<String> getPlayerNames(){
         int tournamentId = Session.getUserId();
         Collection<Player> players = playerRepository.getAllPlayerNamesInTournament(tournamentId);
@@ -63,6 +66,7 @@ public class PlayerController {
             playerRepository.deletePlayer(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

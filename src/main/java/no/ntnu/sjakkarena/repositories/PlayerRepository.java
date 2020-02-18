@@ -34,7 +34,7 @@ public class PlayerRepository {
      */
     public int addNewPlayer(Player player){
         String values = DBInteractionHelper.toValuesString(player.getName(),
-                player.getTournament());
+                player.getTournament(), player.getIcon());
         KeyHolder keyHolder = new GeneratedKeyHolder();
         try {
             //code from https://stackoverflow.com/questions/12882874/how-can-i-get-the-autoincremented-id-when-i-insert-a-record-in-a-table-via-jdbct
@@ -42,7 +42,7 @@ public class PlayerRepository {
                     new PreparedStatementCreator() {
                         public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                             PreparedStatement ps =
-                                    connection.prepareStatement("INSERT INTO sjakkarena.player (`name`, `tournament`)" +
+                                    connection.prepareStatement("INSERT INTO sjakkarena.player (`name`, `tournament`, `icon`)" +
                                             " VALUES " + values, new String[] {"id"});
                             return ps;
                         }
@@ -63,7 +63,7 @@ public class PlayerRepository {
      * @return
      */
     public Collection<Player> getAllPlayerNamesInTournament(int tournamentId) {
-        List<Player> names =  jdbcTemplate.query("SELECT `player_id`, `name` FROM  sjakkarena.player WHERE " +
+        List<Player> names =  jdbcTemplate.query("SELECT `player_id`, `name`, `icon` FROM  sjakkarena.player WHERE " +
                 "tournament = " + tournamentId, rowMapper);
         return names;
     }

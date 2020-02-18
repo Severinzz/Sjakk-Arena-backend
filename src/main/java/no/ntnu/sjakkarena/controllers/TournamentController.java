@@ -51,6 +51,7 @@ public class TournamentController {
             jsonObject.put("tournament_id", tournamentID);
             return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
         } catch (NotAbleToUpdateDBException | ImproperlyFormedDataException | NullPointerException e) {
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
