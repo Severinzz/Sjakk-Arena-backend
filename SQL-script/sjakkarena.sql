@@ -36,12 +36,12 @@ CREATE TABLE IF NOT EXISTS sjakkarena.`game`(
   INDEX `fk_game_black_idx` (`black` ASC) VISIBLE,
   CONSTRAINT `fk_game_white`
     FOREIGN KEY (`white`)
-    REFERENCES sjakkarena.`user` (`user_id`)
+    REFERENCES sjakkarena.`player` (`player_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_game_black`
     FOREIGN KEY (`black`)
-    REFERENCES sjakkarena.`user` (`user_id`)
+    REFERENCES sjakkarena.`player` (`player_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
