@@ -79,6 +79,7 @@ CREATE TABLE IF NOT EXISTS `sjakkarena`.`player`(
   `points` DECIMAL(1,1) UNSIGNED NULL DEFAULT 0,
   `rounds` SMALLINT UNSIGNED NULL DEFAULT 0,
   `tournament` INT NOT NULL,
+  `icon` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`player_id`),
   UNIQUE INDEX `Id_UNIQUE` (`player_id` ASC) VISIBLE,
   UNIQUE KEY `name_tournament` (`name`, `tournament`),

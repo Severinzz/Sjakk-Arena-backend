@@ -12,8 +12,8 @@ VALUES (535937, "sjakkturnering", "sjakk@turnering.no", "22:03", "23:04", 4, 5, 
 -- -----------------------------------------------------
 -- Table `sjakkarena`.`player`
 -- -----------------------------------------------------
-INSERT INTO `sjakkarena`.`player` (`name`, `tournament`)
-VALUES ("Bjarne", 535937),
-       ("Pål", 535937),
-       ("Per", 535937),
-       ("Espen", 535937);
+INSERT INTO `sjakkarena`.`player` (`name`, `tournament`, `icon`)
+VALUES ("Bjarne", 535937, "fas fa-chess-pawn"),
+       ("Pål", 535937, "fas fa-chess-knight"),
+       ("Per", 535937, "fas fa-chess-king"),
+       ("Espen", 535937, "fas fa-chess-bishop");

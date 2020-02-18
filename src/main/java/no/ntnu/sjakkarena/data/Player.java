@@ -10,10 +10,13 @@ public class Player extends User{
     private int points;
     private int rounds;
     private int tournament;
+    @Expose
+    private String icon;
 
-    public Player(int playerId, String name){
+    public Player(int playerId, String name, String icon){
         super(playerId);
         this.name = name;
+        this.icon = icon;
     }
 
     public Player(int playerId, String name, boolean active, int points, int rounds, int tournament){
@@ -63,5 +66,13 @@ public class Player extends User{
 
     public void setTournament(int tournament) {
         this.tournament = tournament;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 }
