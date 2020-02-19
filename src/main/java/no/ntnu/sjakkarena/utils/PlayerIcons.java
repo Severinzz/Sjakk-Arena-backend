@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class PlayerIconHelper {
+public class PlayerIcons {
 
-    private static ArrayList<String> ICONS = new ArrayList<String>(Arrays.asList("fas fa-chess-rook",
-            "fas fa-chess-queen", "fas fa-chess-pawn", "fas fa-chess-knight", "fas fa-chess-king",
-            "fas fa-chess-bishop"));
+    private static ArrayList<String> ICONS = new ArrayList<String>(Arrays.asList("fas fa-chess-rook fa-3x",
+            "fas fa-chess-queen fa-3x", "fas fa-chess-pawn fa-3x", "fas fa-chess-knight fa-3x", "fas fa-chess-king fa-3x",
+            "fas fa-chess-bishop fa-3x"));
 
     /**
      * Returns a random fontawesome icon css class

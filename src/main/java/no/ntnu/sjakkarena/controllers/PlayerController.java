@@ -7,7 +7,7 @@ import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.utils.JWSHelper;
-import no.ntnu.sjakkarena.utils.PlayerIconHelper;
+import no.ntnu.sjakkarena.utils.PlayerIcons;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,7 +32,7 @@ public class PlayerController {
     public ResponseEntity<String> registerUser(@RequestBody String userJSON) {
         Gson gson = new Gson();
         Player player = gson.fromJson(userJSON, Player.class);
-        player.setIcon(PlayerIconHelper.getRandomFontAwesomeIcon());
+        player.setIcon(PlayerIcons.getRandomFontAwesomeIcon());
         try {
             int userId = playerRepository.addNewPlayer(player);
             JSONObject jsonResponse = new JSONObject();
