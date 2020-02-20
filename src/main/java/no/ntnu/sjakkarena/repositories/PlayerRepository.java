@@ -91,7 +91,7 @@ public class PlayerRepository {
             jdbcTemplate.update(updateQuery, id);
         }
         catch(DataAccessException e){
-            throw new NotAbleToUpdateDBException("Could not set active filed to 0");
+            throw new NotAbleToUpdateDBException("Could not set 'active' field to 0");
         }
     }
 }
