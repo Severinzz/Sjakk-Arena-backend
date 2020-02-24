@@ -76,7 +76,7 @@ public class PlayerController {
      * @param id ID for the player to change value for
      * @return 200 OK if successfully set active field to 0, otherwise 400
      */
-    @RequestMapping(value="/player/set-inactive/{id}", method=RequestMethod.PATCH)
+    @RequestMapping(value="/user/set_inactive/{id}", method=RequestMethod.PATCH)
     public ResponseEntity<String> setPlayerInactive(@PathVariable(name="id") int id) {
         try {
             playerRepository.setPlayerInactive(id);
