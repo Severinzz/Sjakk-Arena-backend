@@ -28,19 +28,20 @@ CREATE TABLE IF NOT EXISTS sjakkarena.`game`(
   `table` TINYINT UNSIGNED NULL,
   `start` TIME NULL,
   `end` TIME NULL,
-  `white` INT NOT NULL,
-  `black` INT NOT NULL,
-  `result` VARCHAR(3) NULL,
+  `white_player` INT NOT NULL,
+  `black_player` INT NOT NULL,
+  `result` VARCHAR(7) NULL,
+  `active` TINYINT(1),
   PRIMARY KEY (`game_id`),
-  INDEX `fk_game_white_idx` (`white` ASC) VISIBLE,
-  INDEX `fk_game_black_idx` (`black` ASC) VISIBLE,
+  INDEX `fk_game_white_idx` (`white_player` ASC) VISIBLE,
+  INDEX `fk_game_black_idx` (`black_player` ASC) VISIBLE,
   CONSTRAINT `fk_game_white`
-    FOREIGN KEY (`white`)
+    FOREIGN KEY (`white_player`)
     REFERENCES sjakkarena.`player` (`player_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_game_black`
-    FOREIGN KEY (`black`)
+    FOREIGN KEY (`black_player`)
     REFERENCES sjakkarena.`player` (`player_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)

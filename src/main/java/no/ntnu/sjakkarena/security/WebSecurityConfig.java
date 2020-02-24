@@ -17,7 +17,7 @@ import java.util.Arrays;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception{
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
         JWSFilter jwsFilter = new JWSFilter();
         httpSecurity
                 .cors()

@@ -13,7 +13,7 @@ public class EmailSender {
 
     private JavaMailSender emailSender;
 
-    public EmailSender(){
+    public EmailSender() {
         // Code from https://www.baeldung.com/spring-email
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");
@@ -31,7 +31,7 @@ public class EmailSender {
         emailSender = mailSender;
     }
 
-    public void sendEmail(String to, String subject, String text){
+    public void sendEmail(String to, String subject, String text) {
         // Code from https://www.baeldung.com/spring-email
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);

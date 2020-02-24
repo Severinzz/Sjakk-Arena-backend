@@ -2,7 +2,7 @@ package no.ntnu.sjakkarena.data;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Tournament extends User{
+public class Tournament extends User {
 
     @SerializedName("tournament_name")
     private String tournamentName;
@@ -96,7 +96,8 @@ public class Tournament extends User{
     public void setActive(boolean active) {
         this.active = active;
     }
-      public String getAdminUUID() {
+
+    public String getAdminUUID() {
         return adminUUID;
     }
 
