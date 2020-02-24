@@ -23,16 +23,15 @@ public class Validator {
      *
      * @param tournament the tournament to be validated
      */
-    public static void validateTournament(Tournament tournament) {
+    public static void tournamentIsValid(Tournament tournament) {
         boolean validAdminEmail = validateWithRegEx(tournament.getAdminEmail(), EMAIL_REGEX);
 
         boolean validTables = validateNonNegativeInteger(tournament.getTables());
         boolean validMaxRounds = validateNonNegativeInteger(tournament.getMaxRounds());
         boolean validTimes;
-        if (tournament.getEnd() == null){
+        if (tournament.getEnd() == null) {
             validTimes = validateWithRegEx(tournament.getStart(), TIME_REGEX);
-        }
-        else{
+        } else {
             validTimes = validateTimes(tournament.getStart(), tournament.getEnd());
         }
 
@@ -43,11 +42,12 @@ public class Validator {
 
     /**
      * Validates the start and end times
+     *
      * @param start
      * @param end
      * @return true if start and end times is
      */
-    private static boolean validateTimes(String start, String end){
+    private static boolean validateTimes(String start, String end) {
         boolean validStart = validateWithRegEx(start, TIME_REGEX);
         boolean validEnd = validateWithRegEx(end, TIME_REGEX);
         if (validStart && validEnd) {
@@ -59,17 +59,10 @@ public class Validator {
     }
 
     /**
-     * Returns true if the provided value is null, otherwise falls
-     * @return true if the provided value is null, otherwise falls
-     */
-    private static boolean notNull(Object o){
-        return o != null;
-    }
-
-    /**
      * Validate a string using regex
+     *
      * @param string the string to be validated
-     * @param regex the regex to match the string with
+     * @param regex  the regex to match the string with
      * @return true if string match regex, otherwise false
      */
     private static boolean validateWithRegEx(String string, Pattern regex) {
@@ -85,5 +78,15 @@ public class Validator {
      */
     private static boolean validateNonNegativeInteger(int integer) {
         return integer >= 0;
+    }
+
+    /**
+     * Validates result input
+     *
+     * @param result The result to be validated
+     * @return true if result is valid
+     */
+    public static boolean resultIsValid(String result) {
+        return (result.equals("1-0") || result.equals("0-1") || result.equals("0.5-0.5"));
     }
 }

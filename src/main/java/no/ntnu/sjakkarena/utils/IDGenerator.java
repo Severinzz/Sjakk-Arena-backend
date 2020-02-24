@@ -15,13 +15,14 @@ public class IDGenerator {
 
     /**
      * Generates a unique tournament ID
+     *
      * @return a unique tournament ID
      */
-    public static int generateTournamentID(){
+    public static int generateTournamentID() {
         Random random = new Random();
         int id = random.nextInt(maxNumberOfTournaments);
         int i = 0;
-        while (tournamentRepository.findTournamentById(id).getId() == id && i < maxNumberOfTournaments){
+        while (tournamentRepository.findTournamentById(id).getId() == id && i < maxNumberOfTournaments) {
             i++;
             id = random.nextInt(maxNumberOfTournaments);
         }
@@ -30,13 +31,14 @@ public class IDGenerator {
 
     /**
      * Generates a unique admin UUID
+     *
      * @return a unique admin UUID
      */
-    public static String generateAdminUUID(){
+    public static String generateAdminUUID() {
         int stringLength = 5;
         String adminUUID = generateRandomString(stringLength);
         int i = 0;
-        while(tournamentRepository.findTournamentByAdminUUID(adminUUID).equals(adminUUID) && i < maxNumberOfTournaments){
+        while (tournamentRepository.findTournamentByAdminUUID(adminUUID).equals(adminUUID) && i < maxNumberOfTournaments) {
             i++;
             adminUUID = generateRandomString(stringLength);
         }
@@ -46,10 +48,11 @@ public class IDGenerator {
     /**
      * Generates a random alphanumerical string
      * Code from https://www.baeldung.com/java-random-string
+     *
      * @param length the length of the generated string
      * @return a random alphanumerical string
      */
-    private static String generateRandomString(int length){
+    private static String generateRandomString(int length) {
         int zero = 48;
         int z = 122;
         Random random = new Random();

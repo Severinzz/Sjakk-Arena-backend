@@ -18,11 +18,12 @@ public class JWSHelper {
 
     /**
      * Creates a JWS with the given subject and id
+     *
      * @param subject
      * @param id
      * @return JWS as a String
      */
-    public static String createJWS(String subject, String id){
+    public static String createJWS(String subject, String id) {
         Key secretKey = KeyHelper.getKey();
         String jws = Jwts.builder().setSubject(subject).setId(id).signWith(secretKey).compact();
         return jws;
@@ -30,6 +31,7 @@ public class JWSHelper {
 
     /**
      * Validates a JWS. Code from https://stackoverflow.com/questions/41975045/how-to-design-a-good-jwt-authentication-filter
+     *
      * @param jws The jws to be validated
      * @return True if the jws is valid, otherwise false
      */
@@ -44,6 +46,7 @@ public class JWSHelper {
 
     /**
      * Get an authentication with the authorities as described by the JWS
+     *
      * @param jws The JWS where the information needed for authentication is stored
      * @return An authentication.
      */

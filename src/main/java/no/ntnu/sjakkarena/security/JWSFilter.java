@@ -24,7 +24,7 @@ public class JWSFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
-        try{
+        try {
             HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
             String jwt = this.resolveToken(httpServletRequest);
             if (StringUtils.hasText(jwt)) {
@@ -35,8 +35,7 @@ public class JWSFilter extends GenericFilterBean {
             }
             filterChain.doFilter(servletRequest, servletResponse);
             this.resetAuthenticationAfterRequest();
-        }
-        catch(ExpiredJwtException e){
+        } catch (ExpiredJwtException e) {
             ((HttpServletResponse) servletResponse).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }

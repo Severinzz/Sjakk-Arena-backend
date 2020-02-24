@@ -34,11 +34,11 @@ public class DBInteractionHelper {
      *
      * @return attribute a string that can be used in database update queries
      */
-    public static String toAttributeString(String... arguments){
+    public static String toAttributeString(String... arguments) {
         String attribtues = "(";
-        for (String attribute : arguments){
-            attribtues += "`" + attribute + "`," ;
+        for (String attribute : arguments) {
+            attribtues += "`" + attribute + "`,";
         }
-        return attribtues.substring(0, attribtues.length()-1) + ")";
+        return attribtues.substring(0, attribtues.length() - 1) + ")";
     }
 }

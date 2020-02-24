@@ -20,16 +20,17 @@ public class KeyHelper {
 
     /**
      * Return secret key
+     *
      * @return secret key
      */
-    public static Key getKey(){
+    public static Key getKey() {
         return readKeyFromFile(secretKeyFileName);
     }
 
     /**
      * Writes a secret key to a file
      */
-    public static void writeKeyToFile(){
+    public static void writeKeyToFile() {
         try {
             Path path = Paths.get(secretKeyFileName);
             if (!Files.exists(path)) {
@@ -46,10 +47,11 @@ public class KeyHelper {
 
     /**
      * Reads a key from a file
+     *
      * @param filename the file to read the key from
      * @return a key from a file
      */
-    public static Key readKeyFromFile(String filename){
+    public static Key readKeyFromFile(String filename) {
         Key readKey = null;
         try {
             FileInputStream fileInputStream = new FileInputStream(new File(filename));

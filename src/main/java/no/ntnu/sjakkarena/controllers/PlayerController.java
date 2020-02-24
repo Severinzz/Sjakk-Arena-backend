@@ -39,17 +39,17 @@ public class PlayerController {
             jsonResponse.put("jwt", JWSHelper.createJWS("PLAYER", "" + userId));
             return new ResponseEntity<>(jsonResponse.toString(), HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
         }
     }
 
     /**
      * Returns all the names of the players in the tournament
+     *
      * @return A json with the player ids mapped to their names
      */
-    @RequestMapping(value="/tournament/player-lobby-information", method=RequestMethod.GET)
-    public ResponseEntity<String> getPlayerNames(){
+    @RequestMapping(value = "/tournament/player-lobby-information", method = RequestMethod.GET)
+    public ResponseEntity<String> getPlayerNames() {
         int tournamentId = Session.getUserId();
         Collection<Player> players = playerRepository.getAllPlayerNamesInTournament(tournamentId);
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
@@ -58,16 +58,16 @@ public class PlayerController {
 
     /**
      * Deletes the player with the given ID
+     *
      * @return 200 OK if successfully deleted, otherwise 400 BAD REQUEST
      */
-    @RequestMapping(value="/tournament/delete-player/{id}", method=RequestMethod.DELETE)
-    public ResponseEntity<String> deletePlayer(@PathVariable(name="id") int id) {
+    @RequestMapping(value = "/tournament/delete-player/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deletePlayer(@PathVariable(name = "id") int id) {
         try {
             playerRepository.deletePlayer(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
         }
     }
 }
