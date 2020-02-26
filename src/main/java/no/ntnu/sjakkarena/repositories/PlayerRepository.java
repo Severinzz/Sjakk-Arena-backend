@@ -58,15 +58,15 @@ public class PlayerRepository {
     }
 
     /**
-     * Returns the name of all the players enrolled in the given tournament
+     * Returns the id, name and icon of all the players enrolled in the given tournament
      *
      * @param tournamentId the id of the tournament where the players are enrolled
      * @return
      */
-    public Collection<Player> getAllPlayerNamesInTournament(int tournamentId) {
-        List<Player> names = jdbcTemplate.query("SELECT `player_id`, `name`, `icon` FROM  sjakkarena.player WHERE " +
+    public Collection<Player> getPlayerLobbyInformation(int tournamentId) {
+        List<Player> players = jdbcTemplate.query("SELECT * FROM  sjakkarena.player WHERE " +
                 "tournament = " + tournamentId, rowMapper);
-        return names;
+        return players;
     }
 
     /**
@@ -80,5 +80,16 @@ public class PlayerRepository {
         } catch (DataAccessException e) {
             throw new NotAbleToUpdateDBException("Couldn't delete player from database");
         }
+    }
+
+    /**
+     * Returns the leaderboard of the given tournament
+     * @param tournamentId The id of the tournament
+     * @return A leaderboard of the given tournament
+     */
+    public Collection<Player> getPlayersInTournamentSortedByPoints(int tournamentId) {
+        List<Player> players = jdbcTemplate.query("SELECT * FROM  sjakkarena.player WHERE " +
+                "tournament = " + tournamentId + " ORDER BY `points` DESC", rowMapper);
+        return players;
     }
 }

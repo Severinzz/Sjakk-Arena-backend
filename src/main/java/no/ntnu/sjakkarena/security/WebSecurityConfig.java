@@ -28,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/new-player").permitAll()
                 .antMatchers("/tournament-information/**").permitAll()
                 .antMatchers("/tournament/**").hasAuthority("TOURNAMENT")
-                .antMatchers("/user/**").hasAuthority("PLAYER")
+                .antMatchers("/player/**").hasAuthority("PLAYER")
                 .anyRequest().authenticated();
         httpSecurity.addFilterBefore(jwsFilter, UsernamePasswordAuthenticationFilter.class);
     }

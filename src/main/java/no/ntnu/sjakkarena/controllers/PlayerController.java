@@ -28,7 +28,7 @@ public class PlayerController {
      * @param userJSON A description of the user to be added in json format
      * @return
      */
-    @RequestMapping(value = "/new-player", method = RequestMethod.PUT)
+    @RequestMapping(value = "/new-player", method = RequestMethod.POST)
     public ResponseEntity<String> registerUser(@RequestBody String userJSON) {
         Gson gson = new Gson();
         Player player = gson.fromJson(userJSON, Player.class);
@@ -49,9 +49,9 @@ public class PlayerController {
      * @return A json with the player ids mapped to their names
      */
     @RequestMapping(value = "/tournament/player-lobby-information", method = RequestMethod.GET)
-    public ResponseEntity<String> getPlayerNames() {
+    public ResponseEntity<String> getPlayerLobbyInformation() {
         int tournamentId = Session.getUserId();
-        Collection<Player> players = playerRepository.getAllPlayerNamesInTournament(tournamentId);
+        Collection<Player> players = playerRepository.getPlayerLobbyInformation(tournamentId);
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         return new ResponseEntity<>(gson.toJson(players), HttpStatus.OK);
     }
