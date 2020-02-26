@@ -30,7 +30,7 @@ public class TournamentController {
      * HTTP status 422 UNPROCESSABLE_ENTITY otherwise
      */
     @RequestMapping(value = "/new-tournament",
-            method = RequestMethod.PUT)
+            method = RequestMethod.POST)
     public ResponseEntity<String> registerTournament(@RequestBody String tournamentJSON) {
         Gson gson = new Gson();
         Tournament tournament = gson.fromJson(tournamentJSON, Tournament.class);
