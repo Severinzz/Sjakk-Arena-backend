@@ -81,4 +81,18 @@ public class PlayerRepository {
             throw new NotAbleToUpdateDBException("Couldn't delete player from database");
         }
     }
+
+    /**
+     * Set player field 'active' to 0.
+     * @param id for the player to change value for.
+     */
+    public void setPlayerInactive(int id) {
+        String updateQuery = "UPDATE sjakkarena.player SET active = 0 WHERE player_id = " + id;
+        try {
+            jdbcTemplate.update(updateQuery);
+        }
+        catch(DataAccessException e){
+            throw new NotAbleToUpdateDBException("Could not set 'active' field to 0");
+        }
+    }
 }
