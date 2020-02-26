@@ -73,12 +73,12 @@ public class PlayerController {
 
     /**
      * Set a player with a given ID to inactive
-     * @param id ID for the player to change value for
      * @return 200 OK if successfully set active field to 0, otherwise 400
      */
-    @RequestMapping(value="/user/set-inactive/{id}", method=RequestMethod.PATCH)
-    public ResponseEntity<String> setPlayerInactive(@PathVariable(name="id") int id) {
+    @RequestMapping(value="/player/set-inactive", method=RequestMethod.PATCH)
+    public ResponseEntity<String> setPlayerInactive() {
         try {
+            int id = Session.getUserId();
             playerRepository.setPlayerInactive(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
