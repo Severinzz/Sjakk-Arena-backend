@@ -72,7 +72,7 @@ public class PlayerController {
     }
 
     /**
-     * Set a player with a given ID to inactive
+     * Set a player with a given ID to Inactive
      * @return 200 OK if successfully set active field to 0, otherwise 400
      */
     @RequestMapping(value="/player/set-inactive", method=RequestMethod.PATCH)
@@ -80,6 +80,22 @@ public class PlayerController {
         try {
             int id = Session.getUserId();
             playerRepository.setPlayerInactive(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NotAbleToUpdateDBException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Set a player with a given ID to Active
+     * @return 200 OK if successfully set active field to 0, otherwise 400
+     */
+    @RequestMapping(value="/player/set-active", method=RequestMethod.PATCH)
+    public ResponseEntity<String> setPlayerActive() {
+        try {
+            int id = Session.getUserId();
+            playerRepository.setPlayerActive(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
             e.printStackTrace();
