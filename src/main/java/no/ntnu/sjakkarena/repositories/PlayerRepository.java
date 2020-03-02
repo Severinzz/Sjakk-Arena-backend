@@ -95,6 +95,7 @@ public class PlayerRepository {
   
     /**
      * Set player field 'active' to 0.
+     * Code adapted from: https://www.tutorialspoint.com/springjdbc/springjdbc_update_query.htm
      * @param id for the player to change value for.
      */
     public void setPlayerInactive(int id) {
@@ -105,6 +106,20 @@ public class PlayerRepository {
         catch(DataAccessException e){
             throw new NotAbleToUpdateDBException("Could not set 'active' field to 0");
         }
+    }
 
+    /**
+     * Set player field 'active' to 0.
+     * Code adapted from: https://www.tutorialspoint.com/springjdbc/springjdbc_update_query.htm
+     * @param id for the player to change value for.
+     */
+    public void setPlayerActive(int id) {
+        String updateQuery = "UPDATE sjakkarena.player SET active = 1 WHERE player_id = " + id;
+        try {
+            jdbcTemplate.update(updateQuery);
+        }
+        catch(DataAccessException e){
+            throw new NotAbleToUpdateDBException("Could not set 'active' field to 1");
+        }
     }
 }
