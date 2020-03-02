@@ -82,7 +82,7 @@ public class GameRepository {
                 " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black`" +
                 " WHERE `game`.`white_player` = `white`.`player_id` AND " +
                 " `game`.`black_player` = `black`.`player_id`" +
-                " AND (`white`.`player_id` = " + playerId + " OR `white`.`player_id` = " + playerId + ")" +
+                " AND (`white`.`player_id` = " + playerId + " OR `black`.`player_id` = " + playerId + ")" +
                 " ORDER BY `game`.`start` DESC", gameTableElementRowMapper);
     }
 }
