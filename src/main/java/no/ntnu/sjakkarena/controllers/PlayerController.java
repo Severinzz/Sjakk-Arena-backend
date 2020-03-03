@@ -3,88 +3,123 @@ package no.ntnu.sjakkarena.controllers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import no.ntnu.sjakkarena.Session;
+import no.ntnu.sjakkarena.data.Game;
+import no.ntnu.sjakkarena.data.GameTableElement;
 import no.ntnu.sjakkarena.data.Player;
+import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
+import no.ntnu.sjakkarena.repositories.GameRepository;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
-import no.ntnu.sjakkarena.utils.JWSHelper;
-import no.ntnu.sjakkarena.utils.PlayerIcons;
+import no.ntnu.sjakkarena.repositories.TournamentRepository;
+import no.ntnu.sjakkarena.utils.Validator;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
 
+
 @RestController
+@RequestMapping("/player")
 public class PlayerController {
 
     @Autowired
     private PlayerRepository playerRepository;
 
-    /**
-     * Register a new user
-     *
-     * @param userJSON A description of the user to be added in json format
-     * @return
-     */
-    @RequestMapping(value = "/new-player", method = RequestMethod.POST)
-    public ResponseEntity<String> registerUser(@RequestBody String userJSON) {
-        Gson gson = new Gson();
-        Player player = gson.fromJson(userJSON, Player.class);
-        player.setIcon(PlayerIcons.getRandomFontAwesomeIcon());
-        try {
-            int userId = playerRepository.addNewPlayer(player);
-            JSONObject jsonResponse = new JSONObject();
-            jsonResponse.put("jwt", JWSHelper.createJWS("PLAYER", "" + userId));
-            return new ResponseEntity<>(jsonResponse.toString(), HttpStatus.OK);
-        } catch (NotAbleToUpdateDBException e) {
-            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
-        }
-    }
+    @Autowired
+    private GameRepository gameRepository;
+
+    @Autowired
+    private TournamentRepository tournamentRepository;
 
     /**
-     * Returns all the names of the players in the tournament
+     * Set a player with a given ID to inactive
      *
-     * @return A json with the player ids mapped to their names
-     */
-    @RequestMapping(value = "/tournament/player-lobby-information", method = RequestMethod.GET)
-    public ResponseEntity<String> getPlayerLobbyInformation() {
-        int tournamentId = Session.getUserId();
-        Collection<Player> players = playerRepository.getPlayerLobbyInformation(tournamentId);
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        return new ResponseEntity<>(gson.toJson(players), HttpStatus.OK);
-    }
-
-    /**
-     * Deletes the player with the given ID
-     *
-     * @return 200 OK if successfully deleted, otherwise 400 BAD REQUEST
-     */
-    @RequestMapping(value = "/tournament/delete-player/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<String> deletePlayer(@PathVariable(name = "id") int id) {
-        try {
-            playerRepository.deletePlayer(id);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (NotAbleToUpdateDBException e) {
-            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    /**
-     * Set a player with a given ID to Inactive
      * @return 200 OK if successfully set active field to 0, otherwise 400
      */
-    @RequestMapping(value="/player/set-inactive", method=RequestMethod.PATCH)
-    public ResponseEntity<String> setPlayerInactive() {
+    @RequestMapping(value = "/pause", method = RequestMethod.PATCH)
+    public ResponseEntity<String> pause() {
         try {
             int id = Session.getUserId();
-            playerRepository.setPlayerInactive(id);
+            playerRepository.pausePlayer(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    /**
+     * Return information about the requesting user's tournament
+     * @return information about the requesting user's tournament
+     */
+    @RequestMapping(value = "/tournament", method = RequestMethod.GET)
+    public ResponseEntity<String> getTournament() {
+        int playerId = Session.getUserId();
+        int tournamentId = playerRepository.getPlayer(playerId).getTournamentId();
+        Tournament tournament = tournamentRepository.getTournament(tournamentId);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", tournament.getTournamentName());
+        jsonObject.put("start", tournament.getStart());
+        jsonObject.put("end", tournament.getEnd());
+        return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
+    }
+
+    /**
+     * Return information about the requesting user
+     *
+     * @return information relevant to the client application about the requesting user
+     */
+    @RequestMapping(value = "/information", method = RequestMethod.GET)
+    public ResponseEntity<String> getPlayer() {
+        int playerId = Session.getUserId();
+        Player player = playerRepository.getPlayer(playerId);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", player.getName());
+        jsonObject.put("points", player.getPoints());
+        return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
+    }
+
+    /**
+     * Add a result
+     *
+     * @param opponent The opponent of the player adding the result
+     * @param result   The result to be added
+     * @return 200 OK if successfully added. 400 bad if input is not active or if player doesn't have any active games.
+     */
+    @RequestMapping(value = "add-result", method = RequestMethod.PUT)
+    public ResponseEntity<String> setResult(@RequestParam(value = "opponent") int opponent,
+                                            @RequestParam(value = "result") String result) {
+        if (!Validator.resultIsValid(result)) {
+            return new ResponseEntity<>("Not a valid result", HttpStatus.BAD_REQUEST);
+        }
+        Game game = gameRepository.getActiveGame(Session.getUserId(), opponent); // Has requesting user white pieces?
+        if (game == null) {
+            game = gameRepository.getActiveGame(opponent, Session.getUserId()); // Has requesting user black pieces?
+        }
+        if (game == null) {
+            return new ResponseEntity<>("Player has no active games", HttpStatus.BAD_REQUEST); // Requesting user has no active games
+        }
+        gameRepository.addResult(game.getGameId(), result);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * Returns a list of a player's games
+     *
+     * @return a list of a player's games
+     */
+    @RequestMapping(value = "/games", method = RequestMethod.GET)
+    public ResponseEntity<String> getGames() {
+        int playerId = Session.getUserId();
+        Collection<GameTableElement> games = gameRepository.getGamesByPlayer(playerId);
+        Gson gson = new GsonBuilder().serializeNulls().create();
+        return new ResponseEntity<>(gson.toJson(games), HttpStatus.OK);
     }
 
     /**

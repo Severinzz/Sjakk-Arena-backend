@@ -57,7 +57,7 @@ public class TournamentRepository {
      */
     private void executeUpdateQuery(String attributes, String values) {
         try {
-            jdbcTemplate.update("INSERT INTO sjakkarena.tournament " +
+            jdbcTemplate.update("INSERT INTO `sjakkarena`.`tournament` " +
                     attributes + " VALUES " + values);
 
         } catch (DataAccessException e) {
@@ -68,14 +68,14 @@ public class TournamentRepository {
     /**
      * Finds the tournament with the given id.
      *
-     * @param id the id of the tournament to be found
+     * @param tournamentId the id of the tournament to be found
      * @return The tournament with the given id. If no such tournament was found in the database, an "empty" tournament
      * object is returned.
      */
-    public Tournament findTournamentById(int id) {
+    public Tournament getTournament(int tournamentId) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM sjakkarena.tournament WHERE " +
-                    "tournament_id = " + id, rowMapper);
+            return jdbcTemplate.queryForObject("SELECT * FROM `sjakkarena`.`tournament` WHERE " +
+                    "`tournament_id` = " + tournamentId, rowMapper);
         } catch (NullPointerException e) {
             return new Tournament();
         }
@@ -88,10 +88,10 @@ public class TournamentRepository {
      * @return The tournament with the given UUID. If no such tournament was found in the database, an "empty" tournament
      * object is returned.
      */
-    public Tournament findTournamentByAdminUUID(String adminUUID) {
+    public Tournament getTournament(String adminUUID) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM sjakkarena.tournament WHERE " +
-                    "admin_uuid = \"" + adminUUID + "\"", rowMapper);
+            return jdbcTemplate.queryForObject("SELECT * FROM `sjakkarena`.`tournament` WHERE " +
+                    "`admin_uuid` = \"" + adminUUID + "\"", rowMapper);
         } catch (NullPointerException | EmptyResultDataAccessException e) {
             return new Tournament();
         }
