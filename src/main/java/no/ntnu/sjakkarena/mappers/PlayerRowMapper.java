@@ -11,8 +11,9 @@ public class PlayerRowMapper implements RowMapper<Player> {
     @Override
     public Player mapRow(ResultSet rs, int i) throws SQLException {
         Player player = new Player(rs.getInt("player_id"), rs.getString("name"),
-                rs.getBoolean("active"), rs.getFloat("points"), rs.getInt("rounds"),
-                rs.getInt("tournament"), rs.getString("icon"));
+                rs.getBoolean("paused"), rs.getFloat("points"), rs.getInt("rounds"),
+                rs.getInt("tournament"), rs.getString("icon"),
+                rs.getBoolean("in_tournament"));
         return player;
     }
 }

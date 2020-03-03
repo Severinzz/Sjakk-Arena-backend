@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS sjakkarena.`game`(
   `white_player` INT NOT NULL,
   `black_player` INT NOT NULL,
   `result` VARCHAR(7) NULL,
-  `active` TINYINT(1),
+  `active` TINYINT(1) DEFAULT (0),
   PRIMARY KEY (`game_id`),
   INDEX `fk_game_white_idx` (`white_player` ASC) VISIBLE,
   INDEX `fk_game_black_idx` (`black_player` ASC) VISIBLE,
@@ -76,7 +76,8 @@ DROP TABLE IF EXISTS `sjakkarena`.`player` ;
 CREATE TABLE IF NOT EXISTS `sjakkarena`.`player`(
   `player_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NULL,
-  `active` TINYINT(1) UNSIGNED DEFAULT 1,
+  `in_tournament` TINYINT(1) UNSIGNED DEFAULT 1,
+  `active` TINYINT(1) UNSIGNED DEFAULT 0,
   `points` DECIMAL(5,1) UNSIGNED NULL DEFAULT 0,
   `rounds` SMALLINT UNSIGNED NULL DEFAULT 0,
   `tournament` INT NOT NULL,

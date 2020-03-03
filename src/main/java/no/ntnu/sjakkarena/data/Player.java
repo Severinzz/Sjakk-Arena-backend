@@ -1,26 +1,34 @@
 package no.ntnu.sjakkarena.data;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public class Player extends User{
 
     @Expose
     private String name;
-    private boolean active;
+    private boolean paused;
     private float points;
     private int rounds;
-    private int tournament;
+
+    @SerializedName("tournament")
+    private int tournamentId;
     @Expose
     private String icon;
 
-    public Player(int playerId, String name, boolean active, float points, int rounds, int tournament, String icon){
+    @SerializedName("in_tournament")
+    private boolean inTournament;
+
+    public Player(int playerId, String name, boolean paused, float points, int rounds, int tournamentId, String icon,
+                  boolean inTournament){
         super(playerId);
         this.name = name;
-        this.active = active;
+        this.paused = paused;
         this.points = points;
         this.rounds = rounds;
-        this.tournament = tournament;
+        this.tournamentId = tournamentId;
         this.icon = icon;
+        this.inTournament = inTournament;
     }
 
     public String getName() {
@@ -31,12 +39,12 @@ public class Player extends User{
         this.name = name;
     }
 
-    public boolean isActive() {
-        return active;
+    public boolean isPaused() {
+        return paused;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setPaused(boolean paused) {
+        this.paused = paused;
     }
 
     public float getPoints() {
@@ -55,12 +63,12 @@ public class Player extends User{
         this.rounds = rounds;
     }
 
-    public int getTournament() {
-        return tournament;
+    public int getTournamentId() {
+        return tournamentId;
     }
 
-    public void setTournament(int tournament) {
-        this.tournament = tournament;
+    public void setTournamentId(int tournamentId) {
+        this.tournamentId = tournamentId;
     }
 
     public String getIcon() {
@@ -69,5 +77,13 @@ public class Player extends User{
 
     public void setIcon(String icon) {
         this.icon = icon;
+    }
+
+    public boolean isInTournament() {
+        return inTournament;
+    }
+
+    public void setInTournament(boolean inTournament) {
+        this.inTournament = inTournament;
     }
 }

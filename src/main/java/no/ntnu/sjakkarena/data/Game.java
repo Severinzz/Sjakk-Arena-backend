@@ -11,7 +11,6 @@ public class Game {
     private String result;
     private boolean active;
 
-    public Game(){}
 
     public Game(int gameId, int table, String start, String end, int whitePlayer, int blackPlayer, String result, boolean active) {
         this.gameId = gameId;

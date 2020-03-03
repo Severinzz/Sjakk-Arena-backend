@@ -22,7 +22,7 @@ public class IDGenerator {
         Random random = new Random();
         int id = random.nextInt(maxNumberOfTournaments);
         int i = 0;
-        while (tournamentRepository.findTournamentById(id).getId() == id && i < maxNumberOfTournaments) {
+        while (tournamentRepository.getTournament(id).getId() == id && i < maxNumberOfTournaments) {
             i++;
             id = random.nextInt(maxNumberOfTournaments);
         }
@@ -38,7 +38,7 @@ public class IDGenerator {
         int stringLength = 5;
         String adminUUID = generateRandomString(stringLength);
         int i = 0;
-        while (tournamentRepository.findTournamentByAdminUUID(adminUUID).equals(adminUUID) && i < maxNumberOfTournaments) {
+        while (tournamentRepository.getTournament(adminUUID).equals(adminUUID) && i < maxNumberOfTournaments) {
             i++;
             adminUUID = generateRandomString(stringLength);
         }

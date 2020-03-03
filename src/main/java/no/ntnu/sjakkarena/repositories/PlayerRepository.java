@@ -35,7 +35,7 @@ public class PlayerRepository {
      */
     public int addNewPlayer(Player player) {
         String values = DBInteractionHelper.toValuesString(player.getName(),
-                player.getTournament(), player.getIcon());
+                player.getTournamentId(), player.getIcon());
         KeyHolder keyHolder = new GeneratedKeyHolder();
         try {
             //code from https://stackoverflow.com/questions/12882874/how-can-i-get-the-autoincremented-id-when-i-insert-a-record-in-a-table-via-jdbct
@@ -43,7 +43,7 @@ public class PlayerRepository {
                     new PreparedStatementCreator() {
                         public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                             PreparedStatement ps =
-                                    connection.prepareStatement("INSERT INTO sjakkarena.player (`name`, `tournament`, `icon`)" +
+                                    connection.prepareStatement("INSERT INTO `sjakkarena`.`player` (`name`, `tournament`, `icon`)" +
                                             " VALUES " + values, new String[]{"id"});
                             return ps;
                         }
@@ -58,15 +58,26 @@ public class PlayerRepository {
     }
 
     /**
-     * Returns the id, name and icon of all the players enrolled in the given tournament
+     * Returns the players enrolled in a tournament
      *
      * @param tournamentId the id of the tournament where the players are enrolled
-     * @return
+     * @return A collection of players enrolled in a tournament
      */
-    public Collection<Player> getPlayerLobbyInformation(int tournamentId) {
-        List<Player> players = jdbcTemplate.query("SELECT * FROM  sjakkarena.player WHERE " +
-                "tournament = " + tournamentId, rowMapper);
+    public Collection<Player> getPlayers(int tournamentId) {
+        List<Player> players = jdbcTemplate.query("SELECT * FROM  `sjakkarena`.`player` WHERE " +
+                "`in_tournament` = 1 AND `tournament` = " + tournamentId, rowMapper);
         return players;
+    }
+
+    /**
+     * Returns a player
+     *
+     * @param playerId the id of the player to be returned
+     * @return The player with the specified playerId
+     */
+    public Player getPlayer(int playerId){
+        return jdbcTemplate.queryForObject("SELECT * FROM  `sjakkarena`.`player` WHERE " +
+                "`player_id` = " + playerId, rowMapper);
     }
 
     /**
@@ -76,7 +87,7 @@ public class PlayerRepository {
      */
     public void deletePlayer(int id) {
         try {
-            jdbcTemplate.update("DELETE FROM sjakkarena.player WHERE player_id = " + id);
+            jdbcTemplate.update("UPDATE `sjakkarena`.`player` SET `in_tournament` = 0 WHERE `player_id` = " + id);
         } catch (DataAccessException e) {
             throw new NotAbleToUpdateDBException("Couldn't delete player from database");
         }
@@ -88,23 +99,22 @@ public class PlayerRepository {
      * @return A leaderboard of the given tournament
      */
     public Collection<Player> getPlayersInTournamentSortedByPoints(int tournamentId) {
-        List<Player> players = jdbcTemplate.query("SELECT * FROM  sjakkarena.player WHERE " +
-                "tournament = " + tournamentId + " ORDER BY `points` DESC", rowMapper);
+        List<Player> players = jdbcTemplate.query("SELECT * FROM  `sjakkarena`.`player` WHERE " +
+                "`in_tournament` = 1 AND `tournament` = " + tournamentId + " ORDER BY `points` DESC", rowMapper);
         return players;
     }
-  
+
     /**
-     * Set player field 'active' to 0.
-     * @param id for the player to change value for.
+     * Pause player
+     * @param playerId id the of the player to pause.
      */
-    public void setPlayerInactive(int id) {
-        String updateQuery = "UPDATE sjakkarena.player SET active = 0 WHERE player_id = " + id;
+    public void pausePlayer(int playerId) {
+        String updateQuery = "UPDATE `sjakkarena`.`player` SET paused = 1 WHERE player_id = " + playerId;
         try {
             jdbcTemplate.update(updateQuery);
         }
         catch(DataAccessException e){
             throw new NotAbleToUpdateDBException("Could not set 'active' field to 0");
         }
-
     }
 }
