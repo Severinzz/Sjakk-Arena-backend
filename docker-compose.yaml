@@ -1,0 +1,31 @@
+#adapted from https://github.com/andstor/beat-rest-service/blob/develop/docker-compose.yaml (beat - systemutvikling 2019)
+version: '3'
+services:
+  sjakkarena_db:
+    image: mysql
+    restart: on-failure
+    environment:
+      MYSQL_DATABASE: sjakkarena
+      MYSQL_ROOT_PASSWORD:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - 3306:3306
+    volumes:
+      - sjakkarena.data:/var/lib/mysql
+      - ./SQL-script/sjakkarena:/docker-entrypoint-intidb.d
+
+  sjakkarena_rest:
+    container_name: sjakkarena-back
+    restart: on-failure
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: sjakkarena-back
+    ports:
+      - 8080:8080
+    depends_on:
+      - sjakkarena_db
+volumes:
+  sjakkarena.data:
+
