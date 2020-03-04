@@ -126,7 +126,7 @@ public class PlayerController {
      * Set a player with a given ID to unpaused
      * @return 200 OK if successfully set paused field to 0, otherwise 400
      */
-    @RequestMapping(value="/player/unpause", method=RequestMethod.PATCH)
+    @RequestMapping(value="/unpause", method=RequestMethod.PATCH)
     public ResponseEntity<String> setPlayerActive() {
         try {
             int id = Session.getUserId();
