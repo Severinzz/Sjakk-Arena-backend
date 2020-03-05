@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS sjakkarena.`tournament`(
   `end` DATETIME NULL,
   `tables` TINYINT UNSIGNED NULL,
   `max_rounds` SMALLINT UNSIGNED NULL,
-  `active` TINYINT(1) DEFAULT 1,
+  `active` TINYINT(1) DEFAULT 0,
   `admin_uuid` VARCHAR(255) NULL UNIQUE,
   `early_start` TINYINT(1) DEFAULT 0,
   PRIMARY KEY (`tournament_id`))
@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS `sjakkarena`.`player`(
   `name` VARCHAR(45) NULL,
   `in_tournament` TINYINT(1) UNSIGNED DEFAULT 1,
   `paused` TINYINT(1) UNSIGNED DEFAULT 0,
+  `active` TINYINT(1) UNSIGNED DEFAULT 1,
   `points` DECIMAL(5,1) UNSIGNED NULL DEFAULT 0,
   `rounds` SMALLINT UNSIGNED NULL DEFAULT 0,
   `tournament` INT NOT NULL,

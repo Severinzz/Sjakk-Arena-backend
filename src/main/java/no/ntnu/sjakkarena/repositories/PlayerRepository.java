@@ -87,7 +87,7 @@ public class PlayerRepository {
      */
     public void deletePlayer(int id) {
         try {
-            jdbcTemplate.update("UPDATE `sjakkarena`.`player` SET `in_tournament` = 0 WHERE `player_id` = " + id);
+            jdbcTemplate.update("DELETE FROM player WHERE `player_id` = " + id);
         } catch (DataAccessException e) {
             throw new NotAbleToUpdateDBException("Couldn't delete player from database");
         }
@@ -114,12 +114,12 @@ public class PlayerRepository {
             jdbcTemplate.update(updateQuery);
         }
         catch(DataAccessException e){
-            throw new NotAbleToUpdateDBException("Could not set 'active' field to 0");
+            throw new NotAbleToUpdateDBException("Could not set 'paused' field to 1");
         }
     }
 
     /**
-     * Set player field 'active' to 0.
+     * Set player field 'paused' to 0.
      * Code adapted from: https://www.tutorialspoint.com/springjdbc/springjdbc_update_query.htm
      * @param id for the player to change value for.
      */
@@ -129,7 +129,22 @@ public class PlayerRepository {
             jdbcTemplate.update(updateQuery);
         }
         catch(DataAccessException e){
-            throw new NotAbleToUpdateDBException("Could not set 'active' field to 1");
+            throw new NotAbleToUpdateDBException("Could not set 'pause' field to 0");
+        }
+    }
+
+    /**
+     * Set player field 'active' to 0.
+     * Code adapted from: https://www.tutorialspoint.com/springjdbc/springjdbc_update_query.htm
+     * @param id for the player to change value for.
+     */
+    public void disablePlayer(int id) {
+        String updateQuery = "UPDATE sjakkarena.player SET active = 0 WHERE player_id = " + id;
+        try {
+            jdbcTemplate.update(updateQuery);
+        }
+        catch(DataAccessException e){
+            throw new NotAbleToUpdateDBException("Could not set 'active' field to 0");
         }
     }
 }

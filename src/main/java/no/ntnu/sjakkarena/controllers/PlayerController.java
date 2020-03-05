@@ -65,6 +65,7 @@ public class PlayerController {
         Tournament tournament = tournamentRepository.getTournament(tournamentId);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("name", tournament.getTournamentName());
+        jsonObject.put("started", tournament.isActive());
         jsonObject.put("start", tournament.getStart());
         jsonObject.put("end", tournament.getEnd());
         return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
@@ -131,6 +132,38 @@ public class PlayerController {
         try {
             int id = Session.getUserId();
             playerRepository.unpausePlayer(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NotAbleToUpdateDBException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Set a player with a given ID to inactive
+     * @return 200 OK if successfully set active field to 0, otherwise 400
+     */
+    @RequestMapping(value="/set-inactive", method=RequestMethod.PATCH)
+    public ResponseEntity<String> setPlayerInActive() {
+        try {
+            int id = Session.getUserId();
+            playerRepository.disablePlayer(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NotAbleToUpdateDBException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Deletes the player with the given JWT
+     * @return 200 OK if the player is successfully deleted, otherwise 400
+     */
+    @RequestMapping(value="/delete-player", method=RequestMethod.PATCH)
+    public ResponseEntity<String> deletePlayer() {
+        try {
+            int id = Session.getUserId();
+            playerRepository.deletePlayer(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
             e.printStackTrace();
