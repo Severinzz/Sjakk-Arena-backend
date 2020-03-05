@@ -123,8 +123,8 @@ public class PlayerRepository {
      * Code adapted from: https://www.tutorialspoint.com/springjdbc/springjdbc_update_query.htm
      * @param id for the player to change value for.
      */
-    public void setPlayerActive(int id) {
-        String updateQuery = "UPDATE sjakkarena.player SET active = 1 WHERE player_id = " + id;
+    public void unpausePlayer(int id) {
+        String updateQuery = "UPDATE sjakkarena.player SET paused = 0 WHERE player_id = " + id;
         try {
             jdbcTemplate.update(updateQuery);
         }

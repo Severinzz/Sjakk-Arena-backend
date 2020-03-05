@@ -38,7 +38,7 @@ public class PlayerController {
     private TournamentRepository tournamentRepository;
 
     /**
-     * Set a player with a given ID to inactive
+     * Set a player with a given ID to paused
      *
      * @return 200 OK if successfully set active field to 0, otherwise 400
      */
@@ -123,14 +123,14 @@ public class PlayerController {
     }
 
     /**
-     * Set a player with a given ID to Active
-     * @return 200 OK if successfully set active field to 0, otherwise 400
+     * Set a player with a given ID to unpaused
+     * @return 200 OK if successfully set paused field to 0, otherwise 400
      */
-    @RequestMapping(value="/player/set-active", method=RequestMethod.PATCH)
+    @RequestMapping(value="/unpause", method=RequestMethod.PATCH)
     public ResponseEntity<String> setPlayerActive() {
         try {
             int id = Session.getUserId();
-            playerRepository.setPlayerActive(id);
+            playerRepository.unpausePlayer(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
             e.printStackTrace();
