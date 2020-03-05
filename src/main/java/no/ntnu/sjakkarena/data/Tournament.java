@@ -15,7 +15,7 @@ public class Tournament extends User {
 
     @SerializedName("max_rounds")
     private int maxRounds; // maximum number of rounds in the tournament
-    private boolean paused; // true if tournament isn't paused
+    private boolean active; // true if tournament isn't paused
 
     @SerializedName("admin_uuid")
     private String adminUUID; // an unique id given to the admin of tournament
@@ -28,7 +28,7 @@ public class Tournament extends User {
     }
 
     public Tournament(int tournamentId, String tournamentName, String adminEmail, String start, String end,
-                      int tables, int maxRounds, boolean paused, String adminUUID, boolean earlyStart) {
+                      int tables, int maxRounds, boolean active, String adminUUID, boolean earlyStart) {
         super(tournamentId);
         this.tournamentName = tournamentName;
         this.adminEmail = adminEmail;
@@ -36,7 +36,7 @@ public class Tournament extends User {
         this.end = end;
         this.tables = tables;
         this.maxRounds = maxRounds;
-        this.paused = paused;
+        this.active = active;
         this.adminUUID = adminUUID;
         this.earlyStart = earlyStart;
     }
@@ -89,12 +89,12 @@ public class Tournament extends User {
         this.maxRounds = maxRounds;
     }
 
-    public boolean isPaused() {
-        return paused;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setPaused(boolean paused) {
-        this.paused = paused;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public String getAdminUUID() {
