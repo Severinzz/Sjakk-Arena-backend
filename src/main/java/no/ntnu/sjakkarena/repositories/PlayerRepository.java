@@ -100,7 +100,7 @@ public class PlayerRepository {
      */
     public Collection<Player> getPlayersInTournamentSortedByPoints(int tournamentId) {
         List<Player> players = jdbcTemplate.query("SELECT * FROM  `sjakkarena`.`player` WHERE " +
-                "`in_tournament` = 1 AND `tournament` = " + tournamentId + " ORDER BY `points` DESC", rowMapper);
+                "`tournament` = " + tournamentId + " ORDER BY `points` DESC", rowMapper); // TODO: Skal den gi tilbake dei som he forlatt turneringa etter start?
         return players;
     }
 
@@ -139,12 +139,12 @@ public class PlayerRepository {
      * @param id for the player to change value for.
      */
     public void disablePlayer(int id) {
-        String updateQuery = "UPDATE sjakkarena.player SET active = 0 WHERE player_id = " + id;
+        String updateQuery = "UPDATE sjakkarena.player SET in_tournament = 0 WHERE player_id = " + id;
         try {
             jdbcTemplate.update(updateQuery);
         }
         catch(DataAccessException e){
-            throw new NotAbleToUpdateDBException("Could not set 'active' field to 0");
+            throw new NotAbleToUpdateDBException("Could not set 'in_tournament' field to 0");
         }
     }
 }
