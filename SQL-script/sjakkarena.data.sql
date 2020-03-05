@@ -16,13 +16,13 @@ VALUES (535937, "sjakkturnering", "sjakk@turnering.no", "2020-02-23 22:03", "202
 -- Table `sjakkarena`.`player`
 -- -----------------------------------------------------
 INSERT INTO `sjakkarena`.`player` (`player_id`, `name`, `tournament`, `icon`, `points`)
-VALUES (1, "Bjarne", 535937, "fas fa-chess-pawn", 10),
-       (2, "Pål", 535937, "fas fa-chess-knight", 9),
-       (3, "Per", 535937, "fas fa-chess-king", 8),
-       (4, "Espen", 535937, "fas fa-chess-bishop", 7),
-       (5, "Hans", 1923, "fas fa-chess-knigh", 2),
-       (6, "Grete", 1923, "fas fa-chess-knigh", 2),
-       (48, "Ole", 535937, "fas fa-chess-bishop", 7); -- jwt: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTEFZRVIiLCJqdGkiOiI0OCJ9.-kZd6IlAA1f6nYPxyQWH3-6KfXSFRWBdwE9oH7TqqoA
+VALUES (1, "Bjarne", 535937, "fas fa-chess-pawn fa-3x", 10),
+       (2, "Pål", 535937, "fas fa-chess-knight fa-3x", 9),
+       (3, "Per", 535937, "fas fa-chess-king fa-3x", 8),
+       (4, "Espen", 535937, "fas fa-chess-bishop fa-3x", 7),
+       (5, "Hans", 1923, "fas fa-chess-knight fa-3x", 2),
+       (6, "Grete", 1923, "fas fa-chess-knight fa-3x", 2),
+       (48, "Ole", 535937, "fas fa-chess-bishop fa-3x", 7); -- jwt: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTEFZRVIiLCJqdGkiOiI0OCJ9.-kZd6IlAA1f6nYPxyQWH3-6KfXSFRWBdwE9oH7TqqoA
 
 -- -----------------------------------------------------
 -- Table `sjakkarena`.`game`
