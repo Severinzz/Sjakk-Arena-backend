@@ -27,7 +27,7 @@ VALUES (1, "Bjarne", 535937, "fas fa-chess-pawn", 10),
 -- -----------------------------------------------------
 -- Table `sjakkarena`.`game`
 -- -----------------------------------------------------
-INSERT INTO `sjakkarena`.`GAME` (`table`, `start`, `white_player`, `black_player`, `active`)
+INSERT INTO `sjakkarena`.`game` (`table`, `start`, `white_player`, `black_player`, `active`)
 VALUES (1, "2020-02-23 22:05", 48, 2, 0),
        (2, "2020-02-23 20:05", 48, 2, 0),
        (1, "2020-02-23 19:45", 1, 3, 0),
