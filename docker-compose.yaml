@@ -6,7 +6,7 @@ services:
     restart: on-failure
     volumes:
       - sjakkarena-data:/var/lib/mysql
-      - ./SQL-script/:/docker-entrypoint-intidb.d
+      - ./SQL-script/:/docker-entrypoint-initdb.d
     environment:
       MYSQL_DATABASE: sjakkarena
       MYSQL_ROOT_PASSWORD:
