@@ -19,36 +19,6 @@ CREATE SCHEMA IF NOT EXISTS sjakkarena DEFAULT CHARACTER SET utf8 ;
 USE sjakkarena ;
 
 -- -----------------------------------------------------
--- Table `sjakkarena`.`game`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS sjakkarena.`game` ;
-
-CREATE TABLE IF NOT EXISTS sjakkarena.`game`(
-  `game_id` INT NOT NULL AUTO_INCREMENT,
-  `table` TINYINT UNSIGNED NULL,
-  `start` DATETIME NULL,
-  `end` DATETIME NULL,
-  `white_player` INT NOT NULL,
-  `black_player` INT NOT NULL,
-  `result` VARCHAR(7) NULL,
-  `active` TINYINT(1) DEFAULT 0,
-  PRIMARY KEY (`game_id`),
-  INDEX `fk_game_white_idx` (`white_player` ASC) VISIBLE,
-  INDEX `fk_game_black_idx` (`black_player` ASC) VISIBLE,
-  CONSTRAINT `fk_game_white`
-    FOREIGN KEY (`white_player`)
-    REFERENCES sjakkarena.`player` (`player_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_game_black`
-    FOREIGN KEY (`black_player`)
-    REFERENCES sjakkarena.`player` (`player_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `sjakkarena`.`tournament`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS sjakkarena.`tournament` ;
@@ -89,6 +59,35 @@ CREATE TABLE IF NOT EXISTS `sjakkarena`.`player`(
   CONSTRAINT `fk_user_tournament`
     FOREIGN KEY (`tournament`)
     REFERENCES sjakkarena.`tournament` (`tournament_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `sjakkarena`.`game`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS sjakkarena.`game` ;
+
+CREATE TABLE IF NOT EXISTS sjakkarena.`game`(
+  `game_id` INT NOT NULL AUTO_INCREMENT,
+  `table` TINYINT UNSIGNED NULL,
+  `start` DATETIME NULL,
+  `end` DATETIME NULL,
+  `white_player` INT NOT NULL,
+  `black_player` INT NOT NULL,
+  `result` VARCHAR(7) NULL,
+  `active` TINYINT(1) DEFAULT 0,
+  PRIMARY KEY (`game_id`),
+  INDEX `fk_game_white_idx` (`white_player` ASC) VISIBLE,
+  INDEX `fk_game_black_idx` (`black_player` ASC) VISIBLE,
+  CONSTRAINT `fk_game_white`
+    FOREIGN KEY (`white_player`)
+    REFERENCES sjakkarena.`player` (`player_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_game_black`
+    FOREIGN KEY (`black_player`)
+    REFERENCES sjakkarena.`player` (`player_id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
