@@ -57,7 +57,7 @@ public class GameRepository {
      * @param tournamentId The id of the tournament to which the games belong.
      * @return The games in the tournament
      */
-    public Collection<GameTableElement> getGamesByTournament(int tournamentId) {
+    public Collection<GameTableElement> getGames(int tournamentId) {
         return jdbcTemplate.query("SELECT `game_id`, `table`, `result`, `game`.`active`, `game`.`start`, " +
                 "`game`.`end`, `white_player` AS `white_player_id`, `white`.`name` AS `white_player_name`, " +
                 "`black_player` AS `black_player_id`, `black`.`name` AS `black_player_name`" +

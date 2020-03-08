@@ -1,5 +1,7 @@
-package no.ntnu.sjakkarena.security;
 
+package no.ntnu.sjakkarena.config;
+
+import no.ntnu.sjakkarena.security.JWSFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,13 +26,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
+                .antMatchers("/**").permitAll();
+                /*
                 .antMatchers("/new-tournament").permitAll()
                 .antMatchers("/new-player").permitAll()
                 .antMatchers("/tournament-information/**").permitAll()
                 .antMatchers("/tournament/**").hasAuthority("TOURNAMENT")
                 .antMatchers("/player/**").hasAuthority("PLAYER")
                 .anyRequest().authenticated();
+                */
         httpSecurity.addFilterBefore(jwsFilter, UsernamePasswordAuthenticationFilter.class);
+
     }
 
     @Bean
@@ -46,3 +52,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return source;
     }
 }
+

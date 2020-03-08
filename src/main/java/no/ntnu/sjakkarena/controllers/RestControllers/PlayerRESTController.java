@@ -1,4 +1,4 @@
-package no.ntnu.sjakkarena.controllers;
+package no.ntnu.sjakkarena.controllers.RestControllers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -26,7 +26,7 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping("/player")
-public class PlayerController {
+public class PlayerRESTController {
 
     @Autowired
     private PlayerRepository playerRepository;
@@ -36,6 +36,7 @@ public class PlayerController {
 
     @Autowired
     private TournamentRepository tournamentRepository;
+
 
     /**
      * Set a player with a given ID to inactive
@@ -92,6 +93,7 @@ public class PlayerController {
      * @param result   The result to be added
      * @return 200 OK if successfully added. 400 bad if input is not active or if player doesn't have any active games.
      */
+
     @RequestMapping(value = "add-result", method = RequestMethod.PUT)
     public ResponseEntity<String> setResult(@RequestParam(value = "opponent") int opponent,
                                             @RequestParam(value = "result") String result) {
@@ -126,11 +128,11 @@ public class PlayerController {
      * Set a player with a given ID to Active
      * @return 200 OK if successfully set active field to 0, otherwise 400
      */
-    @RequestMapping(value="/player/set-active", method=RequestMethod.PATCH)
-    public ResponseEntity<String> setPlayerActive() {
+    @RequestMapping(value="/player/end-pause", method=RequestMethod.PATCH)
+    public ResponseEntity<String> endPause() {
         try {
             int id = Session.getUserId();
-            playerRepository.setPlayerActive(id);
+            playerRepository.endPause(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
             e.printStackTrace();

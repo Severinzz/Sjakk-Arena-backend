@@ -1,7 +1,8 @@
-package no.ntnu.sjakkarena.controllers;
+package no.ntnu.sjakkarena.controllers.RestControllers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import no.ntnu.sjakkarena.DBChangeNotifier;
 import no.ntnu.sjakkarena.Session;
 import no.ntnu.sjakkarena.data.GameTableElement;
 import no.ntnu.sjakkarena.data.Player;
@@ -22,7 +23,10 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping("/tournament")
-public class TournamentController {
+public class TournamentRESTController {
+
+    @Autowired
+    private DBChangeNotifier dbChangeNotifier;
 
     @Autowired
     private TournamentRepository tournamentRepository;
@@ -55,23 +59,11 @@ public class TournamentController {
     public ResponseEntity<String> deletePlayer(@PathVariable(name = "id") int id) {
         try {
             playerRepository.deletePlayer(id);
+            dbChangeNotifier.notifyUpdatedPlayerList(Session.getUserId());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
             return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
         }
-    }
-
-    /**
-     * Returns all the names of the players in the tournament
-     *
-     * @return A json with the player ids mapped to their names
-     */
-    @RequestMapping(value = "/players", method = RequestMethod.GET)
-    public ResponseEntity<String> getPlayers() {
-        int tournamentId = Session.getUserId();
-        Collection<Player> players = playerRepository.getPlayers(tournamentId);
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        return new ResponseEntity<>(gson.toJson(players), HttpStatus.OK);
     }
 
     /**
@@ -82,7 +74,7 @@ public class TournamentController {
     @RequestMapping(value = "/leaderboard", method = RequestMethod.GET)
     public ResponseEntity<String> getLeaderboard() {
         int tournamentId = Session.getUserId();
-        Collection<Player> players = playerRepository.getPlayersInTournamentSortedByPoints(tournamentId);
+        Collection<Player> players = tournamentRepository.getPlayersSortedByPoints(tournamentId);
         Gson gson = new Gson();
         return new ResponseEntity<>(gson.toJson(players), HttpStatus.OK);
     }
@@ -95,7 +87,7 @@ public class TournamentController {
     @RequestMapping(value = "/games", method = RequestMethod.GET)
     public ResponseEntity<String> getGames() {
         int tournamentId = Session.getUserId();
-        Collection<GameTableElement> games = gameRepository.getGamesByTournament(tournamentId);
+        Collection<GameTableElement> games = gameRepository.getGames(tournamentId);
         Gson gson = new GsonBuilder().serializeNulls().create();
         return new ResponseEntity<>(gson.toJson(games), HttpStatus.OK);
     }

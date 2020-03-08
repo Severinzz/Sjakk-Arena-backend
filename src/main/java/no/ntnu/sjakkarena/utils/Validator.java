@@ -21,7 +21,7 @@ public class Validator {
      *
      * @param tournament the tournament to be validated
      */
-    public static void tournamentIsValid(Tournament tournament) {
+    public static void validateTournament(Tournament tournament) {
         boolean validAdminEmail = validateWithRegEx(tournament.getAdminEmail(), EMAIL_REGEX);
         boolean validTables = validateNonNegativeInteger(tournament.getTables());
         boolean validMaxRounds = validateNonNegativeInteger(tournament.getMaxRounds());
