@@ -3,7 +3,7 @@ package no.ntnu.sjakkarena.controllers.RestControllers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import no.ntnu.sjakkarena.DBChangeNotifier;
-import no.ntnu.sjakkarena.Session;
+import no.ntnu.sjakkarena.utils.Session;
 import no.ntnu.sjakkarena.data.GameTableElement;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
 
+/**
+ * Handles requests from tournaments
+ */
 @RestController
 @RequestMapping("/tournament")
 public class TournamentRESTController {
@@ -64,19 +67,6 @@ public class TournamentRESTController {
         } catch (NotAbleToUpdateDBException e) {
             return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
         }
-    }
-
-    /**
-     * Returns the leaderboard of the requesting tournament
-     *
-     * @return the leaderboard of the requesting tournament
-     */
-    @RequestMapping(value = "/leaderboard", method = RequestMethod.GET)
-    public ResponseEntity<String> getLeaderboard() {
-        int tournamentId = Session.getUserId();
-        Collection<Player> players = tournamentRepository.getPlayersSortedByPoints(tournamentId);
-        Gson gson = new Gson();
-        return new ResponseEntity<>(gson.toJson(players), HttpStatus.OK);
     }
 
     /**

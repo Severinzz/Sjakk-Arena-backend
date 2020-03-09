@@ -53,7 +53,7 @@ public class UnauthenticatedUserRESTController {
             dbChangeNotifier.notifyUpdatedPlayerList(player.getTournamentId());
             return new ResponseEntity<>(jsonResponse.toString(), HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
-            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Couldn't add player to database", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -72,7 +72,7 @@ public class UnauthenticatedUserRESTController {
             Validator.validateTournament(tournament);
             addTournamentIDs(tournament);
             tournamentRepository.addNewTournament(tournament);
-            sendEmailToTournamentAdmin(tournament);
+            //sendEmailToTournamentAdmin(tournament); //TODO remove to send email
             return new ResponseEntity<>(getToClientJSON(tournament), HttpStatus.OK);
         } catch (NotAbleToUpdateDBException | ImproperlyFormedDataException | NullPointerException e) {
             return new ResponseEntity<>("Couldn't register tournament", HttpStatus.BAD_REQUEST);
@@ -114,7 +114,7 @@ public class UnauthenticatedUserRESTController {
     }
 
     /**
-     * "Sign in" using UUID.
+     * "Sign in" using adminUUID.
      *
      * @param UUID the universally unique identifier of the tournament
      * @return 200 OK + a jwt with subject: "TOURNAMENT" and tournament id as an id.

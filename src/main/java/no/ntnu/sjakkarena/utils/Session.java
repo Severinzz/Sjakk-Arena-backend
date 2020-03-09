@@ -1,4 +1,4 @@
-package no.ntnu.sjakkarena;
+package no.ntnu.sjakkarena.utils;
 
 import no.ntnu.sjakkarena.data.User;
 import org.springframework.security.core.context.SecurityContextHolder;

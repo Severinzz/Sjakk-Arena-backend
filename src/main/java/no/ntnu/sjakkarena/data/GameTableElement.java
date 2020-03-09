@@ -2,6 +2,9 @@ package no.ntnu.sjakkarena.data;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * An element in a game table
+ */
 public class GameTableElement {
 
     @SerializedName("game_id")

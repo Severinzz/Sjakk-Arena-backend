@@ -26,17 +26,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/**").permitAll();
-                /*
                 .antMatchers("/new-tournament").permitAll()
                 .antMatchers("/new-player").permitAll()
-                .antMatchers("/tournament-information/**").permitAll()
+                .antMatchers("/ws/**").permitAll()
+                .antMatchers("/sign-in/**").permitAll()
                 .antMatchers("/tournament/**").hasAuthority("TOURNAMENT")
                 .antMatchers("/player/**").hasAuthority("PLAYER")
                 .anyRequest().authenticated();
-                */
         httpSecurity.addFilterBefore(jwsFilter, UsernamePasswordAuthenticationFilter.class);
-
     }
 
     @Bean
