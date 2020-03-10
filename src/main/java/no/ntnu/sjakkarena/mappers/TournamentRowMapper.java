@@ -13,7 +13,7 @@ public class TournamentRowMapper implements RowMapper<Tournament> {
         Tournament tournament = new Tournament(rs.getInt("tournament_id"),
                 rs.getString("tournament_name"), rs.getString("admin_email"),
                 rs.getString("start"), rs.getString("end"), rs.getInt("tables"),
-                rs.getInt("max_rounds"), rs.getBoolean("paused"),
+                rs.getInt("max_rounds"), rs.getBoolean("active"),
                 rs.getString("admin_uuid"), rs.getBoolean("early_start"));
         return tournament;
     }
