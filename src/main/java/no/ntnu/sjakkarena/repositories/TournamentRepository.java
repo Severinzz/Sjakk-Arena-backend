@@ -1,7 +1,9 @@
 package no.ntnu.sjakkarena.repositories;
 
+import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 
+import no.ntnu.sjakkarena.mappers.PlayerRowMapper;
 import no.ntnu.sjakkarena.utils.DBInteractionHelper;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.mappers.TournamentRowMapper;
@@ -12,6 +14,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Repository containing methods for handling tournament data
  */
@@ -21,7 +26,9 @@ public class TournamentRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private RowMapper<Tournament> rowMapper = new TournamentRowMapper();
+    private RowMapper<Tournament> tournamentRowMapper = new TournamentRowMapper();
+
+    private RowMapper<Player> playerRowMapper = new PlayerRowMapper();
 
     /**
      * Adds a new tournament to the database
@@ -75,7 +82,7 @@ public class TournamentRepository {
     public Tournament getTournament(int tournamentId) {
         try {
             return jdbcTemplate.queryForObject("SELECT * FROM `sjakkarena`.`tournament` WHERE " +
-                    "`tournament_id` = " + tournamentId, rowMapper);
+                    "`tournament_id` = " + tournamentId, tournamentRowMapper);
         } catch (NullPointerException e) {
             return new Tournament();
         }
@@ -91,10 +98,35 @@ public class TournamentRepository {
     public Tournament getTournament(String adminUUID) {
         try {
             return jdbcTemplate.queryForObject("SELECT * FROM `sjakkarena`.`tournament` WHERE " +
-                    "`admin_uuid` = \"" + adminUUID + "\"", rowMapper);
+                    "`admin_uuid` = \"" + adminUUID + "\"", tournamentRowMapper);
         } catch (NullPointerException | EmptyResultDataAccessException e) {
             return new Tournament();
         }
+    }
+
+    /**
+     * Returns the players enrolled in a tournament
+     *
+     * @param tournamentId the id of the tournament where the players are enrolled
+     * @return A collection of players enrolled in a tournament
+     */
+    public Collection<Player> getPlayers(int tournamentId) {
+        List<Player> players = jdbcTemplate.query("SELECT * FROM  `sjakkarena`.`player` WHERE " +
+                "`in_tournament` = 1 AND `tournament` = " + tournamentId, playerRowMapper);
+        return players;
+    }
+
+
+
+    /**
+     * Returns the leaderboard of the given tournament
+     * @param tournamentId The id of the tournament
+     * @return A leaderboard of the given tournament
+     */
+    public Collection<Player> getPlayersSortedByPoints(int tournamentId) {
+        List<Player> players = jdbcTemplate.query("SELECT * FROM  `sjakkarena`.`player` WHERE " +
+                "`in_tournament` = 1 AND `tournament` = " + tournamentId + " ORDER BY `points` DESC", playerRowMapper);
+        return players;
     }
 }
 

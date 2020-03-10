@@ -3,20 +3,21 @@
 -- Model: New Model    Version: 1.0
 -- MySQL Workbench Forward Engineering
 
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+SET @OLD_UNIQUE_CHECKS = @@UNIQUE_CHECKS, UNIQUE_CHECKS = 0;
+SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS = 0;
+SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE =
+    'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
 -- Schema sjakkarena
 -- -----------------------------------------------------
-DROP SCHEMA IF EXISTS sjakkarena ;
+DROP SCHEMA IF EXISTS sjakkarena;
 
 -- -----------------------------------------------------
 -- Schema sjakkarena
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS sjakkarena DEFAULT CHARACTER SET utf8 ;
-USE sjakkarena ;
+CREATE SCHEMA IF NOT EXISTS sjakkarena DEFAULT CHARACTER SET utf8;
+USE sjakkarena;
 
 -- -----------------------------------------------------
 -- Table `sjakkarena`.`tournament`
@@ -41,7 +42,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `sjakkarena`.`player`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `sjakkarena`.`player` ;
+DROP TABLE IF EXISTS `sjakkarena`.`player`;
 
 CREATE TABLE IF NOT EXISTS `sjakkarena`.`player`(
   `player_id` INT NOT NULL AUTO_INCREMENT,
@@ -58,10 +59,11 @@ CREATE TABLE IF NOT EXISTS `sjakkarena`.`player`(
   INDEX `fk_user_tournament_idx` (`tournament` ASC) VISIBLE,
   CONSTRAINT `fk_user_tournament`
     FOREIGN KEY (`tournament`)
-    REFERENCES sjakkarena.`tournament` (`tournament_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+      REFERENCES sjakkarena.`tournament` (`tournament_id`)
+      ON DELETE NO ACTION
+      ON UPDATE NO ACTION
+)
+  ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table `sjakkarena`.`game`
@@ -93,6 +95,6 @@ CREATE TABLE IF NOT EXISTS sjakkarena.`game`(
 ENGINE = InnoDB;
 
 
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+SET SQL_MODE = @OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS = @OLD_UNIQUE_CHECKS;

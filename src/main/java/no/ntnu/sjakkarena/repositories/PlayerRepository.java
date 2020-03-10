@@ -16,8 +16,6 @@ import org.springframework.stereotype.Repository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.List;
 
 @Repository
 public class PlayerRepository {
@@ -38,7 +36,7 @@ public class PlayerRepository {
                 player.getTournamentId(), player.getIcon());
         KeyHolder keyHolder = new GeneratedKeyHolder();
         try {
-            //code from https://stackoverflow.com/questions/12882874/how-can-i-get-the-autoincremented-id-when-i-insert-a-record-in-a-table-via-jdbct
+            //Adapted code from https://stackoverflow.com/questions/12882874/how-can-i-get-the-autoincremented-id-when-i-insert-a-record-in-a-table-via-jdbct
             jdbcTemplate.update(
                     new PreparedStatementCreator() {
                         public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
@@ -55,18 +53,6 @@ public class PlayerRepository {
                     "1. User is already registered in database \n" +
                     "2. Name/value pairs in JSON are missing");
         }
-    }
-
-    /**
-     * Returns the players enrolled in a tournament
-     *
-     * @param tournamentId the id of the tournament where the players are enrolled
-     * @return A collection of players enrolled in a tournament
-     */
-    public Collection<Player> getPlayers(int tournamentId) {
-        List<Player> players = jdbcTemplate.query("SELECT * FROM  `sjakkarena`.`player` WHERE " +
-                "`in_tournament` = 1 AND `tournament` = " + tournamentId, rowMapper);
-        return players;
     }
 
     /**
@@ -94,17 +80,6 @@ public class PlayerRepository {
     }
 
     /**
-     * Returns the leaderboard of the given tournament
-     * @param tournamentId The id of the tournament
-     * @return A leaderboard of the given tournament
-     */
-    public Collection<Player> getPlayersInTournamentSortedByPoints(int tournamentId) {
-        List<Player> players = jdbcTemplate.query("SELECT * FROM  `sjakkarena`.`player` WHERE " +
-                "`tournament` = " + tournamentId + " ORDER BY `points` DESC", rowMapper); // TODO: Skal den gi tilbake dei som he forlatt turneringa etter start?
-        return players;
-    }
-
-    /**
      * Pause player
      * @param playerId id the of the player to pause.
      */
@@ -120,7 +95,6 @@ public class PlayerRepository {
 
     /**
      * Set player field 'paused' to 0.
-     * Code adapted from: https://www.tutorialspoint.com/springjdbc/springjdbc_update_query.htm
      * @param id for the player to change value for.
      */
     public void unpausePlayer(int id) {
@@ -133,11 +107,6 @@ public class PlayerRepository {
         }
     }
 
-    /**
-     * Set player field 'active' to 0.
-     * Code adapted from: https://www.tutorialspoint.com/springjdbc/springjdbc_update_query.htm
-     * @param id for the player to change value for.
-     */
     public void disablePlayer(int id) {
         String updateQuery = "UPDATE sjakkarena.player SET in_tournament = 0 WHERE player_id = " + id;
         try {

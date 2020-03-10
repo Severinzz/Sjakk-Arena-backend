@@ -1,8 +1,9 @@
-package no.ntnu.sjakkarena.controllers;
+package no.ntnu.sjakkarena.controllers.RestControllers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import no.ntnu.sjakkarena.Session;
+import no.ntnu.sjakkarena.DBChangeNotifier;
+import no.ntnu.sjakkarena.utils.Session;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.GameTableElement;
 import no.ntnu.sjakkarena.data.Player;
@@ -23,10 +24,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
 
-
+/**
+ * Handles requests from players
+ */
 @RestController
 @RequestMapping("/player")
-public class PlayerController {
+public class PlayerRESTController {
+
+    @Autowired
+    private DBChangeNotifier dbChangeNotifier;
 
     @Autowired
     private PlayerRepository playerRepository;
@@ -36,6 +42,7 @@ public class PlayerController {
 
     @Autowired
     private TournamentRepository tournamentRepository;
+
 
     /**
      * Set a player with a given ID to paused
@@ -93,6 +100,7 @@ public class PlayerController {
      * @param result   The result to be added
      * @return 200 OK if successfully added. 400 bad if input is not active or if player doesn't have any active games.
      */
+
     @RequestMapping(value = "add-result", method = RequestMethod.PUT)
     public ResponseEntity<String> setResult(@RequestParam(value = "opponent") int opponent,
                                             @RequestParam(value = "result") String result) {
@@ -107,7 +115,16 @@ public class PlayerController {
             return new ResponseEntity<>("Player has no active games", HttpStatus.BAD_REQUEST); // Requesting user has no active games
         }
         gameRepository.addResult(game.getGameId(), result);
+        findTournamentAndNotifyOfLeaderboardChange();
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * Finds the tournament of the "signed in" player and notifies it of a change in leaderboard
+     */
+    private void findTournamentAndNotifyOfLeaderboardChange(){
+        Player player = playerRepository.getPlayer(Session.getUserId());
+        dbChangeNotifier.notifyUpdatedLeaderboard(player.getTournamentId());
     }
 
     /**
