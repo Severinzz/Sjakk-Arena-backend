@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 import org.springframework.web.servlet.resource.WebJarsResourceResolver;
 
-// https://github.com/rstoyanchev/spring-websocket-portfolio
+// Code from https://github.com/rstoyanchev/spring-websocket-portfolio
 @Configuration
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
