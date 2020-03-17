@@ -43,15 +43,15 @@ public class TournamentRepository {
                     tournament.getTournamentName(), tournament.getAdminEmail(), tournament.getStart(),
                     tournament.getTables(), tournament.getMaxRounds(), tournament.getAdminUUID(),
                     tournament.isEarlyStart());
-            attributes = DBInteractionHelper.toAttributeString("tournament_id", "tournament_name", "admin_email", "start",
-                    "tables", "max_rounds", "admin_uuid", "early_start");
+            attributes = "(`tournament_id`, `tournament_name`, `admin_email`, `start`, " +
+                    "`tables`, `max_rounds`, `admin_uuid`, `early_start`)";
         } else {
             values = DBInteractionHelper.toValuesString(tournament.getId(),
                     tournament.getTournamentName(), tournament.getAdminEmail(), tournament.getStart(), tournament.getEnd(),
                     tournament.getTables(), tournament.getMaxRounds(), tournament.getAdminUUID(),
                     tournament.isEarlyStart());
-            attributes = DBInteractionHelper.toAttributeString("tournament_id", "tournament_name", "admin_email", "start", "end",
-                    "tables", "max_rounds", "admin_uuid", "early_start");
+            attributes = "(`tournament_id`, `tournament_name`, `admin_email`, `start`, `end`, " +
+                    "`tables`, `max_rounds`, `admin_uuid`, `early_start`)";
         }
         executeUpdateQuery(attributes, values);
     }

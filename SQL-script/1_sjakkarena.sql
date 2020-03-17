@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS `sjakkarena`.`player`(
   `rounds` SMALLINT UNSIGNED NULL DEFAULT 0,
   `tournament` INT NOT NULL,
   `icon` VARCHAR(255) NOT NULL,
+  `bib_number` INT NULL,
   PRIMARY KEY (`player_id`),
   UNIQUE INDEX `Id_UNIQUE` (`player_id` ASC) VISIBLE,
   UNIQUE KEY `name_tournament` (`name`, `tournament`),

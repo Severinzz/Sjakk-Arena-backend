@@ -6,19 +6,25 @@ public class Game {
     private int table;
     private String start;
     private String end;
-    private int whitePlayer;
-    private int blackPlayer;
+    private int whitePlayerId;
+    private int blackPlayerId;
     private String result;
     private boolean active;
 
+    public Game(int table, String start, int whitePlayerId, int blackPlayerId) {
+        this.table = table;
+        this.start = start;
+        this.whitePlayerId = whitePlayerId;
+        this.blackPlayerId = blackPlayerId;
+    }
 
-    public Game(int gameId, int table, String start, String end, int whitePlayer, int blackPlayer, String result, boolean active) {
+    public Game(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId, String result, boolean active) {
         this.gameId = gameId;
         this.table = table;
         this.start = start;
         this.end = end;
-        this.whitePlayer = whitePlayer;
-        this.blackPlayer = blackPlayer;
+        this.whitePlayerId = whitePlayerId;
+        this.blackPlayerId = blackPlayerId;
         this.result = result;
         this.active = active;
     }
@@ -55,20 +61,20 @@ public class Game {
         this.end = end;
     }
 
-    public int getWhitePlayer() {
-        return whitePlayer;
+    public int getWhitePlayerId() {
+        return whitePlayerId;
     }
 
-    public void setWhitePlayer(int whitePlayer) {
-        this.whitePlayer = whitePlayer;
+    public void setWhitePlayerId(int whitePlayerId) {
+        this.whitePlayerId = whitePlayerId;
     }
 
-    public int getBlackPlayer() {
-        return blackPlayer;
+    public int getBlackPlayerId() {
+        return blackPlayerId;
     }
 
-    public void setBlackPlayer(int blackPlayer) {
-        this.blackPlayer = blackPlayer;
+    public void setBlackPlayerId(int blackPlayerId) {
+        this.blackPlayerId = blackPlayerId;
     }
 
     public String getResult() {

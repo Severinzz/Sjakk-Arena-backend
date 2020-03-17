@@ -94,11 +94,11 @@ public class PlayerRepository {
     }
 
     /**
-     * Set player field 'paused' to 0.
-     * @param id for the player to change value for.
+     * Unpause a player
+     * @param playerId  The id of the player to unpause.
      */
-    public void unpausePlayer(int id) {
-        String updateQuery = "UPDATE sjakkarena.player SET paused = 0 WHERE player_id = " + id;
+    public void unpausePlayer(int playerId) {
+        String updateQuery = "UPDATE sjakkarena.player SET paused = 0 WHERE player_id = " + playerId;
         try {
             jdbcTemplate.update(updateQuery);
         }
@@ -107,8 +107,12 @@ public class PlayerRepository {
         }
     }
 
-    public void disablePlayer(int id) {
-        String updateQuery = "UPDATE sjakkarena.player SET in_tournament = 0 WHERE player_id = " + id;
+    /**
+     * Removes a user from the tournament he/she is enrolled in.
+     * @param playerId The id of the player to be removed from the tournament
+     */
+    public void leaveTournament(int playerId) {
+        String updateQuery = "UPDATE sjakkarena.player SET in_tournament = 0 WHERE player_id = " + playerId;
         try {
             jdbcTemplate.update(updateQuery);
         }
