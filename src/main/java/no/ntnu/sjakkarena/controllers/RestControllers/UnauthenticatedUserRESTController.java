@@ -49,7 +49,7 @@ public class UnauthenticatedUserRESTController {
         String message = "";
         if (playerRepository.doesPlayerExist(player)){
             message = "Name already take, try a new one!";
-            return new ResponseEntity<>(message, HttpStatus.I_AM_A_TEAPOT);
+            return new ResponseEntity<>(message, HttpStatus.I_AM_A_TEAPOT); // frontend leter etter kode 418
         } else {
             try {
                 int userId = playerRepository.addNewPlayer(player);
