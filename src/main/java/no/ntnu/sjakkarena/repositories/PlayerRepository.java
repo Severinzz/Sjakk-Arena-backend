@@ -129,7 +129,7 @@ public class PlayerRepository extends ResponseEntityExceptionHandler {
      * Returns true if there is one, false if not.
      * @param player object with a name and tournament id
      */
-    private boolean doesPlayerExists(@NotNull Player player) {
+    private boolean doesPlayerExists(Player player) {
         // Adapted from: https://stackoverflow.com/questions/48546574/query-to-check-if-the-record-exists-in-spring-jdbc-template
         String sql = "SELECT * FROM sjakkarena.player WHERE player.name = ? AND player.tournament = ? LIMIT 10";
         int count = this.jdbcTemplate.queryForObject(sql, new Object[] {player.getName(), player.getTournamentId()}, Integer.class);
