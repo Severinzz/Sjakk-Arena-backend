@@ -6,8 +6,6 @@ import no.ntnu.sjakkarena.mappers.PlayerRowMapper;
 import no.ntnu.sjakkarena.utils.DBInteractionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -42,9 +40,6 @@ public class PlayerRepository extends ResponseEntityExceptionHandler {
         String values = DBInteractionHelper.toValuesString(player.getName(),
                 player.getTournamentId(), player.getIcon());
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        if (doesPlayerExists(player)) {
-            return new ResponseEntity<String>("There is already someone with that name in tournament, try a new one!", HttpStatus.BAD_REQUEST);
-        } else{
         try {
             //Adapted code from https://stackoverflow.com/questions/12882874/how-can-i-get-the-autoincremented-id-when-i-insert-a-record-in-a-table-via-jdbct
             jdbcTemplate.update(
@@ -62,7 +57,6 @@ public class PlayerRepository extends ResponseEntityExceptionHandler {
             throw new NotAbleToUpdateDBException("Could not add user to database. Possible reasons: \n" +
                     "1. User is already registered in database \n" +
                     "2. Name/value pairs in JSON are missing");
-        }
         }
     }
 
@@ -133,12 +127,12 @@ public class PlayerRepository extends ResponseEntityExceptionHandler {
      * Returns true if there is one, false if not.
      * @param player object with a name and tournament id
      */
-    private boolean doesPlayerExists(Player player) {
+    public boolean doesPlayerExist(Player player) {
         // Adapted from: https://stackoverflow.com/questions/48546574/query-to-check-if-the-record-exists-in-spring-jdbc-template
         boolean result = false;
-        String sql = "SELECT * FROM sjakkarena.player WHERE player.name = ? AND player.tournament = ? LIMIT 10";
+        String sql = "SELECT * FROM sjakkarena.player WHERE player.name = ? AND player.tournament = ? LIMIT 1";
         List<Map<String, Object>> count = this.jdbcTemplate.queryForList(sql, new Object[] {player.getName(), player.getTournamentId()});
-        if (count.size() == 0) {
+        if (count.size() != 0) {
             result = true;
         }
         return result;

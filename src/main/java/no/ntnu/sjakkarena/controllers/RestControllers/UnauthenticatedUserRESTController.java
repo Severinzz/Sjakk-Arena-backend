@@ -46,15 +46,22 @@ public class UnauthenticatedUserRESTController {
         Gson gson = new Gson();
         Player player = gson.fromJson(playerJSON, Player.class);
         player.setIcon(PlayerIcons.getRandomFontAwesomeIcon());
-        try {
-            int userId = playerRepository.addNewPlayer(player);
-            JSONObject jsonResponse = new JSONObject();
-            jsonResponse.put("jwt", JWSHelper.createJWS("PLAYER", "" + userId));
-            dbChangeNotifier.notifyUpdatedPlayerList(player.getTournamentId());
-            return new ResponseEntity<>(jsonResponse.toString(), HttpStatus.OK);
-        } catch (NotAbleToUpdateDBException e) {
-            return new ResponseEntity<>("Couldn't add player to database, wrong game pin or name taken", HttpStatus.BAD_REQUEST);
+        String message = "";
+        if (playerRepository.doesPlayerExist(player)){
+            message = "Name already take, try a new one!";
+            return new ResponseEntity<>(message, HttpStatus.I_AM_A_TEAPOT);
+        } else {
+            try {
+                int userId = playerRepository.addNewPlayer(player);
+                JSONObject jsonResponse = new JSONObject();
+                jsonResponse.put("jwt", JWSHelper.createJWS("PLAYER", "" + userId));
+                dbChangeNotifier.notifyUpdatedPlayerList(player.getTournamentId());
+                return new ResponseEntity<>(jsonResponse.toString(), HttpStatus.OK);
+            } catch (NotAbleToUpdateDBException e) {
+                message = "Couldn't add player to database";
+            }
         }
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
     /**
