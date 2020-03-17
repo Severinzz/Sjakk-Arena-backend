@@ -53,7 +53,7 @@ public class UnauthenticatedUserRESTController {
             dbChangeNotifier.notifyUpdatedPlayerList(player.getTournamentId());
             return new ResponseEntity<>(jsonResponse.toString(), HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
-            return new ResponseEntity<>("Couldn't add player to database", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Couldn't add player to database, wrong game pin or name taken", HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -6,6 +6,8 @@ import no.ntnu.sjakkarena.mappers.PlayerRowMapper;
 import no.ntnu.sjakkarena.utils.DBInteractionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,6 +20,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class PlayerRepository extends ResponseEntityExceptionHandler {
@@ -39,7 +43,7 @@ public class PlayerRepository extends ResponseEntityExceptionHandler {
                 player.getTournamentId(), player.getIcon());
         KeyHolder keyHolder = new GeneratedKeyHolder();
         if (doesPlayerExists(player)) {
-            throw new NotAbleToUpdateDBException("There is already someone with that name in tournament, try a new one!");
+            return new ResponseEntity<String>("There is already someone with that name in tournament, try a new one!", HttpStatus.BAD_REQUEST);
         } else{
         try {
             //Adapted code from https://stackoverflow.com/questions/12882874/how-can-i-get-the-autoincremented-id-when-i-insert-a-record-in-a-table-via-jdbct
@@ -131,10 +135,12 @@ public class PlayerRepository extends ResponseEntityExceptionHandler {
      */
     private boolean doesPlayerExists(Player player) {
         // Adapted from: https://stackoverflow.com/questions/48546574/query-to-check-if-the-record-exists-in-spring-jdbc-template
+        boolean result = false;
         String sql = "SELECT * FROM sjakkarena.player WHERE player.name = ? AND player.tournament = ? LIMIT 10";
-        int count = this.jdbcTemplate.queryForObject(sql, new Object[] {player.getName(), player.getTournamentId()}, Integer.class);
-        if (count != 0) {
-            return true;
-        }else return false;
+        List<Map<String, Object>> count = this.jdbcTemplate.queryForList(sql, new Object[] {player.getName(), player.getTournamentId()});
+        if (count.size() == 0) {
+            result = true;
+        }
+        return result;
     }
 }
