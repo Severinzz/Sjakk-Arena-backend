@@ -16,6 +16,8 @@ import org.springframework.stereotype.Repository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class PlayerRepository {
@@ -115,5 +117,21 @@ public class PlayerRepository {
         catch(DataAccessException e){
             throw new NotAbleToUpdateDBException("Could not set 'in_tournament' field to 0");
         }
+    }
+
+    /**
+     * Validate if player with name already exist in tournament
+     * Returns true if there is one, false if not.
+     * @param player object with a name and tournament id
+     */
+    public boolean doesPlayerExist(Player player) {
+        // Adapted from: https://stackoverflow.com/questions/48546574/query-to-check-if-the-record-exists-in-spring-jdbc-template
+        boolean exist = false;
+        String sql = "SELECT * FROM sjakkarena.player WHERE player.name = ? AND player.tournament = ? LIMIT 1";
+        List<Map<String, Object>> players = jdbcTemplate.queryForList(sql, new Object[] {player.getName(), player.getTournamentId()});
+        if (players.size() != 0) {
+            exist = true;
+        }
+        return exist;
     }
 }
