@@ -8,24 +8,25 @@ public class Game {
     private String end;
     private int whitePlayerId;
     private int blackPlayerId;
-    private String result;
+    private int whitePlayerPoints;
     private boolean active;
 
-    public Game(int table, String start, int whitePlayerId, int blackPlayerId) {
+    public Game(int table, String start, int whitePlayerId, int blackPlayerId, boolean active) {
         this.table = table;
         this.start = start;
         this.whitePlayerId = whitePlayerId;
         this.blackPlayerId = blackPlayerId;
+        this.active = active;
     }
 
-    public Game(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId, String result, boolean active) {
+    public Game(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId, int whitePlayerPoints, boolean active) {
         this.gameId = gameId;
         this.table = table;
         this.start = start;
         this.end = end;
         this.whitePlayerId = whitePlayerId;
         this.blackPlayerId = blackPlayerId;
-        this.result = result;
+        this.whitePlayerPoints = whitePlayerPoints;
         this.active = active;
     }
 
@@ -77,12 +78,12 @@ public class Game {
         this.blackPlayerId = blackPlayerId;
     }
 
-    public String getResult() {
-        return result;
+    public int getWhitePlayerPoints() {
+        return whitePlayerPoints;
     }
 
-    public void setResult(String result) {
-        this.result = result;
+    public void setWhitePlayerPoints(int whitePlayerPoints) {
+        this.whitePlayerPoints = whitePlayerPoints;
     }
 
     public boolean isActive() {

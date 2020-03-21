@@ -16,8 +16,8 @@ public class AfterTournamentStartAdaptedMonradTest extends AdaptedMonradTest {
 
     @Test
     public void provideNewGamesTwoPlayersWhoCannotMeetDueToMaximumColorRatio(){
-        colorRuleInit(6, 2, 4);
-        List<Game> games = AfterTournamentStartAdaptedMonrad.provideNewGames(players, availableTables);
+        colorRuleTestsInit(6, 2, 4);
+        List<Game> games = AfterTournamentStartAdaptedMonrad.getNewGames(players, availableTables);
         assertTrue(games.isEmpty());
     }
 
@@ -26,13 +26,13 @@ public class AfterTournamentStartAdaptedMonradTest extends AdaptedMonradTest {
      */
     @Test
     public void provideNewGamesTwoPlayersWhoCannotMeetDueToSameColorStreak() {
-        colorRuleInit(5, 3, 3);
-        List<Game> games = AfterTournamentStartAdaptedMonrad.provideNewGames(players, availableTables);
+        colorRuleTestsInit(5, 3, 3);
+        List<Game> games = AfterTournamentStartAdaptedMonrad.getNewGames(players, availableTables);
         assertTrue(games.isEmpty());
     }
 
 
-    private void colorRuleInit(int rounds, int sameColorStreak, int whiteGames) {
+    private void colorRuleTestsInit(int rounds, int sameColorStreak, int whiteGames) {
         int numberOfPlayers = 2;
         playerInit(numberOfPlayers);
         tablesInit(2);
@@ -49,7 +49,7 @@ public class AfterTournamentStartAdaptedMonradTest extends AdaptedMonradTest {
     public void provideNewGamesWhenOnlyTwoPlayerHasNotPlayedAgainstEachOther() {
         int numberOfPlayers = 9;
         onlyTwoPlayersHasNotPlayedAgainstEachOtherInit(numberOfPlayers);
-        List<Game> games = AfterTournamentStartAdaptedMonrad.provideNewGames(players, availableTables);
+        List<Game> games = AfterTournamentStartAdaptedMonrad.getNewGames(players, availableTables);
         assertEquals(1, games.size());
 
         Game game = games.get(0);
@@ -97,7 +97,7 @@ public class AfterTournamentStartAdaptedMonradTest extends AdaptedMonradTest {
         findTheClosestPossibleOpponentToTheLeadingPlayerInit();
         Player playerInFirstPlace = players.get(0);
         Player playerInFifthPlace = players.get(4);
-        List<Game> games = AfterTournamentStartAdaptedMonrad.provideNewGames(players, availableTables);
+        List<Game> games = AfterTournamentStartAdaptedMonrad.getNewGames(players, availableTables);
         GameInspector gameInspector = new GameInspector(games);
         assertTrue(gameInspector.isPlayingAgainstEachOther(playerInFirstPlace, playerInFifthPlace));
     }
@@ -137,6 +137,6 @@ public class AfterTournamentStartAdaptedMonradTest extends AdaptedMonradTest {
         player.setPreviousOpponents(previousOpponents);
         player.setLastPlayedColor(lastPlayedColor);
         player.setSameColorStreak(sameColorStreak);
-        player.setWhiteGames(whiteGames);
+        player.setNumberOfWhiteGames(whiteGames);
     }
 }

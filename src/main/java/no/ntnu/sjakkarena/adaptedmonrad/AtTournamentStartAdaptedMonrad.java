@@ -46,7 +46,7 @@ public class AtTournamentStartAdaptedMonrad {
         int i = 0;
         while ((i + 1 < playersNotPlaying.size()) && !availableTables.isEmpty()) {
             games.add(new Game(availableTables.poll(), LocalDateTime.now().withNano(0).toString(),
-                    playersNotPlaying.get(i+1).getId(), playersNotPlaying.get(i).getId()));
+                    playersNotPlaying.get(i+1).getId(), playersNotPlaying.get(i).getId(), true));
             i += 2;
         }
         return games;

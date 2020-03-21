@@ -25,12 +25,12 @@ public class Player extends User{
     private int bibNumber;
 
     private Collection<Integer> previousOpponents = new ArrayList<>();
-    private int whiteGames;
+    private int numberOfWhiteGames;
     private String lastPlayedColor;
     private int sameColorStreak;
 
     public Player(int playerId, String name, boolean paused, double points, int rounds, int tournamentId, String icon,
-                  boolean inTournament){
+                  boolean inTournament, int numberOfWhiteGames, String lastPlayedColor, int sameColorStreak){
         super(playerId);
         this.name = name;
         this.paused = paused;
@@ -39,6 +39,9 @@ public class Player extends User{
         this.tournamentId = tournamentId;
         this.icon = icon;
         this.inTournament = inTournament;
+        this.numberOfWhiteGames = numberOfWhiteGames;
+        this.lastPlayedColor = lastPlayedColor;
+        this.sameColorStreak = sameColorStreak;
     }
 
     public String getName() {
@@ -113,12 +116,12 @@ public class Player extends User{
         this.previousOpponents = previousOpponents;
     }
 
-    public int getWhiteGames() {
-        return whiteGames;
+    public int getNumberOfWhiteGames() {
+        return numberOfWhiteGames;
     }
 
-    public void setWhiteGames(int whiteGames) {
-        this.whiteGames = whiteGames;
+    public void setNumberOfWhiteGames(int numberOfWhiteGames) {
+        this.numberOfWhiteGames = numberOfWhiteGames;
     }
 
     public String getLastPlayedColor() {
@@ -135,5 +138,13 @@ public class Player extends User{
 
     public void setSameColorStreak(int sameColorStreak) {
         this.sameColorStreak = sameColorStreak;
+    }
+
+    public double getWhiteGameRatio(){
+        return (double) numberOfWhiteGames / rounds;
+    }
+
+    public double getBlackGameRatio(){
+        return (double)(rounds- numberOfWhiteGames) / rounds;
     }
 }

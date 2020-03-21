@@ -26,7 +26,7 @@ public class AtTournamentStartAdaptedMonradTest extends AdaptedMonradTest{
         players = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             players.add(new Player(i, "", true, 1, 1, 1, "",
-                    true));
+                    true, 0, "", 0));
         }
     }
 

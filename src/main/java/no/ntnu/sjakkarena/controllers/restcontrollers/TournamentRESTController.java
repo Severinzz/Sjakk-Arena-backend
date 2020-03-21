@@ -1,11 +1,10 @@
-package no.ntnu.sjakkarena.controllers.RestControllers;
+package no.ntnu.sjakkarena.controllers.restcontrollers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import no.ntnu.sjakkarena.DBChangeNotifier;
-import no.ntnu.sjakkarena.utils.Session;
+import no.ntnu.sjakkarena.subscriberhandler.TournamentSubscriberHandler;
+import no.ntnu.sjakkarena.utils.RESTSession;
 import no.ntnu.sjakkarena.data.GameTableElement;
-import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.repositories.GameRepository;
@@ -29,7 +28,7 @@ import java.util.Collection;
 public class TournamentRESTController {
 
     @Autowired
-    private DBChangeNotifier dbChangeNotifier;
+    private TournamentSubscriberHandler tournamentSubscriberHandler;
 
     @Autowired
     private TournamentRepository tournamentRepository;
@@ -47,7 +46,7 @@ public class TournamentRESTController {
      */
     @RequestMapping(value = "/information", method = RequestMethod.GET)
     public ResponseEntity<String> getTournament() {
-        int tournamentId = Session.getUserId();
+        int tournamentId = RESTSession.getUserId();
         Tournament tournament = tournamentRepository.getTournament(tournamentId);
         Gson gson = new Gson();
         return new ResponseEntity<>(gson.toJson(tournament), HttpStatus.OK);
@@ -62,7 +61,7 @@ public class TournamentRESTController {
     public ResponseEntity<String> deletePlayer(@PathVariable(name = "id") int id) {
         try {
             playerRepository.deletePlayer(id);
-            dbChangeNotifier.notifyUpdatedPlayerList(Session.getUserId());
+            tournamentSubscriberHandler.sendPlayerList(RESTSession.getUserId());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
             return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
@@ -76,7 +75,7 @@ public class TournamentRESTController {
      */
     @RequestMapping(value = "/games", method = RequestMethod.GET)
     public ResponseEntity<String> getGames() {
-        int tournamentId = Session.getUserId();
+        int tournamentId = RESTSession.getUserId();
         Collection<GameTableElement> games = gameRepository.getGames(tournamentId);
         Gson gson = new GsonBuilder().serializeNulls().create();
         return new ResponseEntity<>(gson.toJson(games), HttpStatus.OK);

@@ -15,10 +15,8 @@ public class AdaptedMonradTest {
 
         for (int i = 1; i <= numberOfPlayers; i++) {
             Player player = new Player(i, "Player" + i, true, 0, 0,
-                    535937, "fa fa-chess-bishop", true);
-            player.setWhiteGames(0);
-            player.setLastPlayedColor("");
-            player.setSameColorStreak(0);
+                    535937, "fa fa-chess-bishop", true, 0,
+                    "", 0);
             players.add(player);
         }
     }

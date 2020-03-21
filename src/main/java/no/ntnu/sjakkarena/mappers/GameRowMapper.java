@@ -8,11 +8,12 @@ import java.sql.SQLException;
 
 public class GameRowMapper implements RowMapper<Game> {
 
+    // TODO add white games, lastPlayedColor and sameColorStreak
     @Override
     public Game mapRow(ResultSet rs, int i) throws SQLException {
         return new Game(rs.getInt("game_id"), rs.getInt("table"),
                 rs.getString("start"), rs.getString("end"),
                 rs.getInt("white_player"), rs.getInt("black_player"),
-                rs.getString("result"), rs.getBoolean("active"));
+                rs.getInt("white_player_points"), rs.getBoolean("active"));
     }
 }

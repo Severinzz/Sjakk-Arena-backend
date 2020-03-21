@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 @Repository
 public class PlayerRepository {
@@ -23,7 +24,7 @@ public class PlayerRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private RowMapper<Player> rowMapper = new PlayerRowMapper();
+    private RowMapper<Player> playerRowMapper = new PlayerRowMapper();
 
     /**
      * Adds a new player to the database
@@ -62,8 +63,7 @@ public class PlayerRepository {
      * @return The player with the specified playerId
      */
     public Player getPlayer(int playerId){
-        return jdbcTemplate.queryForObject("SELECT * FROM  `sjakkarena`.`player` WHERE " +
-                "`player_id` = " + playerId, rowMapper);
+        return jdbcTemplate.queryForObject("CALL get_player(" + playerId + ")", playerRowMapper);
     }
 
     /**
@@ -119,5 +119,24 @@ public class PlayerRepository {
         catch(DataAccessException e){
             throw new NotAbleToUpdateDBException("Could not set 'in_tournament' field to 0");
         }
+    }
+
+    public List<Player> getPlayersWhoIsCurrentlyNotPlaying(int tournamentId) {
+        List<Player> players = jdbcTemplate.query("CALL get_players_in_tournament_not_playing("+ tournamentId + ")",
+                playerRowMapper);
+        addPreviousOpponents(players);
+        return players;
+    }
+
+    private void addPreviousOpponents(List<Player> players){
+        for (Player player : players){
+            addPreviousOpponents(player);
+        }
+    }
+
+    private void addPreviousOpponents(Player player){
+        List<Integer> previousOpponents =
+                jdbcTemplate.queryForList("CALL get_previous_opponents("+ player.getId() + ")", Integer.class);
+        player.setPreviousOpponents(previousOpponents);
     }
 }

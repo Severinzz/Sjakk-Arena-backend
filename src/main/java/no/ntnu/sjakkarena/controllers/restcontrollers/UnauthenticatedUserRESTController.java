@@ -1,7 +1,7 @@
-package no.ntnu.sjakkarena.controllers.RestControllers;
+package no.ntnu.sjakkarena.controllers.restcontrollers;
 
 import com.google.gson.Gson;
-import no.ntnu.sjakkarena.DBChangeNotifier;
+import no.ntnu.sjakkarena.subscriberhandler.TournamentSubscriberHandler;
 import no.ntnu.sjakkarena.EmailSender;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 public class UnauthenticatedUserRESTController {
 
     @Autowired
-    private DBChangeNotifier dbChangeNotifier;
+    private TournamentSubscriberHandler tournamentSubscriberHandler;
 
     @Autowired
     private TournamentRepository tournamentRepository;
@@ -50,7 +50,7 @@ public class UnauthenticatedUserRESTController {
             int userId = playerRepository.addNewPlayer(player);
             JSONObject jsonResponse = new JSONObject();
             jsonResponse.put("jwt", JWSHelper.createJWS("PLAYER", "" + userId));
-            dbChangeNotifier.notifyUpdatedPlayerList(player.getTournamentId());
+            tournamentSubscriberHandler.sendPlayerList(player.getTournamentId());
             return new ResponseEntity<>(jsonResponse.toString(), HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
             return new ResponseEntity<>("Couldn't add player to database", HttpStatus.BAD_REQUEST);

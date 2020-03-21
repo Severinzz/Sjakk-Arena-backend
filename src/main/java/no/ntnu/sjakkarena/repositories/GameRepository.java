@@ -43,11 +43,11 @@ public class GameRepository {
      * Add a game result to the database
      *
      * @param gameId The game id
-     * @param result The game result
+     * @param whitePlayerPoints The game result
      */
-    public void addResult(int gameId, String result) {
+    public void addResult(int gameId, double whitePlayerPoints) {
         String end = LocalDateTime.now().toString();
-        jdbcTemplate.update("UPDATE `sjakkarena`.`game` SET `result` = \"" + result + "\"," +
+        jdbcTemplate.update("UPDATE `sjakkarena`.`game` SET `white_player_points` = \"" + whitePlayerPoints + "\"," +
                 " `active` = 0, `end` = \"" + end + "\" WHERE game_id = " + gameId);
     }
 

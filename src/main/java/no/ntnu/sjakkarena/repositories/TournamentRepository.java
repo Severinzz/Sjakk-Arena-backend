@@ -128,5 +128,9 @@ public class TournamentRepository {
                 "`in_tournament` = 1 AND `tournament` = " + tournamentId + " ORDER BY `points` DESC", playerRowMapper);
         return players;
     }
+
+    public List<Integer> getAvailableTables(int tournamentId) {
+        return jdbcTemplate.queryForList("CALL get_available_tables(" + tournamentId + ")", Integer.class);
+    }
 }
 
