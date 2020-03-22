@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class UnauthenticatedUserRESTController {
 
+    // TODO move business logic to service class
     @Autowired
     private TournamentSubscriberHandler tournamentSubscriberHandler;
 

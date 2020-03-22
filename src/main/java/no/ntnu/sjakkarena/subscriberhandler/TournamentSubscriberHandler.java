@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.events.GamesCreatedEvent;
+import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -15,6 +16,9 @@ public class TournamentSubscriberHandler extends SubscriberHandler{
     @Autowired
     private TournamentRepository tournamentRepository;
 
+    @Autowired
+    private PlayerRepository playerRepository;
+
 
     /**
      * Sends all the names of the players in the tournament
@@ -24,7 +28,7 @@ public class TournamentSubscriberHandler extends SubscriberHandler{
     public void sendPlayerList(int tournamentId) {
         try {
             // TODO remove tournament repository.getPl... use events instead
-            Collection<Player> players = tournamentRepository.getPlayers(tournamentId);
+            Collection<Player> players = playerRepository.getPlayersInTournament(tournamentId);
             Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
             sendToSubscriber(tournamentId,"/queue/tournament/players", gson.toJson(players));
         } catch (NullPointerException e) {

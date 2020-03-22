@@ -48,17 +48,17 @@ public class GameService {
             throw new NotInDatabaseException("Player has no active games");
         }
         gameRepository.addResult(game.getGameId(), whitePlayerPoints);
-        onResultAdded();
+        onResultAdd();
     }
 
-    private void onResultAdded() {
+    private void onResultAdd() {
         int tournamentId = playerRepository.getPlayer(RESTSession.getUserId()).getTournamentId();
         this.adaptedMonrad = new AfterTournamentStartAdaptedMonrad();
         manageNewGamesRequest(tournamentId);
     }
 
     @EventListener
-    public void onTournamentStarted(TournamentStartedEvent tournamentStartedEvent){
+    public void onTournamentStart(TournamentStartedEvent tournamentStartedEvent){
         this.adaptedMonrad = tournamentStartedEvent.getAdaptedMonrad();
         manageNewGamesRequest(tournamentStartedEvent.getTournamentId());
     }

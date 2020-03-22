@@ -28,6 +28,7 @@ public class TournamentRepository {
 
     private RowMapper<Tournament> tournamentRowMapper = new TournamentRowMapper();
 
+    // TODO remove
     private RowMapper<Player> playerRowMapper = new PlayerRowMapper();
 
     /**
@@ -105,24 +106,11 @@ public class TournamentRepository {
     }
 
     /**
-     * Returns the players enrolled in a tournament
-     *
-     * @param tournamentId the id of the tournament where the players are enrolled
-     * @return A collection of players enrolled in a tournament
-     */
-    public Collection<Player> getPlayers(int tournamentId) {
-        List<Player> players = jdbcTemplate.query("SELECT * FROM  `sjakkarena`.`player` WHERE " +
-                "`in_tournament` = 1 AND `tournament` = " + tournamentId, playerRowMapper);
-        return players;
-    }
-
-
-
-    /**
      * Returns the leaderboard of the given tournament
      * @param tournamentId The id of the tournament
      * @return A leaderboard of the given tournament
      */
+    // TODO move to playerRepository
     public Collection<Player> getPlayersSortedByPoints(int tournamentId) {
         List<Player> players = jdbcTemplate.query("SELECT * FROM  `sjakkarena`.`player` WHERE " +
                 "`in_tournament` = 1 AND `tournament` = " + tournamentId + " ORDER BY `points` DESC", playerRowMapper);

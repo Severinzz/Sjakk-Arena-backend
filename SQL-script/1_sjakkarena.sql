@@ -221,6 +221,31 @@ END//
 DELIMITER ;
 
 -- -----------------------------------------------------
+--  get_random_bib_number TODO find a way to throw exception when no bib numbers are available
+-- -----------------------------------------------------
+DROP FUNCTION IF EXISTS sjakkarena.get_random_bib_number;
+DELIMITER //
+CREATE FUNCTION sjakkarena.get_random_bib_number(tournament_id INT(11))
+  RETURNS INT
+  DETERMINISTIC
+BEGIN
+  DECLARE bib_number INT;
+  DECLARE max_number_of_players_in_tournament INT;
+  DECLARE i INT DEFAULT 0;
+  SET max_number_of_players_in_tournament = 10000;
+  SET bib_number = FLOOR(RAND() * max_number_of_players_in_tournament);
+  WHILE (i < max_number_of_players_in_tournament) AND (bib_number IN (SELECT bib_number
+                                                                      FROM sjakkarena.player
+                                                                      WHERE player.tournament = tournament_id))
+  DO
+  SET bib_number = FLOOR(RAND() * max_number_of_players_in_tournament) + 1;
+  SET i = i + 1;
+  END WHILE;
+  RETURN bib_number;
+END//
+DELIMITER ;
+
+-- -----------------------------------------------------
 --  Procedures
 -- -----------------------------------------------------
 
@@ -384,5 +409,18 @@ BEGIN
                            AND player_id = white_player
                            AND player.tournament = tournament_id);
   DROP TABLE IF EXISTS `tables`;
+END//
+DELIMITER ;
+
+-- -----------------------------------------------------
+--  insert_player
+-- -----------------------------------------------------
+DROP PROCEDURE IF EXISTS sjakkarena.insert_player;
+DELIMITER //
+CREATE PROCEDURE sjakkarena.insert_player
+(IN `name` VARCHAR(255), IN `tournament` INT, IN `icon` VARCHAR(255))
+BEGIN
+  INSERT INTO sjakkarena.player (`player`.`name`, `player`.`tournament`, `player`.`icon`, `player`.`bib_number`)
+  VALUES (`name`, `tournament`, `icon`, get_random_bib_number(tournament));
 END//
 DELIMITER ;
