@@ -8,7 +8,6 @@ import org.springframework.context.event.EventListener;
 
 public class PlayerSubscriberHandler extends SubscriberHandler {
 
-
     /**
      *
      * @param newGamesEvent
@@ -34,5 +33,4 @@ public class PlayerSubscriberHandler extends SubscriberHandler {
             printNotSubscribingErrorMessage("games to players", e);
         }
     }
-
 }

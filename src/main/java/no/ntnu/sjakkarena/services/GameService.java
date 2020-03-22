@@ -2,10 +2,12 @@ package no.ntnu.sjakkarena.services;
 
 import no.ntnu.sjakkarena.adaptedmonrad.AfterTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Game;
+import no.ntnu.sjakkarena.data.GameWithPlayerNames;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.events.NewGamesEvent;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.repositories.GameRepository;
+import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
 import no.ntnu.sjakkarena.utils.RESTSession;
@@ -28,6 +30,9 @@ public class GameService {
     private TournamentRepository tournamentRepository;
 
     @Autowired
+    private GameWithPlayerNamesRepository gameWithPlayerNamesRepository;
+
+    @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
 
@@ -48,11 +53,12 @@ public class GameService {
         int tournamentId = playerRepository.getPlayer(RESTSession.getUserId()).getTournamentId();
         List<Game> newGames = requestNewGames(tournamentId);
         gameRepository.addGames(newGames);
-        createAndPublishNewGamesEvent(newGames, tournamentId);
+        List<GameWithPlayerNames> gameWithPlayerNames = gameWithPlayerNamesRepository.getActiveGames(tournamentId);
+        createAndPublishNewGamesEvent(gameWithPlayerNames, tournamentId);
     }
 
-    private void createAndPublishNewGamesEvent(List<Game> newGames, int tournamentId) {
-        NewGamesEvent newGamesEvent = new NewGamesEvent(this, newGames, tournamentId);
+    private void createAndPublishNewGamesEvent(List<GameWithPlayerNames> gameWithPlayerNames, int tournamentId) {
+        NewGamesEvent newGamesEvent = new NewGamesEvent(this, gameWithPlayerNames, tournamentId);
         applicationEventPublisher.publishEvent(newGamesEvent);
     }
 
