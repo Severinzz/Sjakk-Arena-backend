@@ -1,19 +1,19 @@
 package no.ntnu.sjakkarena.events;
 
 import no.ntnu.sjakkarena.adaptedmonrad.AdaptedMonrad;
-import no.ntnu.sjakkarena.adaptedmonrad.AtTournamentStartAdaptedMonrad;
+import no.ntnu.sjakkarena.adaptedmonrad.AfterTournamentStartAdaptedMonrad;
 import org.springframework.context.ApplicationEvent;
 
-public class TournamentStartedEvent extends ApplicationEvent {
+public class NewPlayerAddedEvent extends ApplicationEvent {
 
     private int tournamentId;
 
     private AdaptedMonrad adaptedMonrad;
 
-    public TournamentStartedEvent(Object source, int tournamentId) {
-        super(source);
+    public NewPlayerAddedEvent(Object object, int tournamentId) {
+        super(object);
         this.tournamentId = tournamentId;
-        this.adaptedMonrad = new AtTournamentStartAdaptedMonrad();
+        this.adaptedMonrad = new AfterTournamentStartAdaptedMonrad();
     }
 
     public int getTournamentId() {

@@ -5,6 +5,7 @@ import no.ntnu.sjakkarena.adaptedmonrad.AfterTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.events.GamesCreatedEvent;
+import no.ntnu.sjakkarena.events.NewPlayerAddedEvent;
 import no.ntnu.sjakkarena.events.TournamentStartedEvent;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.repositories.GameRepository;
@@ -61,6 +62,12 @@ public class GameService {
     public void onTournamentStart(TournamentStartedEvent tournamentStartedEvent){
         this.adaptedMonrad = tournamentStartedEvent.getAdaptedMonrad();
         manageNewGamesRequest(tournamentStartedEvent.getTournamentId());
+    }
+
+    @EventListener
+    public void onNewPlayerAdd(NewPlayerAddedEvent newPlayerAddedEvent){
+        this.adaptedMonrad = newPlayerAddedEvent.getAdaptedMonrad();
+        manageNewGamesRequest(newPlayerAddedEvent.getTournamentId());
     }
 
     private void manageNewGamesRequest(int tournamentId){

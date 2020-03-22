@@ -24,7 +24,6 @@ public class TournamentService {
 
     private void onTournamentStart() {
         int tournamentId = RESTSession.getUserId();
-        applicationEventPublisher.publishEvent(new TournamentStartedEvent(this, tournamentId,
-                new AtTournamentStartAdaptedMonrad()));
+        applicationEventPublisher.publishEvent(new TournamentStartedEvent(this, tournamentId));
     }
 }

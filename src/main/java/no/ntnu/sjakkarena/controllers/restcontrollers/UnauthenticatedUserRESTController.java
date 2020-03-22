@@ -1,6 +1,7 @@
 package no.ntnu.sjakkarena.controllers.restcontrollers;
 
 import com.google.gson.Gson;
+import no.ntnu.sjakkarena.services.UnauthenticatedUserService;
 import no.ntnu.sjakkarena.subscriberhandler.TournamentSubscriberHandler;
 import no.ntnu.sjakkarena.EmailSender;
 import no.ntnu.sjakkarena.data.Player;
@@ -27,14 +28,13 @@ import org.springframework.web.bind.annotation.*;
 public class UnauthenticatedUserRESTController {
 
     // TODO move business logic to service class
-    @Autowired
-    private TournamentSubscriberHandler tournamentSubscriberHandler;
+
 
     @Autowired
     private TournamentRepository tournamentRepository;
 
     @Autowired
-    private PlayerRepository playerRepository;
+    private UnauthenticatedUserService unauthenticatedUserService;
 
     /**
      * Register a new user
@@ -46,13 +46,9 @@ public class UnauthenticatedUserRESTController {
     public ResponseEntity<String> registerPlayer(@RequestBody String playerJSON) {
         Gson gson = new Gson();
         Player player = gson.fromJson(playerJSON, Player.class);
-        player.setIcon(PlayerIcons.getRandomFontAwesomeIcon());
         try {
-            int userId = playerRepository.addNewPlayer(player);
-            JSONObject jsonResponse = new JSONObject();
-            jsonResponse.put("jwt", JWSHelper.createJWS("PLAYER", "" + userId));
-            tournamentSubscriberHandler.sendPlayerList(player.getTournamentId());
-            return new ResponseEntity<>(jsonResponse.toString(), HttpStatus.OK);
+            String responseMessage = unauthenticatedUserService.addNewPlayer(player);
+            return new ResponseEntity<>(responseMessage, HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
             return new ResponseEntity<>("Couldn't add player to database", HttpStatus.BAD_REQUEST);
         }
