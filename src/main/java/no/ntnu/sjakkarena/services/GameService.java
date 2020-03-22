@@ -12,7 +12,6 @@ import no.ntnu.sjakkarena.utils.RESTSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -45,11 +44,15 @@ public class GameService {
         onResultAdded();
     }
 
-    private void onResultAdded(){
+    private void onResultAdded() {
         int tournamentId = playerRepository.getPlayer(RESTSession.getUserId()).getTournamentId();
         List<Game> newGames = requestNewGames(tournamentId);
+        gameRepository.addGames(newGames);
+        createAndPublishNewGamesEvent(newGames, tournamentId);
+    }
+
+    private void createAndPublishNewGamesEvent(List<Game> newGames, int tournamentId) {
         NewGamesEvent newGamesEvent = new NewGamesEvent(this, newGames, tournamentId);
-        // TODO add games to database
         applicationEventPublisher.publishEvent(newGamesEvent);
     }
 

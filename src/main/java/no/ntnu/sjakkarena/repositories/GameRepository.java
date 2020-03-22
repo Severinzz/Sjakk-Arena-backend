@@ -6,12 +6,16 @@ import no.ntnu.sjakkarena.mappers.GameRowMapper;
 import no.ntnu.sjakkarena.mappers.GameTableElementRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 public class GameRepository {
@@ -69,12 +73,7 @@ public class GameRepository {
                 " ORDER BY `game`.`start` DESC", gameTableElementRowMapper);
     }
 
-    /**
-     * Get games that the player has played or is playing
-     *
-     * @param playerId The id of the player
-     * @return A collection of games the player has played or is playing
-     */
+    // TODO change to getActiveGames in tournament
     public Collection<GameTableElement> getGamesByPlayer(int playerId) {
         return jdbcTemplate.query("SELECT `game_id`, `table`, `result`, `game`.`active`, `game`.`start`, " +
                 "`game`.`end`, `white_player` AS `white_player_id`, `white`.`name` AS `white_player_name`, " +
@@ -84,5 +83,25 @@ public class GameRepository {
                 " `game`.`black_player` = `black`.`player_id`" +
                 " AND (`white`.`player_id` = " + playerId + " OR `black`.`player_id` = " + playerId + ")" +
                 " ORDER BY `game`.`start` DESC", gameTableElementRowMapper);
+    }
+
+    //Adapted code from https://www.baeldung.com/spring-jdbc-jdbctemplate
+    public void addGames(List<Game> newGames) {
+         jdbcTemplate.batchUpdate("INSERT INTO `sjakkarena`.`game` (`table`, `start`, `white_player`, " +
+                        "`black_player`, `active`) VALUES (?, ?, ?, ?, ?)",
+                new BatchPreparedStatementSetter() {
+                    @Override
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        ps.setInt(1, newGames.get(i).getTable());
+                        ps.setString(2, newGames.get(i).getStart());
+                        ps.setInt(3, newGames.get(i).getWhitePlayerId());
+                        ps.setInt(4, newGames.get(i).getBlackPlayerId());
+                        ps.setBoolean(5, newGames.get(i).isActive());
+                    }
+                    @Override
+                    public int getBatchSize() {
+                        return newGames.size();
+                    }
+                });
     }
 }

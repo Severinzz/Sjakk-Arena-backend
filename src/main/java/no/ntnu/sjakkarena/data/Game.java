@@ -1,13 +1,22 @@
 package no.ntnu.sjakkarena.data;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Game {
 
+    @SerializedName("game_id")
     private int gameId;
     private int table;
     private String start;
     private String end;
+
+    @SerializedName("white_player_id")
     private int whitePlayerId;
+
+    @SerializedName("black_player_id")
     private int blackPlayerId;
+
+    @SerializedName("white_player_points")
     private int whitePlayerPoints;
     private boolean active;
 
