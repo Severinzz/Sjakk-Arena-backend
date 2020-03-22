@@ -335,19 +335,20 @@ BEGIN
                   get_last_played_color(player_id)     AS last_played_color,
                   get_number_of_white_games(player_id) AS number_of_white_games
   FROM `sjakkarena`.`player`,
-       (SELECT player_id as inactive_player_id
+       (SELECT player_id as player_not_playing_id
         FROM (SELECT DISTINCT player_id
               FROM `sjakkarena`.`player`
-              WHERE `player`.`tournament` = tournament_id) AS enrolled_player
+              WHERE `player`.`tournament` = tournament_id AND `player`.`in_tournament` = 1 AND
+                `player`.`paused` = 0) AS enrolled_player
         WHERE player_id NOT IN (SELECT DISTINCT white_player
                                 FROM `sjakkarena`.`game`
                                 WHERE active = 1
                                 UNION
                                 SELECT DISTINCT black_player
                                 FROM `sjakkarena`.`game`
-                                WHERE active = 1)) AS inactive_players
+                                WHERE active = 1)) AS player_not_playing
   WHERE `player`.tournament = tournament_id
-    AND player_id = inactive_players.inactive_player_id;
+    AND player_id = player_not_playing.player_not_playing_id;
 END//
 DELIMITER ;
 
