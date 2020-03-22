@@ -23,6 +23,6 @@ public class PlayerWebSocketController {
      */
     @MessageMapping(value = "/player/games")
     public void getGames(Authentication authentication) {
-        //playerSubscriberHandler.handleNewGamesEvent(WebSocketSession.getUserId(authentication));
+        //playerSubscriberHandler.onGamesCreated(WebSocketSession.getUserId(authentication));
     }
 }

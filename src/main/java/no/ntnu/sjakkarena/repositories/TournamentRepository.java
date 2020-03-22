@@ -132,5 +132,9 @@ public class TournamentRepository {
     public List<Integer> getAvailableTables(int tournamentId) {
         return jdbcTemplate.queryForList("CALL get_available_tables(" + tournamentId + ")", Integer.class);
     }
+
+    public void setActive(int tournamentId) {
+        jdbcTemplate.update("UPDATE sjakkarena.tournament SET `active` = 1 WHERE tournament_id = " + tournamentId);
+    }
 }
 

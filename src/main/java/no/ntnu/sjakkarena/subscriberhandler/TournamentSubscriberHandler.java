@@ -3,7 +3,7 @@ package no.ntnu.sjakkarena.subscriberhandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import no.ntnu.sjakkarena.data.Player;
-import no.ntnu.sjakkarena.events.NewGamesEvent;
+import no.ntnu.sjakkarena.events.GamesCreatedEvent;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -50,14 +50,14 @@ public class TournamentSubscriberHandler extends SubscriberHandler{
 
     /**
      *
-     * @param newGamesEvent
+     * @param gamesCreatedEvent
      */
     @EventListener
-    public void handleNewGamesEvent(NewGamesEvent newGamesEvent) {
+    public void onGamesCreated(GamesCreatedEvent gamesCreatedEvent) {
         try {
             Gson gson = new Gson();
-            sendToSubscriber(newGamesEvent.getTournamentId(), "/queue/tournament/games",
-                    gson.toJson(newGamesEvent.getGames()));
+            sendToSubscriber(gamesCreatedEvent.getTournamentId(), "/queue/tournament/games",
+                    gson.toJson(gamesCreatedEvent.getActiveGames()));
         }
         catch(NullPointerException e){
             printNotSubscribingErrorMessage("new games", e);

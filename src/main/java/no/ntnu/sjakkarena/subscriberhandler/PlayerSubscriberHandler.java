@@ -3,18 +3,18 @@ package no.ntnu.sjakkarena.subscriberhandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import no.ntnu.sjakkarena.data.Game;
-import no.ntnu.sjakkarena.events.NewGamesEvent;
+import no.ntnu.sjakkarena.events.GamesCreatedEvent;
 import org.springframework.context.event.EventListener;
 
 public class PlayerSubscriberHandler extends SubscriberHandler {
 
     /**
      *
-     * @param newGamesEvent
+     * @param gamesCreatedEvent
      */
     @EventListener
-    public void handleNewGamesEvent(NewGamesEvent newGamesEvent) {
-        for (Game game : newGamesEvent.getGames()){
+    public void onGamesCreated(GamesCreatedEvent gamesCreatedEvent) {
+        for (Game game : gamesCreatedEvent.getActiveGames()){
             sendGameToWhiteAndBlackPlayer(game);
         }
     }

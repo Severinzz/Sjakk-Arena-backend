@@ -32,6 +32,9 @@ public class Player extends User{
     public Player(int playerId, String name, boolean paused, double points, int rounds, int tournamentId, String icon,
                   boolean inTournament, int numberOfWhiteGames, String lastPlayedColor, int sameColorStreak){
         super(playerId);
+        if (lastPlayedColor == null){
+            lastPlayedColor = "Ingen spilte parti";
+        }
         this.name = name;
         this.paused = paused;
         this.points = points;

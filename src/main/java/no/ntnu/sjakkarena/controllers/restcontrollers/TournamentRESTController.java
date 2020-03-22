@@ -2,15 +2,15 @@ package no.ntnu.sjakkarena.controllers.restcontrollers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;
-import no.ntnu.sjakkarena.subscriberhandler.TournamentSubscriberHandler;
-import no.ntnu.sjakkarena.utils.RESTSession;
 import no.ntnu.sjakkarena.data.GameWithPlayerNames;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
-import no.ntnu.sjakkarena.repositories.GameRepository;
+import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
+import no.ntnu.sjakkarena.services.TournamentService;
+import no.ntnu.sjakkarena.subscriberhandler.TournamentSubscriberHandler;
+import no.ntnu.sjakkarena.utils.RESTSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +40,7 @@ public class TournamentRESTController {
     private PlayerRepository playerRepository;
 
     @Autowired
-    private GameRepository gameRepository;
+    private TournamentService tournamentService;
 
     @Autowired
     private GameWithPlayerNamesRepository gameWithPlayerNamesRepository;
@@ -86,5 +86,12 @@ public class TournamentRESTController {
         Collection<GameWithPlayerNames> games = gameWithPlayerNamesRepository.getGamesWithPlayerNames(tournamentId);
         Gson gson = new GsonBuilder().serializeNulls().create();
         return new ResponseEntity<>(gson.toJson(games), HttpStatus.OK);
+    }
+
+    // TODO change to websocket. Tournament subscribes to service where tournament is notified on tournament start
+    @RequestMapping(value = "/start", method = RequestMethod.PATCH)
+    public ResponseEntity<String> startTournament(){
+        tournamentService.startTournament();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

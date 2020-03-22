@@ -12,20 +12,7 @@ import java.util.List;
 /**
  *
  */
-public class AfterTournamentStartAdaptedMonrad {
-
-
-    /**
-     * Get new games in the tournament
-     *
-     * @param playersNotPlaying The players that is not currently playing a game
-     * @param availableTables   The currently available tables
-     * @return New games.
-     */
-    public static List<Game> getNewGames(List<Player> playersNotPlaying, Collection<Integer> availableTables) {
-        PlayerSorter.sortPlayers(playersNotPlaying);
-        return setupGames(new ArrayDeque<>(playersNotPlaying), new PriorityQueue<>(availableTables));
-    }
+public class AfterTournamentStartAdaptedMonrad extends AdaptedMonrad {
 
     /**
      * Set up games. Find opponents and give them an available table
@@ -34,7 +21,8 @@ public class AfterTournamentStartAdaptedMonrad {
      * @param availableTables   The currently available tables
      * @return New games
      */
-    private static List<Game> setupGames(ArrayDeque<Player> playersNotPlaying, Queue<Integer> availableTables) {
+    @Override
+    protected List<Game> setupGames(ArrayDeque<Player> playersNotPlaying, Queue<Integer> availableTables) {
         List<Game> games = new ArrayList<>();
         while (!playersNotPlaying.isEmpty() && !availableTables.isEmpty()) {
             try {
@@ -59,7 +47,7 @@ public class AfterTournamentStartAdaptedMonrad {
      *                          game.
      * @return opponent An opponent to the challenger.
      */
-    private static Player findOpponent(Player challenger, List<Player> possibleOpponents) {
+    private Player findOpponent(Player challenger, List<Player> possibleOpponents) {
         int i = 0;
         boolean opponentIsNotFound = true;
         Player opponent = null;
@@ -85,7 +73,7 @@ public class AfterTournamentStartAdaptedMonrad {
      * @param player2
      * @return True if player can meet each other in
      */
-    private static boolean canMeet(Player player1, Player player2) {
+    private boolean canMeet(Player player1, Player player2) {
         return hasNotPlayedAgainstEachOther(player1, player2)
                 && ColorDistributor.canDistributeColors(player1, player2);
     }
@@ -97,7 +85,7 @@ public class AfterTournamentStartAdaptedMonrad {
      * @param player2
      * @return True if the players don't have played against each other earlier in the tournament
      */
-    public static boolean hasNotPlayedAgainstEachOther(Player player1, Player player2) {
+    public boolean hasNotPlayedAgainstEachOther(Player player1, Player player2) {
         boolean hasNotPlayed = true;
         for (Integer playerId : player1.getPreviousOpponents()) {
             if (player2.getId() == playerId) {

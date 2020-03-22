@@ -3,20 +3,20 @@ package no.ntnu.sjakkarena.events;
 import no.ntnu.sjakkarena.data.Game;
 import org.springframework.context.ApplicationEvent;
 import java.util.List;
-public class NewGamesEvent extends ApplicationEvent {
+public class GamesCreatedEvent extends ApplicationEvent {
 
-    private List<? extends Game> games;
+    private List<? extends Game> activeGames;
 
     private int tournamentId;
 
-    public NewGamesEvent(Object source, List<? extends Game> games, int tournamentId) {
+    public GamesCreatedEvent(Object source, List<? extends Game> activeGames, int tournamentId) {
         super(source);
-        this.games = games;
+        this.activeGames = activeGames;
         this.tournamentId = tournamentId;
     }
 
-    public List<? extends Game> getGames() {
-        return games;
+    public List<? extends Game> getActiveGames() {
+        return activeGames;
     }
 
     public int getTournamentId() {

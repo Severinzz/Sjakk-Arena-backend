@@ -1,5 +1,6 @@
 package no.ntnu.sjakkarena.AdaptedMonradTests;
 
+import no.ntnu.sjakkarena.adaptedmonrad.AdaptedMonrad;
 import no.ntnu.sjakkarena.adaptedmonrad.AtTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
@@ -13,10 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AtTournamentStartAdaptedMonradTest extends AdaptedMonradTest{
 
+    private AdaptedMonrad adaptedMonrad = new AtTournamentStartAdaptedMonrad();
+
     @Test
     public void provideBibNumber() {
         provideBibNumberInit();
-        AtTournamentStartAdaptedMonrad.provideBibNumber(players);
+        adaptedMonrad.provideBibNumber(players);
         for (int i = 0; i < players.size(); i++) {
             assertEquals(players.get(i).getBibNumber(), i + 1);
         }
@@ -36,7 +39,7 @@ public class AtTournamentStartAdaptedMonradTest extends AdaptedMonradTest{
     @Test
     public void provideNewGamesAtTournamentStartNoEnrolledPlayers() {
         tablesInit(2);
-        List<Game> games = AtTournamentStartAdaptedMonrad.provideNewGames(new ArrayList<Player>(), availableTables);
+        List<Game> games = adaptedMonrad.getNewGames(new ArrayList<Player>(), availableTables);
         assertTrue(games.isEmpty());
     }
 
@@ -59,7 +62,7 @@ public class AtTournamentStartAdaptedMonradTest extends AdaptedMonradTest{
     private void provideNewGamesAtTournamentStart(int numberOfTables, int numberOfPlayers) {
         playerInit(numberOfPlayers);
         tablesInit(numberOfTables);
-        List<Game> newGames = AtTournamentStartAdaptedMonrad.provideNewGames(players, availableTables);
+        List<Game> newGames = adaptedMonrad.getNewGames(players, availableTables);
         if (numberOfPlayers / 2 < numberOfTables) {
             assertEquals(numberOfPlayers / 2, newGames.size());
         } else {
@@ -75,7 +78,7 @@ public class AtTournamentStartAdaptedMonradTest extends AdaptedMonradTest{
     @Test
     public void provideNewGamesOnEarlyStart() {
         earlyStartInit();
-        List<Game> games = AtTournamentStartAdaptedMonrad.provideNewGames(players, availableTables);
+        List<Game> games = adaptedMonrad.getNewGames(players, availableTables);
         Game game = games.get(0);
         assertEquals(game.getTable(), 1);
         assertTrue(game.getWhitePlayerId() == 2 && game.getBlackPlayerId() == 1);
