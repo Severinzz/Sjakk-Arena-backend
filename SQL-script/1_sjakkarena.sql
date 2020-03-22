@@ -311,18 +311,16 @@ BEGIN
                   get_number_of_white_games(player_id) AS number_of_white_games
   FROM `sjakkarena`.`player`,
        (SELECT player_id as inactive_player_id
-        FROM (SELECT DISTINCT white_player as player_id
-              FROM `sjakkarena`.`game`
-              UNION
-              SELECT DISTINCT black_player
-              FROM `sjakkarena`.`game`) as players_with_games
+        FROM (SELECT DISTINCT player_id
+              FROM `sjakkarena`.`player`
+              WHERE `player`.`tournament` = tournament_id) AS enrolled_player
         WHERE player_id NOT IN (SELECT DISTINCT white_player
                                 FROM `sjakkarena`.`game`
                                 WHERE active = 1
                                 UNION
                                 SELECT DISTINCT black_player
                                 FROM `sjakkarena`.`game`
-                                WHERE active = 1)) as inactive_players
+                                WHERE active = 1)) AS inactive_players
   WHERE `player`.tournament = tournament_id
     AND player_id = inactive_players.inactive_player_id;
 END//
@@ -365,10 +363,12 @@ BEGIN
     SELECT tables
     FROM `sjakkarena`.`tournament`
     WHERE `tournament`.tournament_id = `tournament_id`);
-  CREATE TABLE `tables`(
+  CREATE TABLE `tables`
+  (
     table_nr INT(11) DEFAULT NULL
   )
-    ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8;
   WHILE i <= number_of_tables
   DO
   INSERT INTO `tables`
@@ -378,8 +378,11 @@ BEGIN
   SELECT *
   FROM tables
   WHERE table_nr NOT IN (SELECT DISTINCT `table`
-                         FROM sjakkarena.game, sjakkarena.player
-                         WHERE active = 1 AND player_id = white_player AND player.tournament = tournament_id);
-  DROP TABLE IF EXISTS  `tables`;
+                         FROM sjakkarena.game,
+                              sjakkarena.player
+                         WHERE active = 1
+                           AND player_id = white_player
+                           AND player.tournament = tournament_id);
+  DROP TABLE IF EXISTS `tables`;
 END//
 DELIMITER ;
