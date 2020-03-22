@@ -48,7 +48,7 @@ public class GameService {
     private void onResultAdded(){
         int tournamentId = playerRepository.getPlayer(RESTSession.getUserId()).getTournamentId();
         List<Game> newGames = requestNewGames(tournamentId);
-        NewGamesEvent newGamesEvent = new NewGamesEvent(this, newGames);
+        NewGamesEvent newGamesEvent = new NewGamesEvent(this, newGames, tournamentId);
         // TODO add games to database
         applicationEventPublisher.publishEvent(newGamesEvent);
     }

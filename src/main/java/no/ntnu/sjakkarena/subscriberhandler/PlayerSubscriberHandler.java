@@ -3,17 +3,11 @@ package no.ntnu.sjakkarena.subscriberhandler;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import no.ntnu.sjakkarena.data.Game;
-import no.ntnu.sjakkarena.data.User;
 import no.ntnu.sjakkarena.events.NewGamesEvent;
-import no.ntnu.sjakkarena.utils.UserStorage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 public class PlayerSubscriberHandler extends SubscriberHandler {
 
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
 
     /**
      *
@@ -41,8 +35,4 @@ public class PlayerSubscriberHandler extends SubscriberHandler {
         }
     }
 
-    private void sendToSubscriber(int userId, String destination, String payload){
-        User user = UserStorage.getUser(userId);
-        simpMessagingTemplate.convertAndSendToUser(user.toString(), destination, payload);
-    }
 }
