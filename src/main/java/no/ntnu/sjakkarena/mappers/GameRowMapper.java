@@ -7,8 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class GameRowMapper implements RowMapper<Game> {
-
-    // TODO add white games, lastPlayedColor and sameColorStreak
+    
     @Override
     public Game mapRow(ResultSet rs, int i) throws SQLException {
         return new Game(rs.getInt("game_id"), rs.getInt("table"),

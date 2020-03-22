@@ -1,7 +1,7 @@
 package no.ntnu.sjakkarena.repositories;
 
 import no.ntnu.sjakkarena.data.GameWithPlayerNames;
-import no.ntnu.sjakkarena.mappers.GamesWithPlayerNamesRowMapper;
+import no.ntnu.sjakkarena.mappers.GameWithPlayerNamesRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -15,7 +15,7 @@ public class GameWithPlayerNamesRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private RowMapper<GameWithPlayerNames> gameTableElementRowMapper = new GamesWithPlayerNamesRowMapper();
+    private RowMapper<GameWithPlayerNames> gameWithPlayerNamesRowMapper = new GameWithPlayerNamesRowMapper();
 
     /**
      * Get games by tournament
@@ -32,7 +32,7 @@ public class GameWithPlayerNamesRepository {
                 " WHERE `game`.`white_player` = `white`.`player_id` AND " +
                 "`game`.`black_player` = `black`.`player_id` AND `tournament`.`tournament_id` = `white`.`tournament`" +
                 " AND `tournament`.`tournament_id` = " + tournamentId +
-                " ORDER BY `game`.`start` DESC", gameTableElementRowMapper);
+                " ORDER BY `game`.`start` DESC", gameWithPlayerNamesRowMapper);
     }
 
     public List<GameWithPlayerNames> getActiveGames(int tournamentId) {
@@ -43,7 +43,7 @@ public class GameWithPlayerNamesRepository {
                 " WHERE `game`.`white_player` = `white`.`player_id` AND " +
                 " `game`.`black_player` = `black`.`player_id`" +
                 " AND `white`.`tournament` = " + tournamentId + " AND `game`.`active` = " + 1 +
-                " ORDER BY `game`.`start` DESC", gameTableElementRowMapper);
+                " ORDER BY `game`.`start` DESC", gameWithPlayerNamesRowMapper);
     }
 }
 

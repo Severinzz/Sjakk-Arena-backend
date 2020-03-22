@@ -17,7 +17,7 @@ public class Game {
     private int blackPlayerId;
 
     @SerializedName("white_player_points")
-    private int whitePlayerPoints;
+    private Integer whitePlayerPoints;
     private boolean active;
 
     public Game(int table, String start, int whitePlayerId, int blackPlayerId, boolean active) {
@@ -28,7 +28,11 @@ public class Game {
         this.active = active;
     }
 
-    public Game(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId, int whitePlayerPoints, boolean active) {
+    public Game(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId,
+                Integer whitePlayerPoints, boolean active) {
+        if (active && whitePlayerPoints == 0){
+            whitePlayerPoints = null;
+        }
         this.gameId = gameId;
         this.table = table;
         this.start = start;
@@ -87,7 +91,7 @@ public class Game {
         this.blackPlayerId = blackPlayerId;
     }
 
-    public int getWhitePlayerPoints() {
+    public Integer getWhitePlayerPoints() {
         return whitePlayerPoints;
     }
 

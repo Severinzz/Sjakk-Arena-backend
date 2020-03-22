@@ -14,7 +14,7 @@ public class GameWithPlayerNames extends Game{
     private String blackPlayerName;
 
     public GameWithPlayerNames(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId,
-                               int whitePlayerPoints,  boolean active, String whitePlayerName,  String blackPlayerName) {
+                               Integer whitePlayerPoints,  boolean active, String whitePlayerName,  String blackPlayerName) {
         super(gameId, table, start, end, whitePlayerId, blackPlayerId, whitePlayerPoints, active);
         this.whitePlayerName = whitePlayerName;
         this.blackPlayerName = blackPlayerName;
