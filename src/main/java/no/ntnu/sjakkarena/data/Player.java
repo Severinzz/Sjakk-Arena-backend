@@ -3,12 +3,15 @@ package no.ntnu.sjakkarena.data;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 public class Player extends User{
 
     @Expose
     private String name;
     private boolean paused;
-    private float points;
+    private double points;
     private int rounds;
 
     @SerializedName("tournament")
@@ -19,9 +22,19 @@ public class Player extends User{
     @SerializedName("in_tournament")
     private boolean inTournament;
 
-    public Player(int playerId, String name, boolean paused, float points, int rounds, int tournamentId, String icon,
-                  boolean inTournament){
+    private int bibNumber;
+
+    private Collection<Integer> previousOpponents = new ArrayList<>();
+    private int numberOfWhiteGames;
+    private String lastPlayedColor;
+    private int sameColorStreak;
+
+    public Player(int playerId, String name, boolean paused, double points, int rounds, int tournamentId, String icon,
+                  boolean inTournament, int numberOfWhiteGames, String lastPlayedColor, int sameColorStreak){
         super(playerId);
+        if (lastPlayedColor == null){
+            lastPlayedColor = "Ingen spilte parti";
+        }
         this.name = name;
         this.paused = paused;
         this.points = points;
@@ -29,6 +42,9 @@ public class Player extends User{
         this.tournamentId = tournamentId;
         this.icon = icon;
         this.inTournament = inTournament;
+        this.numberOfWhiteGames = numberOfWhiteGames;
+        this.lastPlayedColor = lastPlayedColor;
+        this.sameColorStreak = sameColorStreak;
     }
 
     public String getName() {
@@ -47,11 +63,11 @@ public class Player extends User{
         this.paused = paused;
     }
 
-    public float getPoints() {
+    public double getPoints() {
         return points;
     }
 
-    public void setPoints(float points) {
+    public void setPoints(double points) {
         this.points = points;
     }
 
@@ -85,5 +101,53 @@ public class Player extends User{
 
     public void setInTournament(boolean inTournament) {
         this.inTournament = inTournament;
+    }
+
+    public int getBibNumber() {
+        return bibNumber;
+    }
+
+    public void setBibNumber(int bibNumber) {
+        this.bibNumber = bibNumber;
+    }
+
+    public Collection<Integer> getPreviousOpponents() {
+        return previousOpponents;
+    }
+
+    public void setPreviousOpponents(Collection<Integer> previousOpponents) {
+        this.previousOpponents = previousOpponents;
+    }
+
+    public int getNumberOfWhiteGames() {
+        return numberOfWhiteGames;
+    }
+
+    public void setNumberOfWhiteGames(int numberOfWhiteGames) {
+        this.numberOfWhiteGames = numberOfWhiteGames;
+    }
+
+    public String getLastPlayedColor() {
+        return lastPlayedColor;
+    }
+
+    public void setLastPlayedColor(String lastPlayedColor) {
+        this.lastPlayedColor = lastPlayedColor;
+    }
+
+    public int getSameColorStreak() {
+        return sameColorStreak;
+    }
+
+    public void setSameColorStreak(int sameColorStreak) {
+        this.sameColorStreak = sameColorStreak;
+    }
+
+    public double getWhiteGameRatio(){
+        return (double) numberOfWhiteGames / rounds;
+    }
+
+    public double getBlackGameRatio(){
+        return (double)(rounds- numberOfWhiteGames) / rounds;
     }
 }

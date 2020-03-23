@@ -13,7 +13,8 @@ public class PlayerRowMapper implements RowMapper<Player> {
         Player player = new Player(rs.getInt("player_id"), rs.getString("name"),
                 rs.getBoolean("paused"), rs.getFloat("points"), rs.getInt("rounds"),
                 rs.getInt("tournament"), rs.getString("icon"),
-                rs.getBoolean("in_tournament"));
+                rs.getBoolean("in_tournament"), rs.getInt("number_of_white_games"),
+                rs.getString("last_played_color"), rs.getInt("same_color_streak"));
         return player;
     }
 }

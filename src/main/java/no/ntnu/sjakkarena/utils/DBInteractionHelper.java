@@ -27,18 +27,4 @@ public class DBInteractionHelper {
         }
         return values.substring(0, values.length() - 2) + ")";
     }
-
-    /**
-     * Takes the input and returns a string containing attributes that can be used in database update queries.
-     * E.g. input "abc", "def", "ghi" gives the output "(`abc`, `def, `ghi`)"
-     *
-     * @return attribute a string that can be used in database update queries
-     */
-    public static String toAttributeString(String... arguments) {
-        String attribtues = "(";
-        for (String attribute : arguments) {
-            attribtues += "`" + attribute + "`,";
-        }
-        return attribtues.substring(0, attribtues.length() - 1) + ")";
-    }
 }

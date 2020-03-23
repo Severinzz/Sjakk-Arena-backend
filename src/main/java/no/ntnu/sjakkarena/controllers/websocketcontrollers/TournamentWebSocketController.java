@@ -1,7 +1,7 @@
-package no.ntnu.sjakkarena.controllers;
+package no.ntnu.sjakkarena.controllers.websocketcontrollers;
 
-import no.ntnu.sjakkarena.DBChangeNotifier;
-import no.ntnu.sjakkarena.data.User;
+import no.ntnu.sjakkarena.subscriberhandler.TournamentSubscriberHandler;
+import no.ntnu.sjakkarena.utils.WebSocketSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.core.Authentication;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Controller;
 public class TournamentWebSocketController {
 
     @Autowired
-    private DBChangeNotifier dbChangeNotifier;
+    private TournamentSubscriberHandler tournamentSubscriberHandler;
 
     /**
      * Returns all the names of the players in the tournament
@@ -24,7 +24,7 @@ public class TournamentWebSocketController {
      */
     @MessageMapping("/tournament/players")
     public void getPlayers(Authentication authentication) {
-        dbChangeNotifier.notifyUpdatedPlayerList(getUserId(authentication));
+        tournamentSubscriberHandler.sendPlayerList(WebSocketSession.getUserId(authentication));
     }
 
 
@@ -35,11 +35,6 @@ public class TournamentWebSocketController {
      */
     @MessageMapping("/tournament/leaderboard")
     public void getLeaderboard(Authentication authentication) {
-        dbChangeNotifier.notifyUpdatedLeaderboard(getUserId(authentication));
-    }
-
-    private int getUserId(Authentication authentication){
-        User user = (User) authentication.getPrincipal();
-        return user.getId();
+        tournamentSubscriberHandler.sendLeaderBoard(WebSocketSession.getUserId(authentication));
     }
 }

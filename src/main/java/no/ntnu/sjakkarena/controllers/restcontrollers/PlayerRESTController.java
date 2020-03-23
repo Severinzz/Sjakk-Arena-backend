@@ -1,28 +1,19 @@
-package no.ntnu.sjakkarena.controllers.RestControllers;
+package no.ntnu.sjakkarena.controllers.restcontrollers;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import no.ntnu.sjakkarena.DBChangeNotifier;
-import no.ntnu.sjakkarena.utils.Session;
-import no.ntnu.sjakkarena.data.Game;
-import no.ntnu.sjakkarena.data.GameTableElement;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
-import no.ntnu.sjakkarena.repositories.GameRepository;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
-import no.ntnu.sjakkarena.utils.Validator;
+import no.ntnu.sjakkarena.utils.RESTSession;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collection;
 
 /**
  * Handles requests from players
@@ -32,17 +23,12 @@ import java.util.Collection;
 public class PlayerRESTController {
 
     @Autowired
-    private DBChangeNotifier dbChangeNotifier;
-
-    @Autowired
     private PlayerRepository playerRepository;
-
-    @Autowired
-    private GameRepository gameRepository;
 
     @Autowired
     private TournamentRepository tournamentRepository;
 
+    // TODO create player service and move most logic to the service class
 
     /**
      * Set a player with a given ID to paused
@@ -52,7 +38,7 @@ public class PlayerRESTController {
     @RequestMapping(value = "/pause", method = RequestMethod.PATCH)
     public ResponseEntity<String> pause() {
         try {
-            int id = Session.getUserId();
+            int id = RESTSession.getUserId();
             playerRepository.pausePlayer(id);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
@@ -62,12 +48,13 @@ public class PlayerRESTController {
     }
 
     /**
-     * Return information about the requesting user's tournament
-     * @return information about the requesting user's tournament
+     * Return information about the requesting player's tournament
+     *
+     * @return information about the requesting player's tournament
      */
     @RequestMapping(value = "/tournament", method = RequestMethod.GET)
     public ResponseEntity<String> getTournament() {
-        int playerId = Session.getUserId();
+        int playerId = RESTSession.getUserId();
         int tournamentId = playerRepository.getPlayer(playerId).getTournamentId();
         Tournament tournament = tournamentRepository.getTournament(tournamentId);
         JSONObject jsonObject = new JSONObject();
@@ -85,7 +72,7 @@ public class PlayerRESTController {
      */
     @RequestMapping(value = "/information", method = RequestMethod.GET)
     public ResponseEntity<String> getPlayer() {
-        int playerId = Session.getUserId();
+        int playerId = RESTSession.getUserId();
         Player player = playerRepository.getPlayer(playerId);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("name", player.getName());
@@ -94,61 +81,14 @@ public class PlayerRESTController {
     }
 
     /**
-     * Add a result
+     * Unpause the "signed-in" player
      *
-     * @param opponent The opponent of the player adding the result
-     * @param result   The result to be added
-     * @return 200 OK if successfully added. 400 bad if input is not active or if player doesn't have any active games.
+     * @return 200 OK if successfully unpaused, otherwise 400
      */
-
-    @RequestMapping(value = "add-result", method = RequestMethod.PUT)
-    public ResponseEntity<String> setResult(@RequestParam(value = "opponent") int opponent,
-                                            @RequestParam(value = "result") String result) {
-        if (!Validator.resultIsValid(result)) {
-            return new ResponseEntity<>("Not a valid result", HttpStatus.BAD_REQUEST);
-        }
-        Game game = gameRepository.getActiveGame(Session.getUserId(), opponent); // Has requesting user white pieces?
-        if (game == null) {
-            game = gameRepository.getActiveGame(opponent, Session.getUserId()); // Has requesting user black pieces?
-        }
-        if (game == null) {
-            return new ResponseEntity<>("Player has no active games", HttpStatus.BAD_REQUEST); // Requesting user has no active games
-        }
-        gameRepository.addResult(game.getGameId(), result);
-        findTournamentAndNotifyOfLeaderboardChange();
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    /**
-     * Finds the tournament of the "signed in" player and notifies it of a change in leaderboard
-     */
-    private void findTournamentAndNotifyOfLeaderboardChange(){
-        Player player = playerRepository.getPlayer(Session.getUserId());
-        dbChangeNotifier.notifyUpdatedLeaderboard(player.getTournamentId());
-    }
-
-    /**
-     * Returns a list of a player's games
-     *
-     * @return a list of a player's games
-     */
-    @RequestMapping(value = "/games", method = RequestMethod.GET)
-    public ResponseEntity<String> getGames() {
-        int playerId = Session.getUserId();
-        Collection<GameTableElement> games = gameRepository.getGamesByPlayer(playerId);
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        return new ResponseEntity<>(gson.toJson(games), HttpStatus.OK);
-    }
-
-    /**
-     * Set a player with a given ID to unpaused
-     * @return 200 OK if successfully set paused field to 0, otherwise 400
-     */
-    @RequestMapping(value="/unpause", method=RequestMethod.PATCH)
+    @RequestMapping(value = "/unpause", method = RequestMethod.PATCH)
     public ResponseEntity<String> setPlayerActive() {
         try {
-            int id = Session.getUserId();
-            playerRepository.unpausePlayer(id);
+            playerRepository.unpausePlayer(RESTSession.getUserId());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
             e.printStackTrace();
@@ -158,13 +98,13 @@ public class PlayerRESTController {
 
     /**
      * Set a player with a given ID to inactive
+     *
      * @return 200 OK if successfully set active field to 0, otherwise 400
      */
-    @RequestMapping(value="/set-inactive", method=RequestMethod.PATCH)
-    public ResponseEntity<String> setPlayerInActive() {
+    @RequestMapping(value = "/leave-tournament", method = RequestMethod.PATCH)
+    public ResponseEntity<String> leaveTournament() {
         try {
-            int id = Session.getUserId();
-            playerRepository.disablePlayer(id);
+            playerRepository.leaveTournament(RESTSession.getUserId());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
             e.printStackTrace();
@@ -174,13 +114,13 @@ public class PlayerRESTController {
 
     /**
      * Deletes the player with the given JWT
+     *
      * @return 200 OK if the player is successfully deleted, otherwise 400
      */
-    @RequestMapping(value="/delete-player", method=RequestMethod.PATCH)
+    @RequestMapping(value = "/delete-player", method = RequestMethod.PATCH)
     public ResponseEntity<String> deletePlayer() {
         try {
-            int id = Session.getUserId();
-            playerRepository.deletePlayer(id);
+            playerRepository.deletePlayer(RESTSession.getUserId());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
             e.printStackTrace();

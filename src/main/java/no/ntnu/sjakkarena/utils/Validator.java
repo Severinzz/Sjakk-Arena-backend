@@ -60,10 +60,10 @@ public class Validator {
     /**
      * Validates result input
      *
-     * @param result The result to be validated
+     * @param whitePlayerPoints The result to be validated
      * @return true if result is valid
      */
-    public static boolean resultIsValid(String result) {
-        return (result.equals("1-0") || result.equals("0-1") || result.equals("0.5-0.5"));
+    public static boolean pointsIsValid(double whitePlayerPoints) {
+        return (whitePlayerPoints == 0 || whitePlayerPoints == 0.5 || whitePlayerPoints == 1);
     }
 }

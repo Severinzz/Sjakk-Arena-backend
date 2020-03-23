@@ -1,16 +1,16 @@
-package no.ntnu.sjakkarena.controllers.RestControllers;
+package no.ntnu.sjakkarena.controllers.restcontrollers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import no.ntnu.sjakkarena.DBChangeNotifier;
-import no.ntnu.sjakkarena.utils.Session;
-import no.ntnu.sjakkarena.data.GameTableElement;
-import no.ntnu.sjakkarena.data.Player;
+import no.ntnu.sjakkarena.data.GameWithPlayerNames;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
-import no.ntnu.sjakkarena.repositories.GameRepository;
+import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
+import no.ntnu.sjakkarena.services.TournamentService;
+import no.ntnu.sjakkarena.subscriberhandler.TournamentSubscriberHandler;
+import no.ntnu.sjakkarena.utils.RESTSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +28,10 @@ import java.util.Collection;
 @RequestMapping("/tournament")
 public class TournamentRESTController {
 
+    // TODO move repositories to service class
+
     @Autowired
-    private DBChangeNotifier dbChangeNotifier;
+    private TournamentSubscriberHandler tournamentSubscriberHandler;
 
     @Autowired
     private TournamentRepository tournamentRepository;
@@ -38,7 +40,10 @@ public class TournamentRESTController {
     private PlayerRepository playerRepository;
 
     @Autowired
-    private GameRepository gameRepository;
+    private TournamentService tournamentService;
+
+    @Autowired
+    private GameWithPlayerNamesRepository gameWithPlayerNamesRepository;
 
     /**
      * Get information about the requesting tournament
@@ -47,7 +52,7 @@ public class TournamentRESTController {
      */
     @RequestMapping(value = "/information", method = RequestMethod.GET)
     public ResponseEntity<String> getTournament() {
-        int tournamentId = Session.getUserId();
+        int tournamentId = RESTSession.getUserId();
         Tournament tournament = tournamentRepository.getTournament(tournamentId);
         Gson gson = new Gson();
         return new ResponseEntity<>(gson.toJson(tournament), HttpStatus.OK);
@@ -62,7 +67,8 @@ public class TournamentRESTController {
     public ResponseEntity<String> deletePlayer(@PathVariable(name = "id") int id) {
         try {
             playerRepository.deletePlayer(id);
-            dbChangeNotifier.notifyUpdatedPlayerList(Session.getUserId());
+            // TODO change to event handling
+            tournamentSubscriberHandler.sendPlayerList(RESTSession.getUserId());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
             return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
@@ -76,9 +82,16 @@ public class TournamentRESTController {
      */
     @RequestMapping(value = "/games", method = RequestMethod.GET)
     public ResponseEntity<String> getGames() {
-        int tournamentId = Session.getUserId();
-        Collection<GameTableElement> games = gameRepository.getGames(tournamentId);
+        int tournamentId = RESTSession.getUserId();
+        Collection<GameWithPlayerNames> games = gameWithPlayerNamesRepository.getGamesWithPlayerNames(tournamentId);
         Gson gson = new GsonBuilder().serializeNulls().create();
         return new ResponseEntity<>(gson.toJson(games), HttpStatus.OK);
+    }
+
+    // TODO change to websocket. Tournament subscribes to service where tournament is notified on tournament start
+    @RequestMapping(value = "/start", method = RequestMethod.PATCH)
+    public ResponseEntity<String> startTournament(){
+        tournamentService.startTournament();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

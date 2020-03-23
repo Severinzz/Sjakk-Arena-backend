@@ -1,7 +1,9 @@
-package no.ntnu.sjakkarena.controllers.RestControllers;
+package no.ntnu.sjakkarena.controllers.restcontrollers;
 
 import com.google.gson.Gson;
-import no.ntnu.sjakkarena.DBChangeNotifier;
+import no.ntnu.sjakkarena.exceptions.NameAlreadyExistsException;
+import no.ntnu.sjakkarena.services.UnauthenticatedUserService;
+import no.ntnu.sjakkarena.subscriberhandler.TournamentSubscriberHandler;
 import no.ntnu.sjakkarena.EmailSender;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
@@ -26,14 +28,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class UnauthenticatedUserRESTController {
 
-    @Autowired
-    private DBChangeNotifier dbChangeNotifier;
+    // TODO move business logic to service class
+
 
     @Autowired
     private TournamentRepository tournamentRepository;
 
     @Autowired
-    private PlayerRepository playerRepository;
+    private UnauthenticatedUserService unauthenticatedUserService;
 
     /**
      * Register a new user
@@ -45,23 +47,14 @@ public class UnauthenticatedUserRESTController {
     public ResponseEntity<String> registerPlayer(@RequestBody String playerJSON) {
         Gson gson = new Gson();
         Player player = gson.fromJson(playerJSON, Player.class);
-        player.setIcon(PlayerIcons.getRandomFontAwesomeIcon());
-        String message = "";
-        if (playerRepository.doesPlayerExist(player)){
-            message = "Name already take, try a new one!";
-            return new ResponseEntity<>(message, HttpStatus.CONFLICT); // frontend leter etter kode 409
-        } else {
-            try {
-                int userId = playerRepository.addNewPlayer(player);
-                JSONObject jsonResponse = new JSONObject();
-                jsonResponse.put("jwt", JWSHelper.createJWS("PLAYER", "" + userId));
-                dbChangeNotifier.notifyUpdatedPlayerList(player.getTournamentId());
-                return new ResponseEntity<>(jsonResponse.toString(), HttpStatus.OK);
-            } catch (NotAbleToUpdateDBException e) {
-                message = "Couldn't add player to database";
-            }
+        try {
+            String responseMessage = unauthenticatedUserService.addNewPlayer(player);
+            return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+        } catch (NotAbleToUpdateDBException e) {
+            return new ResponseEntity<>("Couldn't add player to database", HttpStatus.BAD_REQUEST);
+        } catch (NameAlreadyExistsException e) {
+            return new ResponseEntity<>("Name already take, try a new one!", HttpStatus.CONFLICT); // frontend leter etter kode 409
         }
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -89,10 +82,11 @@ public class UnauthenticatedUserRESTController {
 
     /**
      * Get the information to be returned to the client
+     *
      * @param tournament The newly created tournament
      * @return information to be returned to the client
      */
-    private String getToClientJSON(Tournament tournament){
+    private String getToClientJSON(Tournament tournament) {
         String jws = JWSHelper.createJWS("TOURNAMENT", "" + tournament.getId());
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("jwt", jws);
@@ -102,15 +96,17 @@ public class UnauthenticatedUserRESTController {
 
     /**
      * Adds tournament id and adminUUID to the tournament
+     *
      * @param tournament the tournament to be given IDs
      */
-    private void addTournamentIDs(Tournament tournament){
+    private void addTournamentIDs(Tournament tournament) {
         tournament.setId(IDGenerator.generateTournamentID());
         tournament.setAdminUUID(IDGenerator.generateAdminUUID());
     }
 
     /**
      * Sends an email to the tournament admin containing the adminUUID
+     *
      * @param tournament a tournament
      */
     private void sendEmailToTournamentAdmin(Tournament tournament) {

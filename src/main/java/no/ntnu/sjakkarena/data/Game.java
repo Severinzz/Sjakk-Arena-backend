@@ -1,25 +1,45 @@
 package no.ntnu.sjakkarena.data;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Game {
 
+    @SerializedName("game_id")
     private int gameId;
     private int table;
     private String start;
     private String end;
-    private int whitePlayer;
-    private int blackPlayer;
-    private String result;
+
+    @SerializedName("white_player_id")
+    private int whitePlayerId;
+
+    @SerializedName("black_player_id")
+    private int blackPlayerId;
+
+    @SerializedName("white_player_points")
+    private Integer whitePlayerPoints;
     private boolean active;
 
+    public Game(int table, String start, int whitePlayerId, int blackPlayerId, boolean active) {
+        this.table = table;
+        this.start = start;
+        this.whitePlayerId = whitePlayerId;
+        this.blackPlayerId = blackPlayerId;
+        this.active = active;
+    }
 
-    public Game(int gameId, int table, String start, String end, int whitePlayer, int blackPlayer, String result, boolean active) {
+    public Game(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId,
+                Integer whitePlayerPoints, boolean active) {
+        if (active && whitePlayerPoints == 0){
+            whitePlayerPoints = null;
+        }
         this.gameId = gameId;
         this.table = table;
         this.start = start;
         this.end = end;
-        this.whitePlayer = whitePlayer;
-        this.blackPlayer = blackPlayer;
-        this.result = result;
+        this.whitePlayerId = whitePlayerId;
+        this.blackPlayerId = blackPlayerId;
+        this.whitePlayerPoints = whitePlayerPoints;
         this.active = active;
     }
 
@@ -55,28 +75,28 @@ public class Game {
         this.end = end;
     }
 
-    public int getWhitePlayer() {
-        return whitePlayer;
+    public int getWhitePlayerId() {
+        return whitePlayerId;
     }
 
-    public void setWhitePlayer(int whitePlayer) {
-        this.whitePlayer = whitePlayer;
+    public void setWhitePlayerId(int whitePlayerId) {
+        this.whitePlayerId = whitePlayerId;
     }
 
-    public int getBlackPlayer() {
-        return blackPlayer;
+    public int getBlackPlayerId() {
+        return blackPlayerId;
     }
 
-    public void setBlackPlayer(int blackPlayer) {
-        this.blackPlayer = blackPlayer;
+    public void setBlackPlayerId(int blackPlayerId) {
+        this.blackPlayerId = blackPlayerId;
     }
 
-    public String getResult() {
-        return result;
+    public Integer getWhitePlayerPoints() {
+        return whitePlayerPoints;
     }
 
-    public void setResult(String result) {
-        this.result = result;
+    public void setWhitePlayerPoints(int whitePlayerPoints) {
+        this.whitePlayerPoints = whitePlayerPoints;
     }
 
     public boolean isActive() {
