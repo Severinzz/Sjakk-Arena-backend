@@ -44,7 +44,7 @@ public class TournamentSubscriberHandler extends SubscriberHandler{
     public void sendLeaderBoard(int tournamentId) {
         try {
             // TODO remove tournament repository.getPl... use events instead
-            Collection<Player> players = tournamentRepository.getPlayersSortedByPoints(tournamentId);
+            Collection<Player> players = playerRepository.getPlayersInTournamentSortedByPoints(tournamentId);
             sendToSubscriber(tournamentId, "/queue/tournament/leaderboard",
                     jsonCreator.writeValueAsString(players));
         } catch (NullPointerException e) {

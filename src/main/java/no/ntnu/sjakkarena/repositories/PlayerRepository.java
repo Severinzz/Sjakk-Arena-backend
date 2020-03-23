@@ -175,4 +175,15 @@ public class PlayerRepository {
         }
         return exist;
     }
+
+    /**
+     * Returns the leaderboard of the given tournament
+     * @param tournamentId The id of the tournament
+     * @return A leaderboard of the given tournament
+     */
+    public Collection<Player> getPlayersInTournamentSortedByPoints(int tournamentId) {
+        List<Player> players = jdbcTemplate.query("SELECT * FROM  `sjakkarena`.`player` WHERE " +
+                "`in_tournament` = 1 AND `tournament` = " + tournamentId + " ORDER BY `points` DESC", playerRowMapper);
+        return players;
+    }
 }
