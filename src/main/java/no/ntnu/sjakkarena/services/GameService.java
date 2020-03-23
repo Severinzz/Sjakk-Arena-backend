@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class GameService {
+public class GameService extends UserService {
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
@@ -56,6 +56,7 @@ public class GameService {
 
     private void onResultAdd() {
         int tournamentId = playerRepository.getPlayer(RESTSession.getUserId()).getTournamentId();
+        onPlayerListChange(tournamentId);
         this.adaptedMonrad = new AfterTournamentStartAdaptedMonrad();
         manageNewGamesRequest(tournamentId);
     }

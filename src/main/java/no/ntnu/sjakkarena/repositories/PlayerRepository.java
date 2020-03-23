@@ -82,7 +82,7 @@ public class PlayerRepository {
      */
     public void deletePlayer(int id) {
         try {
-            jdbcTemplate.update("DELETE FROM player WHERE `player_id` = " + id);
+            jdbcTemplate.update("DELETE FROM sjakkarena.player WHERE `player_id` = " + id);
         } catch (DataAccessException e) {
             throw new NotAbleToUpdateDBException("Couldn't delete player from database");
         }

@@ -55,7 +55,7 @@ public class TournamentService extends UserService{
     public void deletePlayer(int playerId) {
         try {
             playerRepository.deletePlayer(playerId);
-            onPlayerDelete();
+            onPlayerListChange(RESTSession.getUserId());
         } catch (NotAbleToUpdateDBException e) {
             throw e;
         }

@@ -53,7 +53,7 @@ public class TournamentSubscriberHandler extends SubscriberHandler {
     @EventListener
     public void onGamesCreation(GamesCreatedEvent gamesCreatedEvent) {
         try {
-            sendToSubscriber(gamesCreatedEvent.getTournamentId(), "/queue/tournament/games",
+            sendToSubscriber(gamesCreatedEvent.getTournamentId(), "/queue/tournament/active-games",
                     jsonCreator.writeValueAsString(gamesCreatedEvent.getActiveGames()));
         } catch (NullPointerException e) {
             printNotSubscribingErrorMessage("new games", e);

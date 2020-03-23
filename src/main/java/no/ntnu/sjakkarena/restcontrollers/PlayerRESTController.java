@@ -101,7 +101,7 @@ public class PlayerRESTController {
      *
      * @return 200 OK if the player is successfully deleted, otherwise 400
      */
-    @RequestMapping(value = "/delete-player", method = RequestMethod.PATCH)
+    @RequestMapping(value = "/delete-player", method = RequestMethod.DELETE)
     public ResponseEntity<String> deletePlayer() {
         try {
             playerService.deletePlayer();

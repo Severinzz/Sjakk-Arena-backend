@@ -11,8 +11,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+// TODO change name
 @Service
-public class UserService {
+public abstract class UserService {
     @Autowired
     protected PlayerRepository playerRepository;
 
@@ -22,9 +23,8 @@ public class UserService {
     @Autowired
     protected TournamentRepository tournamentRepository;
 
-    protected void onPlayerDelete() {
+    protected void onPlayerListChange(int tournamentId) {
         // TODO make an own service class containing methods for setting up events
-        int tournamentId = RESTSession.getUserId();
         boolean tournamentHasStarted = tournamentRepository.getTournament(tournamentId).isActive();
         List<Player> players = playerRepository.getPlayersInTournament(tournamentId);
         List<Player> leaderBoard = playerRepository.getPlayersInTournamentSortedByPoints(tournamentId);
