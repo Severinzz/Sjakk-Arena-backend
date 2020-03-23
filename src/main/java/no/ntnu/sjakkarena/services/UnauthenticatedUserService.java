@@ -1,6 +1,7 @@
 package no.ntnu.sjakkarena.services;
 
 import no.ntnu.sjakkarena.EmailSender;
+import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.events.NewPlayerAddedEvent;
@@ -9,22 +10,16 @@ import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
-import no.ntnu.sjakkarena.subscriberhandler.TournamentSubscriberHandler;
 import no.ntnu.sjakkarena.utils.IDGenerator;
-import no.ntnu.sjakkarena.utils.JWSHelper;
 import no.ntnu.sjakkarena.utils.PlayerIcons;
 import no.ntnu.sjakkarena.utils.Validator;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 @Service
 public class UnauthenticatedUserService {
-
-    // TODO use events instead
-    @Autowired
-    private TournamentSubscriberHandler tournamentSubscriberHandler;
 
     @Autowired
     private TournamentRepository tournamentRepository;
@@ -35,6 +30,8 @@ public class UnauthenticatedUserService {
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
+    private JSONCreator jsonCreator = new JSONCreator();
+
     public String addNewPlayer(Player player) {
         if (playerRepository.doesPlayerExist(player)){
             throw new NameAlreadyExistsException("Name already take, try a new one!");
@@ -42,10 +39,8 @@ public class UnauthenticatedUserService {
         try {
             player.setIcon(PlayerIcons.getRandomFontAwesomeIcon());
             int userId = playerRepository.addNewPlayer(player);
-            JSONObject jsonResponse = new JSONObject();
-            jsonResponse.put("jwt", JWSHelper.createJWS("PLAYER", "" + userId));
             onNewPlayerAdd(player.getTournamentId());
-            return jsonResponse.toString();
+            return jsonCreator.createResponseToNewPlayer(userId);
         } catch (NotAbleToUpdateDBException e) {
             throw e;
         }
@@ -56,38 +51,28 @@ public class UnauthenticatedUserService {
         addTournamentIDs(tournament);
         tournamentRepository.addNewTournament(tournament);
         //sendEmailToTournamentAdmin(tournament); //Remove comment to send email
-        return getMessageToClient(tournament);
+        return jsonCreator.createResponseToNewTournament(tournament);
     }
 
     public String signIn(String adminUUID){
         try {
             Tournament tournament = tournamentRepository.getTournament(adminUUID);
-            return getMessageToClient(tournament);
+            return jsonCreator.createResponseToNewTournament(tournament);
         } catch(NotInDatabaseException e){
             throw e;
         }
     }
 
     private void onNewPlayerAdd(int tournamentId) {
-        tournamentSubscriberHandler.sendPlayerList(tournamentId);
-        if (tournamentRepository.getTournament(tournamentId).isActive()) {
-            NewPlayerAddedEvent newPlayerAddedEvent = new NewPlayerAddedEvent(this, tournamentId);
-            applicationEventPublisher.publishEvent(newPlayerAddedEvent);
-        }
+        NewPlayerAddedEvent newPlayerAddedEvent = createNewPlayerAddedEvent(tournamentId);
+        applicationEventPublisher.publishEvent(newPlayerAddedEvent);
     }
 
-    /**
-     * Get the message to be returned to the client
-     *
-     * @param tournament The newly created tournament
-     * @return information to be returned to the client
-     */
-    private String getMessageToClient(Tournament tournament) {
-        String jws = JWSHelper.createJWS("TOURNAMENT", "" + tournament.getId());
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("jwt", jws);
-        jsonObject.put("tournament_id", tournament.getId());
-        return jsonObject.toString();
+    private NewPlayerAddedEvent createNewPlayerAddedEvent(int tournamentId){
+        boolean tournamentHasStarted = tournamentRepository.getTournament(tournamentId).isActive();
+        List<Player> players = playerRepository.getPlayersInTournament(tournamentId);
+        List<Player> leaderBoard = playerRepository.getPlayersInTournamentSortedByPoints(tournamentId);
+        return new NewPlayerAddedEvent(this, players, leaderBoard, tournamentId, tournamentHasStarted);
     }
 
     /**

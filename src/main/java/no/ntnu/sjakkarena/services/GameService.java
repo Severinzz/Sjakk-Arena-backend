@@ -68,8 +68,10 @@ public class GameService {
 
     @EventListener
     public void onNewPlayerAdd(NewPlayerAddedEvent newPlayerAddedEvent){
-        this.adaptedMonrad = newPlayerAddedEvent.getAdaptedMonrad();
-        manageNewGamesRequest(newPlayerAddedEvent.getTournamentId());
+        if (newPlayerAddedEvent.hasTournamentStarted()) {
+            this.adaptedMonrad = newPlayerAddedEvent.getAdaptedMonrad();
+            manageNewGamesRequest(newPlayerAddedEvent.getTournamentId());
+        }
     }
 
     private void manageNewGamesRequest(int tournamentId){

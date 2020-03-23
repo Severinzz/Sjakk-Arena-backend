@@ -1,39 +1,23 @@
 package no.ntnu.sjakkarena.services;
 
+import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.GameWithPlayerNames;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.events.TournamentStartedEvent;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;
-import no.ntnu.sjakkarena.repositories.PlayerRepository;
-import no.ntnu.sjakkarena.repositories.TournamentRepository;
-import no.ntnu.sjakkarena.subscriberhandler.TournamentSubscriberHandler;
-import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.utils.RESTSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
 @Service
-public class TournamentService {
-
-    @Autowired
-    private TournamentRepository tournamentRepository;
-
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
-
-    @Autowired
-    private TournamentSubscriberHandler tournamentSubscriberHandler;
+public class TournamentService extends UserService{
 
     @Autowired
     private GameWithPlayerNamesRepository gameWithPlayerNamesRepository;
-
-    @Autowired
-    private PlayerRepository playerRepository;
 
 
     private JSONCreator jsonCreator = new JSONCreator();
@@ -57,15 +41,6 @@ public class TournamentService {
         }
     }
 
-    public void deletePlayer(int playerId) {
-        try {
-            playerRepository.deletePlayer(playerId);
-            // TODO change to event handling
-            tournamentSubscriberHandler.sendPlayerList(RESTSession.getUserId());
-        } catch (NotAbleToUpdateDBException e) {
-            throw e;
-        }
-    }
 
     public String getGamesWithPlayerNames() {
         int tournamentId = RESTSession.getUserId();
@@ -77,7 +52,12 @@ public class TournamentService {
         int tournamentId = RESTSession.getUserId();
         applicationEventPublisher.publishEvent(new TournamentStartedEvent(this, tournamentId));
     }
-
-
-
+    public void deletePlayer(int playerId) {
+        try {
+            playerRepository.deletePlayer(playerId);
+            onPlayerDelete();
+        } catch (NotAbleToUpdateDBException e) {
+            throw e;
+        }
+    }
 }

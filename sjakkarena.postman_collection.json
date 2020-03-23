@@ -15,67 +15,6 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "Player's games",
-					"item": [
-						{
-							"name": "Get player's games",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "4f5a2d65-9ae9-4f87-b47a-2ab2241b42f8",
-										"exec": [
-											"pm.test(\"Status code is 200\", function () {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											"",
-											"pm.test(\"First game has white_player_id 48\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData[0].white_player_id).to.eql(48);",
-											"});",
-											"",
-											"pm.test(\"First game has black_player_id 4\", function () {",
-											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData[0].black_player_id).to.eql(4);",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTEFZRVIiLCJqdGkiOiI0OCJ9.-kZd6IlAA1f6nYPxyQWH3-6KfXSFRWBdwE9oH7TqqoA",
-											"type": "string"
-										}
-									]
-								},
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "http://localhost:8080/player/games",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"player",
-										"games"
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
 					"name": "Add result",
 					"item": [
 						{
@@ -109,7 +48,7 @@
 								"method": "PUT",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/player/add-result?opponent=4&result=0.5-0.5",
+									"raw": "http://localhost:8080/player/add-result?opponent=4&result=0.5",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -126,7 +65,7 @@
 										},
 										{
 											"key": "result",
-											"value": "0.5-0.5"
+											"value": "0.5"
 										}
 									]
 								}
@@ -167,7 +106,7 @@
 								"method": "PUT",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/player/add-result?opponent=2&result=0.5-0.5",
+									"raw": "http://localhost:8080/player/add-result?opponent=2&result=0.5",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -184,7 +123,7 @@
 										},
 										{
 											"key": "result",
-											"value": "0.5-0.5"
+											"value": "0.5"
 										}
 									]
 								}
@@ -225,7 +164,7 @@
 								"method": "PUT",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/player/add-result?opponent=2&result=0.5-1",
+									"raw": "http://localhost:8080/player/add-result?opponent=4&result=0.2",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -238,11 +177,11 @@
 									"query": [
 										{
 											"key": "opponent",
-											"value": "2"
+											"value": "4"
 										},
 										{
 											"key": "result",
-											"value": "0.5-1"
+											"value": "0.2"
 										}
 									]
 								}
@@ -499,6 +438,57 @@
 					],
 					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Unpause player",
+					"item": [
+						{
+							"name": "Unpause successfully",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ba7f614b-5394-4db7-ade0-11f391d4cb72",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTEFZRVIiLCJqdGkiOiI0OCJ9.-kZd6IlAA1f6nYPxyQWH3-6KfXSFRWBdwE9oH7TqqoA",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/player/pause",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"player",
+										"pause"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -658,11 +648,11 @@
 										"id": "c72b6d6e-c355-40cb-b38a-917f0d399cb0",
 										"exec": [
 											"pm.test(\"Status code is 400\", function () {",
-											"    pm.response.to.have.status(400);",
+											"    pm.response.to.have.status(404);",
 											"});",
 											"",
 											"pm.test(\"Body matches string\", function () {",
-											"    pm.expect(pm.response.text()).to.include(\"adminUUID is incorrect\");",
+											"    pm.expect(pm.response.text()).to.include(\"AdminUUID is incorrect\");",
 											"});"
 										],
 										"type": "text/javascript"
@@ -738,7 +728,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"tournament_name\": \"test\",\n\t\"admin_email\": \"test@test.com\",\n\t\"start\": \"2020-02-23T20:01\",\n\t\"end\": \"2020-02-23T22:02\",\n\t\"tables\": 4,\n\t\"max_rounds\": 3,\n\t\"early_start\": \"true\"\n}",
+									"raw": "{\n\t\"tournament_name\": \"test\",\n\t\"admin_email\": \"test@test.com\",\n\t\"start\": \"2020-02-23T20:01\",\n\t\"end\": \"2020-02-23T22:02\",\n\t\"tables\": 0,\n\t\"max_rounds\": 1,\n\t\"early_start\": \"true\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1108,7 +1098,7 @@
 										"id": "b9db1908-a435-4761-aa17-df31ac11d017",
 										"exec": [
 											"pm.test(\"Add existing user response\", function(){",
-											"    pm.response.to.have.status(400); ",
+											"    pm.response.to.have.status(409); ",
 											"})"
 										],
 										"type": "text/javascript"
@@ -1227,31 +1217,31 @@
 	],
 	"variable": [
 		{
-			"id": "21c53a67-eea2-458c-8e3f-bb9058ff5fa3",
+			"id": "ffd6e65c-b3fa-48dc-b28d-6f215808fef5",
 			"key": "tournamentId",
 			"value": 535937,
 			"type": "number"
 		},
 		{
-			"id": "64df13bb-3362-422c-a9d0-a4eb3f2093c9",
+			"id": "dc39007d-bfc7-431d-880f-b43b46e56036",
 			"key": "jwt",
 			"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJUT1VSTkFNRU5UIiwianRpIjoiMjA2MTYwIn0.yDz2PB9ij8E5TgWMUaKwyOPaPkrTA25f56D6tW3crPc",
 			"type": "string"
 		},
 		{
-			"id": "d66cb136-707d-49cb-bb1f-769b3f56c8c5",
+			"id": "6a71ca72-2fb8-4586-899d-cb10f5eb0ac6",
 			"key": "playerName",
 			"value": "mCarlsen",
 			"type": "string"
 		},
 		{
-			"id": "be2290f3-1344-4ce3-bb0a-bdc25f63a485",
+			"id": "07f452b7-6572-43e0-b59a-b324251b06c1",
 			"key": "tournamentJwt",
 			"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJUT1VSTkFNRU5UIiwianRpIjoiNTM1OTM3In0.wct6xzanPitCfQ7nSMa4KMq1bIsFnp0vthRcZhRhG18",
 			"type": "string"
 		},
 		{
-			"id": "dc0f0e69-906c-4142-a889-11dfbe1a619f",
+			"id": "4713e600-111d-4d9c-af38-05e5fee41346",
 			"key": "playerJwt",
 			"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTEFZRVIiLCJqdGkiOiI2In0.yzYL_ydia9riWSFzSQMa7Kr9EIxSGyEeVVkxfOIdQ_E",
 			"type": "string"

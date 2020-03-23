@@ -153,8 +153,4 @@ public class Player extends User{
     public double getWhiteGameRatio(){
         return (double) numberOfWhiteGames / rounds;
     }
-
-    public double getBlackGameRatio(){
-        return (double)(rounds- numberOfWhiteGames) / rounds;
-    }
 }

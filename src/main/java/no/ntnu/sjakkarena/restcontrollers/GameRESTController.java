@@ -1,4 +1,4 @@
-package no.ntnu.sjakkarena.controllers.restcontrollers;
+package no.ntnu.sjakkarena.restcontrollers;
 
 import no.ntnu.sjakkarena.data.ResultUpdateRequest;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
