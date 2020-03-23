@@ -45,18 +45,13 @@ public class GameService {
         if (!Validator.pointsIsValid(resultUpdateRequest.getResult())) {
             throw new IllegalArgumentException("Not a valid result");
         }
-        // TODO change sql query to find game regardless of who is white or black --> remove the first if statement
-        int opponentId = resultUpdateRequest.getOpponent();
-        double whitePlayerPoints = resultUpdateRequest.getResult();
-        Game game = gameRepository.getActiveGame(RESTSession.getUserId(), opponentId); // Has requesting user white pieces?
-        if (game == null) {
-            game = gameRepository.getActiveGame(opponentId, RESTSession.getUserId()); // Has requesting user black pieces?
+        try {
+            Game game = gameRepository.getActiveGame(RESTSession.getUserId(), resultUpdateRequest.getOpponent()); // Has requesting user white pieces?
+            gameRepository.addResult(game.getGameId(), resultUpdateRequest.getResult());
+            onResultAdd();
+        } catch (NotInDatabaseException e){
+            throw e;
         }
-        if (game == null) {
-            throw new NotInDatabaseException("Player has no active games");
-        }
-        gameRepository.addResult(game.getGameId(), whitePlayerPoints);
-        onResultAdd();
     }
 
     private void onResultAdd() {
