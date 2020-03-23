@@ -4,18 +4,25 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
+
 public class Tournament extends User {
 
     @JsonAlias("tournament_name")
     private String tournamentName;
 
+    @Pattern(regexp = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", flags=Pattern.Flag.CASE_INSENSITIVE) // regex from https://stackoverflow.com/questions/8204680/java-regex-email
     @JsonAlias("admin_email")
     private String adminEmail; // the email of the tournament administrator
     private String start; // point in time when tournament starts
     private String end; // point in time when tournament ends
+
+    @Min(0)
     private int tables; //number of tables in the tournament
 
     @JsonAlias("max_rounds")
+    @Min(0)
     private int maxRounds; // maximum number of rounds in the tournament
     private boolean active; // true if tournament isn't paused
 

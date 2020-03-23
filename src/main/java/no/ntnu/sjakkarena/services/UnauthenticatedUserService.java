@@ -52,8 +52,7 @@ public class UnauthenticatedUserService {
     }
 
     public String handleAddTournamentRequest(Tournament tournament) {
-        // TODO use bean validation in controller class
-        Validator.validateTournament(tournament);
+        Validator.validateThatStartIsBeforeEnd(tournament);
         addTournamentIDs(tournament);
         tournamentRepository.addNewTournament(tournament);
         //sendEmailToTournamentAdmin(tournament); //Remove comment to send email

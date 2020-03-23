@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * Handles requests from users who don't have a token to identify them.  All methods in this class will return a
  * token to the user.
@@ -48,7 +50,7 @@ public class UnauthenticatedUserRESTController {
      * HTTP status 422 UNPROCESSABLE_ENTITY otherwise
      */
     @RequestMapping(value = "/new-tournament", method = RequestMethod.POST)
-    public ResponseEntity<String> registerTournament(@RequestBody Tournament tournament) {
+    public ResponseEntity<String> registerTournament(@Valid @RequestBody Tournament tournament) {
         try {
             String responseMessage = unauthenticatedUserService.handleAddTournamentRequest(tournament);
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);

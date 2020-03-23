@@ -4,6 +4,7 @@ import no.ntnu.sjakkarena.adaptedmonrad.AdaptedMonrad;
 import no.ntnu.sjakkarena.adaptedmonrad.AfterTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
+import no.ntnu.sjakkarena.data.ResultUpdateRequest;
 import no.ntnu.sjakkarena.events.GamesCreatedEvent;
 import no.ntnu.sjakkarena.events.NewPlayerAddedEvent;
 import no.ntnu.sjakkarena.events.TournamentStartedEvent;
@@ -13,6 +14,7 @@ import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
 import no.ntnu.sjakkarena.utils.RESTSession;
+import no.ntnu.sjakkarena.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -39,8 +41,13 @@ public class GameService {
 
     private AdaptedMonrad adaptedMonrad;
 
-    public void addResult(int opponentId, double whitePlayerPoints) {
+    public void addResult(ResultUpdateRequest resultUpdateRequest) {
+        if (!Validator.pointsIsValid(resultUpdateRequest.getResult())) {
+            throw new IllegalArgumentException("Not a valid result");
+        }
         // TODO change sql query to find game regardless of who is white or black --> remove the first if statement
+        int opponentId = resultUpdateRequest.getOpponent();
+        double whitePlayerPoints = resultUpdateRequest.getResult();
         Game game = gameRepository.getActiveGame(RESTSession.getUserId(), opponentId); // Has requesting user white pieces?
         if (game == null) {
             game = gameRepository.getActiveGame(opponentId, RESTSession.getUserId()); // Has requesting user black pieces?
