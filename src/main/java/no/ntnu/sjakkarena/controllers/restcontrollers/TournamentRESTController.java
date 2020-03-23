@@ -3,6 +3,7 @@ package no.ntnu.sjakkarena.controllers.restcontrollers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import no.ntnu.sjakkarena.data.GameWithPlayerNames;
+import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;
@@ -76,6 +77,23 @@ public class TournamentRESTController {
     }
 
     /**
+     * Deletes the player with the given ID
+     *
+     * @return 200 OK if successfully deleted, otherwise 400 BAD REQUEST
+     */
+    @RequestMapping(value = "/set-player-inactive/{id}", method = RequestMethod.PATCH)
+    public ResponseEntity<String> setPlayerInactive(@PathVariable(name = "id") int id) {
+        try {
+            playerRepository.leaveTournament(id);
+            // TODO change to event handling
+            tournamentSubscriberHandler.sendPlayerList(RESTSession.getUserId());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NotAbleToUpdateDBException e) {
+            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
      * Returns the games of the requesting tournament
      *
      * @return the games of the requesting tournament
@@ -93,5 +111,16 @@ public class TournamentRESTController {
     public ResponseEntity<String> startTournament(){
         tournamentService.startTournament();
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * Returns information about a specific player
+     * @return Information about a specific player
+     */
+    @RequestMapping(value = "/player/{id}", method = RequestMethod.GET)
+    public ResponseEntity<String> getPlayer(@PathVariable(name = "id") int playerId){
+        Player player = playerRepository.getPlayer(playerId);
+        Gson gson = new Gson();
+        return new ResponseEntity<>(gson.toJson(player), HttpStatus.OK);
     }
 }
