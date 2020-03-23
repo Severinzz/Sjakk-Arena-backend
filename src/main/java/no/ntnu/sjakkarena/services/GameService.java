@@ -40,11 +40,7 @@ public class GameService {
     private AdaptedMonrad adaptedMonrad;
 
     public void addResult(int opponentId, double whitePlayerPoints) {
-        // TODO change sql query to find game regardless of who is white or black --> remove the first if statement
-        Game game = gameRepository.getActiveGame(RESTSession.getUserId(), opponentId); // Has requesting user white pieces?
-        if (game == null) {
-            game = gameRepository.getActiveGame(opponentId, RESTSession.getUserId()); // Has requesting user black pieces?
-        }
+        Game game = gameRepository.getActiveGame(RESTSession.getUserId(), opponentId);
         if (game == null) {
             throw new NotInDatabaseException("Player has no active games");
         }

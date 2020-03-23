@@ -23,16 +23,19 @@ public class GameRepository {
     private RowMapper<Game> gameRowMapper = new GameRowMapper();
 
     /**
-     * Gets an active game where the provided players are playing
+     * Gets any active game where the provided players are playing.
+     * Order does not matter.
      *
-     * @param whitePlayer The player using white pieces
-     * @param blackPlayer The player using black pieces
+     * @param playerOne The player using white pieces
+     * @param playerTwo The player using black pieces
      * @return The active game where the provided players are playing
      */
-    public Game getActiveGame(int whitePlayer, int blackPlayer) {
+    public Game getActiveGame(int playerOne, int playerTwo) {
         try {
             return jdbcTemplate.queryForObject("SELECT * FROM `sjakkarena`.`game` WHERE white_player = " +
-                    whitePlayer + " AND " + "black_player = " + blackPlayer + " AND `active` = 1", gameRowMapper);
+                    playerOne + " AND " + "black_player = " + playerTwo + " AND `active` = 1 " +
+                    "OR white_player = " + playerTwo +" AND black_player = " + playerOne +
+                    " AND `active` = 1", gameRowMapper);
         } catch (NullPointerException | EmptyResultDataAccessException e) {
             return null;
         }
