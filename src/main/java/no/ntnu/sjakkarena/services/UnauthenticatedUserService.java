@@ -1,9 +1,8 @@
 package no.ntnu.sjakkarena.services;
 
-import no.ntnu.sjakkarena.adaptedmonrad.AdaptedMonrad;
-import no.ntnu.sjakkarena.adaptedmonrad.AfterTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.events.NewPlayerAddedEvent;
+import no.ntnu.sjakkarena.exceptions.NameAlreadyExistsException;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
@@ -32,6 +31,9 @@ public class UnauthenticatedUserService {
     private ApplicationEventPublisher applicationEventPublisher;
 
     public String addNewPlayer(Player player) {
+        if (playerRepository.doesPlayerExist(player)){
+            throw new NameAlreadyExistsException();
+        }
         try {
             player.setIcon(PlayerIcons.getRandomFontAwesomeIcon());
             int userId = playerRepository.addNewPlayer(player);

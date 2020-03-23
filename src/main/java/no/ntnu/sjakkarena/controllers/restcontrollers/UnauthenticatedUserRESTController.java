@@ -1,6 +1,7 @@
 package no.ntnu.sjakkarena.controllers.restcontrollers;
 
 import com.google.gson.Gson;
+import no.ntnu.sjakkarena.exceptions.NameAlreadyExistsException;
 import no.ntnu.sjakkarena.services.UnauthenticatedUserService;
 import no.ntnu.sjakkarena.subscriberhandler.TournamentSubscriberHandler;
 import no.ntnu.sjakkarena.EmailSender;
@@ -51,6 +52,8 @@ public class UnauthenticatedUserRESTController {
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
             return new ResponseEntity<>("Couldn't add player to database", HttpStatus.BAD_REQUEST);
+        } catch (NameAlreadyExistsException e) {
+            return new ResponseEntity<>("Name already take, try a new one!", HttpStatus.CONFLICT); // frontend leter etter kode 409
         }
     }
 
@@ -79,10 +82,11 @@ public class UnauthenticatedUserRESTController {
 
     /**
      * Get the information to be returned to the client
+     *
      * @param tournament The newly created tournament
      * @return information to be returned to the client
      */
-    private String getToClientJSON(Tournament tournament){
+    private String getToClientJSON(Tournament tournament) {
         String jws = JWSHelper.createJWS("TOURNAMENT", "" + tournament.getId());
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("jwt", jws);
@@ -92,15 +96,17 @@ public class UnauthenticatedUserRESTController {
 
     /**
      * Adds tournament id and adminUUID to the tournament
+     *
      * @param tournament the tournament to be given IDs
      */
-    private void addTournamentIDs(Tournament tournament){
+    private void addTournamentIDs(Tournament tournament) {
         tournament.setId(IDGenerator.generateTournamentID());
         tournament.setAdminUUID(IDGenerator.generateAdminUUID());
     }
 
     /**
      * Sends an email to the tournament admin containing the adminUUID
+     *
      * @param tournament a tournament
      */
     private void sendEmailToTournamentAdmin(Tournament tournament) {

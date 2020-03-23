@@ -3,7 +3,6 @@ package no.ntnu.sjakkarena.repositories;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.mappers.PlayerRowMapper;
-import no.ntnu.sjakkarena.utils.DBInteractionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,6 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class PlayerRepository {
@@ -151,5 +151,21 @@ public class PlayerRepository {
     public Collection<Player> getPlayersInTournament(int tournamentId) {
         List<Player> players = jdbcTemplate.query("CALL get_players_in_tournament(" + tournamentId + ")", playerRowMapper);
         return players;
+    }
+
+    /**
+     * Validate if player with name already exist in tournament
+     * Returns true if there is one, false if not.
+     * @param player object with a name and tournament id
+     */
+    public boolean doesPlayerExist(Player player) {
+        // Adapted from: https://stackoverflow.com/questions/48546574/query-to-check-if-the-record-exists-in-spring-jdbc-template
+        boolean exist = false;
+        String sql = "SELECT * FROM sjakkarena.player WHERE player.name = ? AND player.tournament = ? LIMIT 1";
+        List<Map<String, Object>> players = jdbcTemplate.queryForList(sql, new Object[] {player.getName(), player.getTournamentId()});
+        if (players.size() != 0) {
+            exist = true;
+        }
+        return exist;
     }
 }
