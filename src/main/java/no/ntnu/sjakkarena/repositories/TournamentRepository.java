@@ -3,6 +3,7 @@ package no.ntnu.sjakkarena.repositories;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 
+import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.mappers.PlayerRowMapper;
 import no.ntnu.sjakkarena.utils.DBInteractionHelper;
 import no.ntnu.sjakkarena.data.Tournament;
@@ -84,8 +85,8 @@ public class TournamentRepository {
         try {
             return jdbcTemplate.queryForObject("SELECT * FROM `sjakkarena`.`tournament` WHERE " +
                     "`tournament_id` = " + tournamentId, tournamentRowMapper);
-        } catch (NullPointerException e) {
-            return new Tournament();
+        } catch (NullPointerException | EmptyResultDataAccessException e) {
+            throw new NotInDatabaseException("Couldn't find tournament in the database");
         }
     }
 
@@ -101,7 +102,7 @@ public class TournamentRepository {
             return jdbcTemplate.queryForObject("SELECT * FROM `sjakkarena`.`tournament` WHERE " +
                     "`admin_uuid` = \"" + adminUUID + "\"", tournamentRowMapper);
         } catch (NullPointerException | EmptyResultDataAccessException e) {
-            return new Tournament();
+            throw new NotInDatabaseException("AdminUUID is incorrect");
         }
     }
 
@@ -122,7 +123,29 @@ public class TournamentRepository {
     }
 
     public void setActive(int tournamentId) {
-        jdbcTemplate.update("UPDATE sjakkarena.tournament SET `active` = 1 WHERE tournament_id = " + tournamentId);
+        try {
+            jdbcTemplate.update("UPDATE sjakkarena.tournament SET `active` = 1 WHERE tournament_id = " + tournamentId);
+        } catch (DataAccessException e){
+            throw new NotAbleToUpdateDBException("Could not start tournament");
+        }
+    }
+
+    public boolean exists(int tournamentId) {
+        try {
+            getTournament(tournamentId);
+            return true;
+        } catch (NotInDatabaseException e){
+            return false;
+        }
+    }
+
+    public boolean exists(String adminUUID) {
+        try {
+            getTournament(adminUUID);
+            return true;
+        } catch (NotInDatabaseException e){
+            return false;
+        }
     }
 }
 

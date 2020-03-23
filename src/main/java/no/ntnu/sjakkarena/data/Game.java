@@ -1,22 +1,15 @@
 package no.ntnu.sjakkarena.data;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Game {
 
-    @SerializedName("game_id")
     private int gameId;
     private int table;
     private String start;
     private String end;
-
-    @SerializedName("white_player_id")
     private int whitePlayerId;
-
-    @SerializedName("black_player_id")
     private int blackPlayerId;
-
-    @SerializedName("white_player_points")
     private Integer whitePlayerPoints;
     private boolean active;
 
@@ -42,7 +35,7 @@ public class Game {
         this.whitePlayerPoints = whitePlayerPoints;
         this.active = active;
     }
-
+    @JsonProperty("game_id")
     public int getGameId() {
         return gameId;
     }
@@ -75,6 +68,7 @@ public class Game {
         this.end = end;
     }
 
+    @JsonProperty("white_player_id")
     public int getWhitePlayerId() {
         return whitePlayerId;
     }
@@ -83,6 +77,7 @@ public class Game {
         this.whitePlayerId = whitePlayerId;
     }
 
+    @JsonProperty("black_player_id")
     public int getBlackPlayerId() {
         return blackPlayerId;
     }
@@ -91,6 +86,7 @@ public class Game {
         this.blackPlayerId = blackPlayerId;
     }
 
+    @JsonProperty("white_player_points")
     public Integer getWhitePlayerPoints() {
         return whitePlayerPoints;
     }

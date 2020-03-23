@@ -1,33 +1,31 @@
 package no.ntnu.sjakkarena.data;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class Player extends User{
 
-    @Expose
     private String name;
     private boolean paused;
     private double points;
     private int rounds;
-
-    @SerializedName("tournament")
+    @JsonAlias("tournament")
     private int tournamentId;
-    @Expose
     private String icon;
-
-    @SerializedName("in_tournament")
     private boolean inTournament;
-
     private int bibNumber;
-
     private Collection<Integer> previousOpponents = new ArrayList<>();
     private int numberOfWhiteGames;
     private String lastPlayedColor;
     private int sameColorStreak;
+
+    public Player() {
+    }
+
 
     public Player(int playerId, String name, boolean paused, double points, int rounds, int tournamentId, String icon,
                   boolean inTournament, int numberOfWhiteGames, String lastPlayedColor, int sameColorStreak){
@@ -71,6 +69,7 @@ public class Player extends User{
         this.points = points;
     }
 
+    @JsonIgnore
     public int getRounds() {
         return rounds;
     }
@@ -79,6 +78,7 @@ public class Player extends User{
         this.rounds = rounds;
     }
 
+    @JsonProperty("tournament_id")
     public int getTournamentId() {
         return tournamentId;
     }
@@ -95,6 +95,7 @@ public class Player extends User{
         this.icon = icon;
     }
 
+    @JsonProperty("in_tournament")
     public boolean isInTournament() {
         return inTournament;
     }
@@ -103,6 +104,7 @@ public class Player extends User{
         this.inTournament = inTournament;
     }
 
+    @JsonIgnore
     public int getBibNumber() {
         return bibNumber;
     }
@@ -111,6 +113,7 @@ public class Player extends User{
         this.bibNumber = bibNumber;
     }
 
+    @JsonIgnore
     public Collection<Integer> getPreviousOpponents() {
         return previousOpponents;
     }
@@ -119,6 +122,7 @@ public class Player extends User{
         this.previousOpponents = previousOpponents;
     }
 
+    @JsonIgnore
     public int getNumberOfWhiteGames() {
         return numberOfWhiteGames;
     }
@@ -127,6 +131,7 @@ public class Player extends User{
         this.numberOfWhiteGames = numberOfWhiteGames;
     }
 
+    @JsonIgnore
     public String getLastPlayedColor() {
         return lastPlayedColor;
     }
@@ -135,6 +140,7 @@ public class Player extends User{
         this.lastPlayedColor = lastPlayedColor;
     }
 
+    @JsonIgnore
     public int getSameColorStreak() {
         return sameColorStreak;
     }
@@ -143,6 +149,7 @@ public class Player extends User{
         this.sameColorStreak = sameColorStreak;
     }
 
+    @JsonIgnore
     public double getWhiteGameRatio(){
         return (double) numberOfWhiteGames / rounds;
     }

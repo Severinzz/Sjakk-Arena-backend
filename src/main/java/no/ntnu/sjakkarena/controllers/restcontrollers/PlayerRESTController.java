@@ -1,12 +1,8 @@
 package no.ntnu.sjakkarena.controllers.restcontrollers;
 
-import no.ntnu.sjakkarena.data.Player;
-import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
-import no.ntnu.sjakkarena.repositories.PlayerRepository;
-import no.ntnu.sjakkarena.repositories.TournamentRepository;
-import no.ntnu.sjakkarena.utils.RESTSession;
-import org.json.JSONObject;
+import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
+import no.ntnu.sjakkarena.services.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PlayerRESTController {
 
     @Autowired
-    private PlayerRepository playerRepository;
-
-    @Autowired
-    private TournamentRepository tournamentRepository;
-
-    // TODO create player service and move most logic to the service class
+    private PlayerService playerService;
 
     /**
      * Set a player with a given ID to paused
@@ -38,12 +29,10 @@ public class PlayerRESTController {
     @RequestMapping(value = "/pause", method = RequestMethod.PATCH)
     public ResponseEntity<String> pause() {
         try {
-            int id = RESTSession.getUserId();
-            playerRepository.pausePlayer(id);
+            playerService.pausePlayer();
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -54,15 +43,12 @@ public class PlayerRESTController {
      */
     @RequestMapping(value = "/tournament", method = RequestMethod.GET)
     public ResponseEntity<String> getTournament() {
-        int playerId = RESTSession.getUserId();
-        int tournamentId = playerRepository.getPlayer(playerId).getTournamentId();
-        Tournament tournament = tournamentRepository.getTournament(tournamentId);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("name", tournament.getTournamentName());
-        jsonObject.put("started", tournament.isActive());
-        jsonObject.put("start", tournament.getStart());
-        jsonObject.put("end", tournament.getEnd());
-        return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
+        try {
+            String playersTournament = playerService.getPlayersTournament();
+            return new ResponseEntity<>(playersTournament, HttpStatus.OK);
+        } catch (NotInDatabaseException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     /**
@@ -72,12 +58,12 @@ public class PlayerRESTController {
      */
     @RequestMapping(value = "/information", method = RequestMethod.GET)
     public ResponseEntity<String> getPlayer() {
-        int playerId = RESTSession.getUserId();
-        Player player = playerRepository.getPlayer(playerId);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("name", player.getName());
-        jsonObject.put("points", player.getPoints());
-        return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
+        try {
+            String player = playerService.getPlayer();
+            return new ResponseEntity<>(player, HttpStatus.OK);
+        } catch(NotInDatabaseException e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     /**
@@ -88,10 +74,9 @@ public class PlayerRESTController {
     @RequestMapping(value = "/unpause", method = RequestMethod.PATCH)
     public ResponseEntity<String> setPlayerActive() {
         try {
-            playerRepository.unpausePlayer(RESTSession.getUserId());
+            playerService.unpausePlayer();
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
-            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -104,10 +89,9 @@ public class PlayerRESTController {
     @RequestMapping(value = "/leave-tournament", method = RequestMethod.PATCH)
     public ResponseEntity<String> leaveTournament() {
         try {
-            playerRepository.leaveTournament(RESTSession.getUserId());
+            playerService.letPlayerLeaveTournament();
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
-            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -120,10 +104,9 @@ public class PlayerRESTController {
     @RequestMapping(value = "/delete-player", method = RequestMethod.PATCH)
     public ResponseEntity<String> deletePlayer() {
         try {
-            playerRepository.deletePlayer(RESTSession.getUserId());
+            playerService.deletePlayer();
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
-            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

@@ -2,9 +2,11 @@ package no.ntnu.sjakkarena.repositories;
 
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
+import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.mappers.PlayerRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -65,7 +67,12 @@ public class PlayerRepository {
      * @return The player with the specified playerId
      */
     public Player getPlayer(int playerId){
-        return jdbcTemplate.queryForObject("CALL get_player(" + playerId + ")", playerRowMapper);
+        try {
+            return jdbcTemplate.queryForObject("CALL get_player(" + playerId + ")", playerRowMapper);
+        }
+        catch (NullPointerException | EmptyResultDataAccessException e){
+            throw new NotInDatabaseException("Could not find player in the database");
+        }
     }
 
     /**
@@ -91,7 +98,7 @@ public class PlayerRepository {
             jdbcTemplate.update(updateQuery);
         }
         catch(DataAccessException e){
-            throw new NotAbleToUpdateDBException("Could not set 'paused' field to 1");
+            throw new NotAbleToUpdateDBException("Could not pause player");
         }
     }
 
@@ -105,7 +112,7 @@ public class PlayerRepository {
             jdbcTemplate.update(updateQuery);
         }
         catch(DataAccessException e){
-            throw new NotAbleToUpdateDBException("Could not set 'pause' field to 0");
+            throw new NotAbleToUpdateDBException("Could not unpause player");
         }
     }
 

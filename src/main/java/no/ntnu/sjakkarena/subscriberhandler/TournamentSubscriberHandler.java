@@ -1,7 +1,6 @@
 package no.ntnu.sjakkarena.subscriberhandler;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.events.GamesCreatedEvent;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
@@ -19,6 +18,7 @@ public class TournamentSubscriberHandler extends SubscriberHandler{
     @Autowired
     private PlayerRepository playerRepository;
 
+    private JSONCreator jsonCreator = new JSONCreator();
 
     /**
      * Sends all the names of the players in the tournament
@@ -29,8 +29,8 @@ public class TournamentSubscriberHandler extends SubscriberHandler{
         try {
             // TODO remove tournament repository.getPl... use events instead
             Collection<Player> players = playerRepository.getPlayersInTournament(tournamentId);
-            Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-            sendToSubscriber(tournamentId,"/queue/tournament/players", gson.toJson(players));
+            sendToSubscriber(tournamentId,"/queue/tournament/players",
+                    jsonCreator.writeValueAsString(players));
         } catch (NullPointerException e) {
             printNotSubscribingErrorMessage("a list of players", e);
         }
@@ -45,8 +45,8 @@ public class TournamentSubscriberHandler extends SubscriberHandler{
         try {
             // TODO remove tournament repository.getPl... use events instead
             Collection<Player> players = tournamentRepository.getPlayersSortedByPoints(tournamentId);
-            Gson gson = new Gson();
-            sendToSubscriber(tournamentId, "/queue/tournament/leaderboard", gson.toJson(players));
+            sendToSubscriber(tournamentId, "/queue/tournament/leaderboard",
+                    jsonCreator.writeValueAsString(players));
         } catch (NullPointerException e) {
             printNotSubscribingErrorMessage("a leaderboard", e);
         }
@@ -59,9 +59,8 @@ public class TournamentSubscriberHandler extends SubscriberHandler{
     @EventListener
     public void onGamesCreated(GamesCreatedEvent gamesCreatedEvent) {
         try {
-            Gson gson = new Gson();
             sendToSubscriber(gamesCreatedEvent.getTournamentId(), "/queue/tournament/games",
-                    gson.toJson(gamesCreatedEvent.getActiveGames()));
+                    jsonCreator.writeValueAsString(gamesCreatedEvent.getActiveGames()));
         }
         catch(NullPointerException e){
             printNotSubscribingErrorMessage("new games", e);
