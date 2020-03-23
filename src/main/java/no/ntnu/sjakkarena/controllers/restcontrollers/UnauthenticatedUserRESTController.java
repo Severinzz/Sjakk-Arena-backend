@@ -127,7 +127,7 @@ public class UnauthenticatedUserRESTController {
     public ResponseEntity<String> signIn(@PathVariable(name = "uuid") String UUID) {
         Tournament tournament = tournamentRepository.getTournament(UUID);
         if (tournament.getAdminUUID() == null) {
-            return new ResponseEntity<>("adminUUID is incorrect", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("AdminUUID is incorrect", HttpStatus.NOT_FOUND);
         } else {
             //Create JWS
             String jws = JWSHelper.createJWS("TOURNAMENT", "" + tournament.getId());
