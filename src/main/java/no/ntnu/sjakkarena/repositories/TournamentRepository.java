@@ -1,12 +1,10 @@
 package no.ntnu.sjakkarena.repositories;
 
-import no.ntnu.sjakkarena.data.Player;
-import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
-
-import no.ntnu.sjakkarena.mappers.PlayerRowMapper;
-import no.ntnu.sjakkarena.utils.DBInteractionHelper;
 import no.ntnu.sjakkarena.data.Tournament;
+import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
+import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.mappers.TournamentRowMapper;
+import no.ntnu.sjakkarena.utils.DBInteractionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -14,7 +12,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -28,8 +25,6 @@ public class TournamentRepository {
 
     private RowMapper<Tournament> tournamentRowMapper = new TournamentRowMapper();
 
-    // TODO remove
-    private RowMapper<Player> playerRowMapper = new PlayerRowMapper();
 
     /**
      * Adds a new tournament to the database
@@ -84,8 +79,8 @@ public class TournamentRepository {
         try {
             return jdbcTemplate.queryForObject("SELECT * FROM `sjakkarena`.`tournament` WHERE " +
                     "`tournament_id` = " + tournamentId, tournamentRowMapper);
-        } catch (NullPointerException e) {
-            return new Tournament();
+        } catch (NullPointerException | EmptyResultDataAccessException e) {
+            throw new NotInDatabaseException("Couldn't find tournament in the database");
         }
     }
 
@@ -101,20 +96,8 @@ public class TournamentRepository {
             return jdbcTemplate.queryForObject("SELECT * FROM `sjakkarena`.`tournament` WHERE " +
                     "`admin_uuid` = \"" + adminUUID + "\"", tournamentRowMapper);
         } catch (NullPointerException | EmptyResultDataAccessException e) {
-            return new Tournament();
+            throw new NotInDatabaseException("AdminUUID is incorrect");
         }
-    }
-
-    /**
-     * Returns the leaderboard of the given tournament
-     * @param tournamentId The id of the tournament
-     * @return A leaderboard of the given tournament
-     */
-    // TODO move to playerRepository
-    public Collection<Player> getPlayersSortedByPoints(int tournamentId) {
-        List<Player> players = jdbcTemplate.query("SELECT * FROM  `sjakkarena`.`player` WHERE " +
-                "`in_tournament` = 1 AND `tournament` = " + tournamentId + " ORDER BY `points` DESC", playerRowMapper);
-        return players;
     }
 
     public List<Integer> getAvailableTables(int tournamentId) {
@@ -122,7 +105,29 @@ public class TournamentRepository {
     }
 
     public void setActive(int tournamentId) {
-        jdbcTemplate.update("UPDATE sjakkarena.tournament SET `active` = 1 WHERE tournament_id = " + tournamentId);
+        try {
+            jdbcTemplate.update("UPDATE sjakkarena.tournament SET `active` = 1 WHERE tournament_id = " + tournamentId);
+        } catch (DataAccessException e){
+            throw new NotAbleToUpdateDBException("Could not start tournament");
+        }
+    }
+
+    public boolean exists(int tournamentId) {
+        try {
+            getTournament(tournamentId);
+            return true;
+        } catch (NotInDatabaseException e){
+            return false;
+        }
+    }
+
+    public boolean exists(String adminUUID) {
+        try {
+            getTournament(adminUUID);
+            return true;
+        } catch (NotInDatabaseException e){
+            return false;
+        }
     }
 }
 

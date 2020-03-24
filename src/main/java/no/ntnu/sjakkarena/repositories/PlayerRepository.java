@@ -2,9 +2,12 @@ package no.ntnu.sjakkarena.repositories;
 
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
+import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.mappers.PlayerRowMapper;
+import no.ntnu.sjakkarena.utils.PlayerSorter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -15,7 +18,6 @@ import org.springframework.stereotype.Repository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +67,12 @@ public class PlayerRepository {
      * @return The player with the specified playerId
      */
     public Player getPlayer(int playerId){
-        return jdbcTemplate.queryForObject("CALL get_player(" + playerId + ")", playerRowMapper);
+        try {
+            return jdbcTemplate.queryForObject("CALL get_player(" + playerId + ")", playerRowMapper);
+        }
+        catch (NullPointerException | EmptyResultDataAccessException e){
+            throw new NotInDatabaseException("Could not find player in the database");
+        }
     }
 
     /**
@@ -75,7 +82,7 @@ public class PlayerRepository {
      */
     public void deletePlayer(int id) {
         try {
-            jdbcTemplate.update("DELETE FROM player WHERE `player_id` = " + id);
+            jdbcTemplate.update("DELETE FROM sjakkarena.player WHERE `player_id` = " + id);
         } catch (DataAccessException e) {
             throw new NotAbleToUpdateDBException("Couldn't delete player from database");
         }
@@ -91,7 +98,7 @@ public class PlayerRepository {
             jdbcTemplate.update(updateQuery);
         }
         catch(DataAccessException e){
-            throw new NotAbleToUpdateDBException("Could not set 'paused' field to 1");
+            throw new NotAbleToUpdateDBException("Could not pause player");
         }
     }
 
@@ -105,7 +112,7 @@ public class PlayerRepository {
             jdbcTemplate.update(updateQuery);
         }
         catch(DataAccessException e){
-            throw new NotAbleToUpdateDBException("Could not set 'pause' field to 0");
+            throw new NotAbleToUpdateDBException("Could not unpause player");
         }
     }
 
@@ -148,7 +155,7 @@ public class PlayerRepository {
      * @param tournamentId the id of the tournament where the players are enrolled
      * @return A collection of players enrolled in a tournament
      */
-    public Collection<Player> getPlayersInTournament(int tournamentId) {
+    public List<Player> getPlayersInTournament(int tournamentId) {
         List<Player> players = jdbcTemplate.query("CALL get_players_in_tournament(" + tournamentId + ")", playerRowMapper);
         return players;
     }
@@ -167,5 +174,16 @@ public class PlayerRepository {
             exist = true;
         }
         return exist;
+    }
+
+    /**
+     * Returns the leaderboard of the given tournament
+     * @param tournamentId The id of the tournament
+     * @return A leaderboard of the given tournament
+     */
+    public List<Player> getPlayersInTournamentSortedByPoints(int tournamentId) {
+        List<Player> players = getPlayersInTournament(tournamentId);
+        PlayerSorter.sortPlayersByPoints(players);
+        return players;
     }
 }

@@ -1,26 +1,35 @@
 package no.ntnu.sjakkarena.data;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 
 public class Tournament extends User {
 
-    @SerializedName("tournament_name")
+    @JsonAlias("tournament_name")
     private String tournamentName;
 
-    @SerializedName("admin_email")
+    @Pattern(regexp = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", flags=Pattern.Flag.CASE_INSENSITIVE) // regex from https://stackoverflow.com/questions/8204680/java-regex-email
+    @JsonAlias("admin_email")
     private String adminEmail; // the email of the tournament administrator
     private String start; // point in time when tournament starts
     private String end; // point in time when tournament ends
+
+    @Min(0)
     private int tables; //number of tables in the tournament
 
-    @SerializedName("max_rounds")
+    @JsonAlias("max_rounds")
+    @Min(0)
     private int maxRounds; // maximum number of rounds in the tournament
     private boolean active; // true if tournament isn't paused
 
-    @SerializedName("admin_uuid")
+    @JsonAlias("admin_uuid")
     private String adminUUID; // an unique id given to the admin of tournament
 
-    @SerializedName("early_start")
+    @JsonAlias("early_start")
     private boolean earlyStart; //Start when two or more players are enrolled
 
     public Tournament() {
@@ -41,6 +50,7 @@ public class Tournament extends User {
         this.earlyStart = earlyStart;
     }
 
+    @JsonProperty("tournament_name")
     public String getTournamentName() {
         return tournamentName;
     }
@@ -49,6 +59,7 @@ public class Tournament extends User {
         this.tournamentName = tournamentName;
     }
 
+    @JsonProperty("admin_email")
     public String getAdminEmail() {
         return adminEmail;
     }
@@ -81,6 +92,7 @@ public class Tournament extends User {
         this.tables = tables;
     }
 
+    @JsonProperty("max_rounds")
     public int getMaxRounds() {
         return maxRounds;
     }
@@ -97,6 +109,7 @@ public class Tournament extends User {
         this.active = active;
     }
 
+    @JsonIgnore
     public String getAdminUUID() {
         return adminUUID;
     }
@@ -105,6 +118,7 @@ public class Tournament extends User {
         this.adminUUID = adminUUID;
     }
 
+    @JsonProperty("early_start")
     public boolean isEarlyStart() {
         return earlyStart;
     }

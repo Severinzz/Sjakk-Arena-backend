@@ -1,12 +1,13 @@
 package no.ntnu.sjakkarena.subscriberhandler;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.events.GamesCreatedEvent;
 import org.springframework.context.event.EventListener;
 
 public class PlayerSubscriberHandler extends SubscriberHandler {
+
+    private JSONCreator jsonCreator = new JSONCreator();
 
     /**
      *
@@ -26,8 +27,7 @@ public class PlayerSubscriberHandler extends SubscriberHandler {
 
     private void sendGame(Game game, int playerId) {
         try {
-            Gson gson = new GsonBuilder().serializeNulls().create();
-            sendToSubscriber(playerId, "/queue/player/games", gson.toJson(game));
+            sendToSubscriber(playerId, "/queue/player/active-game", jsonCreator.writeValueAsString(game));
         }
         catch(NullPointerException e){
             printNotSubscribingErrorMessage("games to players", e);

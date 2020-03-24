@@ -1,16 +1,14 @@
 package no.ntnu.sjakkarena.data;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * An element in a game table
  */
 public class GameWithPlayerNames extends Game{
 
-    @SerializedName("white_player_name")
     private String whitePlayerName;
 
-    @SerializedName("black_player_name")
     private String blackPlayerName;
 
     public GameWithPlayerNames(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId,
@@ -20,6 +18,7 @@ public class GameWithPlayerNames extends Game{
         this.blackPlayerName = blackPlayerName;
     }
 
+    @JsonProperty("white_player_name")
     public String getWhitePlayerName() {
         return whitePlayerName;
     }
@@ -28,6 +27,7 @@ public class GameWithPlayerNames extends Game{
         this.whitePlayerName = whitePlayerName;
     }
 
+    @JsonProperty("black_player_name")
     public String getBlackPlayerName() {
         return blackPlayerName;
     }

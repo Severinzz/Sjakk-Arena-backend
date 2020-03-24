@@ -1,69 +1,61 @@
 package no.ntnu.sjakkarena.subscriberhandler;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.events.GamesCreatedEvent;
-import no.ntnu.sjakkarena.repositories.PlayerRepository;
-import no.ntnu.sjakkarena.repositories.TournamentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import no.ntnu.sjakkarena.events.PlayerListChangeEvent;
 import org.springframework.context.event.EventListener;
 
-import java.util.Collection;
+import java.util.List;
 
-public class TournamentSubscriberHandler extends SubscriberHandler{
+public class TournamentSubscriberHandler extends SubscriberHandler {
 
-    @Autowired
-    private TournamentRepository tournamentRepository;
-
-    @Autowired
-    private PlayerRepository playerRepository;
-
+    private JSONCreator jsonCreator = new JSONCreator();
 
     /**
      * Sends all the names of the players in the tournament
-     *
-     * @return A json with the player ids mapped to their names
      */
-    public void sendPlayerList(int tournamentId) {
-        try {
-            // TODO remove tournament repository.getPl... use events instead
-            Collection<Player> players = playerRepository.getPlayersInTournament(tournamentId);
-            Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-            sendToSubscriber(tournamentId,"/queue/tournament/players", gson.toJson(players));
-        } catch (NullPointerException e) {
-            printNotSubscribingErrorMessage("a list of players", e);
+    @EventListener
+    public void onPlayerListChange(PlayerListChangeEvent playerListChangeEvent) {
+        if (playerListChangeEvent.hasTournamentStarted()) {
+            sendLeaderBoard(playerListChangeEvent.getTournamentId(),
+                    playerListChangeEvent.getLeaderBoard());
+        } else {
+            sendPlayerList(playerListChangeEvent.getTournamentId(),
+                    playerListChangeEvent.getPlayers());
         }
     }
 
     /**
      * Sends the tournaments leaderboard
-     *
-     * @param tournamentId The id of the tournament
      */
-    public void sendLeaderBoard(int tournamentId) {
+    private void sendLeaderBoard(int tournamentId, List<Player> leaderBoard) {
         try {
-            // TODO remove tournament repository.getPl... use events instead
-            Collection<Player> players = tournamentRepository.getPlayersSortedByPoints(tournamentId);
-            Gson gson = new Gson();
-            sendToSubscriber(tournamentId, "/queue/tournament/leaderboard", gson.toJson(players));
+            sendToSubscriber(tournamentId, "/queue/tournament/leaderboard",
+                    jsonCreator.writeValueAsString(leaderBoard));
         } catch (NullPointerException e) {
-            printNotSubscribingErrorMessage("a leaderboard", e);
+            printNotSubscribingErrorMessage("leader board", e);
+        }
+    }
+
+    private void sendPlayerList(int tournamentId, List<Player> players) {
+        try {
+            sendToSubscriber(tournamentId, "/queue/tournament/players",
+                    jsonCreator.writeValueAsString(players));
+        } catch (NullPointerException e) {
+            printNotSubscribingErrorMessage("players list", e);
         }
     }
 
     /**
-     *
      * @param gamesCreatedEvent
      */
     @EventListener
-    public void onGamesCreated(GamesCreatedEvent gamesCreatedEvent) {
+    public void onGamesCreation(GamesCreatedEvent gamesCreatedEvent) {
         try {
-            Gson gson = new Gson();
-            sendToSubscriber(gamesCreatedEvent.getTournamentId(), "/queue/tournament/games",
-                    gson.toJson(gamesCreatedEvent.getActiveGames()));
-        }
-        catch(NullPointerException e){
+            sendToSubscriber(gamesCreatedEvent.getTournamentId(), "/queue/tournament/active-games",
+                    jsonCreator.writeValueAsString(gamesCreatedEvent.getActiveGames()));
+        } catch (NullPointerException e) {
             printNotSubscribingErrorMessage("new games", e);
         }
     }

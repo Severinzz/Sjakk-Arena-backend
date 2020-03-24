@@ -16,7 +16,7 @@ public abstract class AdaptedMonrad {
      * @return New games.
      */
     public List<Game> getNewGames(List<Player> playersNotPlaying, Collection<Integer> availableTables) {
-        PlayerSorter.sortPlayers(playersNotPlaying);
+        PlayerSorter.sortPlayersByAvgPoints(playersNotPlaying);
         return setupGames(new ArrayDeque<>(playersNotPlaying), new PriorityQueue<>(availableTables));
     }
 

@@ -20,13 +20,14 @@ public class IDGenerator {
      */
     public static int generateTournamentID() {
         Random random = new Random();
-        int id = random.nextInt(maxNumberOfTournaments);
+        int tournamentId;
         int i = 0;
-        while (tournamentRepository.getTournament(id).getId() == id && i < maxNumberOfTournaments) {
+        do {
+            tournamentId = random.nextInt(maxNumberOfTournaments);
             i++;
-            id = random.nextInt(maxNumberOfTournaments);
         }
-        return id;
+        while (tournamentRepository.exists(tournamentId) && i <= maxNumberOfTournaments);
+        return tournamentId;
     }
 
     /**
@@ -36,12 +37,13 @@ public class IDGenerator {
      */
     public static String generateAdminUUID() {
         int stringLength = 5;
-        String adminUUID = generateRandomString(stringLength);
+        String adminUUID;
         int i = 0;
-        while (tournamentRepository.getTournament(adminUUID).equals(adminUUID) && i < maxNumberOfTournaments) {
-            i++;
+        do {
             adminUUID = generateRandomString(stringLength);
+            i++;
         }
+        while (tournamentRepository.exists(adminUUID) && i <= maxNumberOfTournaments);
         return adminUUID;
     }
 

@@ -1,11 +1,9 @@
 package no.ntnu.sjakkarena.data;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class User {
-    @Expose
-    @SerializedName("id")
+
     private int userId;
 
     public User() {
@@ -14,7 +12,7 @@ public class User {
     public User(int userId){
         this.userId = userId;
     }
-
+    @JsonProperty("user_id")
     public int getId() {
         return userId;
     }
