@@ -1,6 +1,7 @@
 package no.ntnu.sjakkarena.repositories;
 
 import no.ntnu.sjakkarena.data.Game;
+import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.mappers.GameRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -25,16 +26,21 @@ public class GameRepository {
     /**
      * Gets an active game where the provided players are playing
      *
-     * @param whitePlayer The player using white pieces
-     * @param blackPlayer The player using black pieces
+     * @param player1
+     * @param player2
      * @return The active game where the provided players are playing
      */
-    public Game getActiveGame(int whitePlayer, int blackPlayer) {
+    public Game getActiveGame(int player1, int player2) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM `sjakkarena`.`game` WHERE white_player = " +
-                    whitePlayer + " AND " + "black_player = " + blackPlayer + " AND `active` = 1", gameRowMapper);
+            return jdbcTemplate.queryForObject("SELECT * " +
+                    "FROM `sjakkarena`.`game` " +
+                    "WHERE (`active` = 1) " +
+                    "AND ((white_player = " + player1 + " " +
+                    "AND  black_player = " + player2 + ")" +
+                    "OR (white_player = " + player2 + " " +
+                    "AND black_player = " + player1 + "))", gameRowMapper);
         } catch (NullPointerException | EmptyResultDataAccessException e) {
-            return null;
+            throw new NotInDatabaseException("Player has no active games");
         }
     }
 
