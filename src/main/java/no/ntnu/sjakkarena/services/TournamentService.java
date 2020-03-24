@@ -2,6 +2,7 @@ package no.ntnu.sjakkarena.services;
 
 import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.GameWithPlayerNames;
+import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.events.TournamentStartedEvent;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
@@ -59,5 +60,15 @@ public class TournamentService extends UserService{
         } catch (NotAbleToUpdateDBException e) {
             throw e;
         }
+    }
+
+    public String getPlayer(int playerId) {
+        Player player = playerRepository.getPlayer(playerId);
+        return jsonCreator.writeValueAsString(player);
+    }
+
+    public void inactivatePlayer(int playerId) {
+        playerRepository.leaveTournament(playerId);
+        onPlayerListChange(RESTSession.getUserId());
     }
 }

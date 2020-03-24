@@ -52,6 +52,21 @@ public class TournamentRESTController {
     }
 
     /**
+     * Deletes the player with the given ID
+     *
+     * @return 200 OK if successfully deleted, otherwise 400 BAD REQUEST
+     */
+    @RequestMapping(value = "/set-player-inactive/{id}", method = RequestMethod.PATCH)
+    public ResponseEntity<String> setPlayerInactive(@PathVariable(name = "id") int playerId) {
+        try {
+            tournamentService.inactivatePlayer(playerId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NotAbleToUpdateDBException e) {
+            return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
      * Returns the games of the requesting tournament
      *
      * @return the games of the requesting tournament
@@ -62,7 +77,6 @@ public class TournamentRESTController {
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
 
-    // TODO change to websocket. Tournament subscribes to service where tournament is notified on tournament start
     @RequestMapping(value = "/start", method = RequestMethod.PATCH)
     public ResponseEntity<String> startTournament() {
         try {
@@ -71,5 +85,15 @@ public class TournamentRESTController {
         } catch(NotAbleToUpdateDBException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    /**
+     * Returns information about a specific player
+     * @return Information about a specific player
+     */
+    @RequestMapping(value = "/player/{id}", method = RequestMethod.GET)
+    public ResponseEntity<String> getPlayer(@PathVariable(name = "id") int playerId){
+        String player = tournamentService.getPlayer(playerId);
+        return new ResponseEntity<>(player, HttpStatus.OK);
     }
 }
