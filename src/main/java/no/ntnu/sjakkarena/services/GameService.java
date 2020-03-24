@@ -41,6 +41,29 @@ public class GameService extends UserService {
 
     private AdaptedMonrad adaptedMonrad;
 
+    // When first player registers a result
+    public void awaitResultApproval(ResultUpdateRequest resultUpdateRequest) {
+        if (!Validator.pointsIsValid(resultUpdateRequest.getResult())) {
+            throw new IllegalArgumentException("Not a valid result");
+        }
+        // TODO: send event to opponent
+    }
+
+    // If second player does not approve game result
+    public void resultDisapporved(ResultUpdateRequest resultUpdateRequest) {
+        if (!Validator.pointsIsValid(resultUpdateRequest.getResult())) {
+            throw new IllegalArgumentException("Not a valid result");
+        }
+        try {
+            Game game = gameRepository.getActiveGame(RESTSession.getUserId(), resultUpdateRequest.getOpponent());
+            int gameId = game.getGameId();
+            gameRepository.invalidateResult(gameId);
+        } catch (NotInDatabaseException e) {
+            throw e;
+        }
+    }
+
+    // If second player approves do this
     public void addResult(ResultUpdateRequest resultUpdateRequest) {
         if (!Validator.pointsIsValid(resultUpdateRequest.getResult())) {
             throw new IllegalArgumentException("Not a valid result");
@@ -49,7 +72,7 @@ public class GameService extends UserService {
             Game game = gameRepository.getActiveGame(RESTSession.getUserId(), resultUpdateRequest.getOpponent()); // Has requesting user white pieces?
             gameRepository.addResult(game.getGameId(), resultUpdateRequest.getResult());
             onResultAdd();
-        } catch (NotInDatabaseException e){
+        } catch (NotInDatabaseException e) {
             throw e;
         }
     }

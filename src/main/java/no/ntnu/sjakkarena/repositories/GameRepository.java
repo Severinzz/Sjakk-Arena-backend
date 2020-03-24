@@ -75,4 +75,39 @@ public class GameRepository {
                     }
                 });
     }
+
+    /**
+     * Setting result of a game to invalid.
+     * @param gameID for game to invalidate result for.
+     */
+    public void invalidateResult(int gameID) {
+        String sql = "UPDATE sjakkarena.game SET valid_result = 0 WHERE game_id = " + gameID;
+        jdbcTemplate.update(sql);
+    }
+
+    public double getResult(int gameID) {
+        String sql = "SELECT 'white_player_points' FROM 'sjakkarena'.'game' WHERE 'game_id' = ?";
+        String ResultDouble = (String) jdbcTemplate.queryForObject(
+                sql, new Object[] { gameID }, String.class);
+        return Double.valueOf(ResultDouble);
+    }
+
+
+    /**
+     * Check if game already have a result
+     * @Return true if game have a registered result, false if not.
+     */
+    public boolean gameHasResult(int gameID) {
+        boolean hasResult = false;
+        String sql = "SELECT white_player_points FROM sjakkarena.game WHERE game_id = " + gameID;
+        try {
+            Integer score = jdbcTemplate.queryForObject(sql, Integer.class);
+            if (score >= 0) {
+                hasResult = true;
+            }
+        } catch (NullPointerException | EmptyResultDataAccessException e) {
+            hasResult = false;
+        }
+        return hasResult;
+    }
 }

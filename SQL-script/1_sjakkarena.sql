@@ -82,6 +82,7 @@ CREATE TABLE IF NOT EXISTS sjakkarena.`game`
   `black_player`        INT                    NOT NULL,
   `white_player_points` DECIMAL(2, 1) UNSIGNED NULL,
   `active`              TINYINT(1) DEFAULT 0,
+  `valid_result`         TINYINT(1) DEFAULT 1,
   PRIMARY KEY (`game_id`),
   INDEX `fk_game_white_idx` (`white_player` ASC) VISIBLE,
   INDEX `fk_game_black_idx` (`black_player` ASC) VISIBLE,
@@ -106,6 +107,24 @@ SET UNIQUE_CHECKS = @OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 --  Functions
 -- -----------------------------------------------------
+-- -----------------------------------------------------
+--  get_games_with_invalid_result
+-- -----------------------------------------------------
+
+DROP FUNCTION IF EXISTS sjakkarena.get_games_with_invalid_result;
+DELIMITER //
+CREATE FUNCTION sjakkarena.get_games_with_invalid_result()
+    RETURNS INT(11)
+    DETERMINISTIC
+BEGIN
+    DECLARE invalid_games_id INT(11) DEFAULT '';
+    SET invalid_games_id = (SELECT game_id
+                            FROM sjakkarena.game
+                            WHERE valid_result = 0);
+    return invalid_games_id;
+end //
+DELIMITER ;
+
 -- -----------------------------------------------------
 --  get_last_played_color
 -- -----------------------------------------------------
