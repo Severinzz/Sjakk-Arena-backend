@@ -85,6 +85,11 @@ public class GameRepository {
         jdbcTemplate.update(sql);
     }
 
+    /**
+     * Get whites result from a game, blacks score is (whites_score - 1)
+     * @param gameID for game to get score from
+     * @return score of the white player
+     */
     public double getResult(int gameID) {
         String sql = "SELECT 'white_player_points' FROM 'sjakkarena'.'game' WHERE 'game_id' = ?";
         String ResultDouble = (String) jdbcTemplate.queryForObject(
