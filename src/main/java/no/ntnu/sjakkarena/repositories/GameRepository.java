@@ -55,6 +55,7 @@ public class GameRepository {
                 "WHERE (valid_result = 0) " +
                 "AND (white_player IN (SELECT player_id FROM sjakkarena.player WHERE tournament = " + TournamentID +") " +
                 "AND black_player IN (SELECT player_id FROM sjakkarena.player WHERE tournament = " + TournamentID +"))";
+            // Kan ta vekk en av de, men da får vi ikke sjekket at begge spillerne er i turneringen.
         try {
             return jdbcTemplate.queryForObject(sql, gameRowMapper);
         } catch (NullPointerException | EmptyResultDataAccessException e) {
