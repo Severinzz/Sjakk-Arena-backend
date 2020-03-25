@@ -2,9 +2,13 @@ package no.ntnu.sjakkarena.subscriberhandler;
 
 import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Game;
+import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.events.GamesCreatedEvent;
 import no.ntnu.sjakkarena.events.PlayerRemovedEvent;
+import no.ntnu.sjakkarena.events.TournamentStartedEvent;
 import org.springframework.context.event.EventListener;
+
+import java.util.List;
 
 public class PlayerSubscriberHandler extends SubscriberHandler {
 
@@ -26,6 +30,23 @@ public class PlayerSubscriberHandler extends SubscriberHandler {
         sendToSubscriber(
                 playerRemovedEvent.getPlayerId(), "/queue/player/removed",
                 playerRemovedEvent.getRemoveReason());
+    }
+  
+    public void onTournamentStart(TournamentStartedEvent tournamentStartedEvent){
+        for (Player player : tournamentStartedEvent.getPlayers()){
+            informPlayerThatTournamentHasStarted(player);
+        }
+
+    }
+
+
+    private void informPlayerThatTournamentHasStarted(Player player) {
+        try{
+            sendToSubscriber(player.getId(), "/queue/player/tournament-status",
+                    jsonCreator.createResponseToTournamentStatusRequester(true));
+        } catch(NullPointerException e){
+            printNotSubscribingErrorMessage("tournament status", e);
+        }
     }
 
     private void sendGameToWhiteAndBlackPlayer(Game game){

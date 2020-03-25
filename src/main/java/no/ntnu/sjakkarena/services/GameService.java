@@ -23,9 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class GameService extends UserService {
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
+public class GameService extends EventService {
 
     @Autowired
     private PlayerRepository playerRepository;
@@ -36,8 +34,7 @@ public class GameService extends UserService {
     @Autowired
     private GameRepository gameRepository;
 
-    @Autowired
-    private GameWithPlayerNamesRepository gameWithPlayerNamesRepository;
+
 
     private AdaptedMonrad adaptedMonrad;
 
@@ -56,7 +53,7 @@ public class GameService extends UserService {
 
     private void onResultAdd() {
         int tournamentId = playerRepository.getPlayer(RESTSession.getUserId()).getTournamentId();
-        onPlayerListChange(tournamentId);
+        createAndPublishPlayerListChangeEvent(tournamentId);
         this.adaptedMonrad = new AfterTournamentStartAdaptedMonrad();
         manageNewGamesRequest(tournamentId);
     }
@@ -78,14 +75,9 @@ public class GameService extends UserService {
     private void manageNewGamesRequest(int tournamentId){
         List<Game> newGames = requestNewGames(tournamentId);
         gameRepository.addGames(newGames);
-        List<? extends Game> gamesWithPlayerNames =  gameWithPlayerNamesRepository.getActiveGames(tournamentId);
-        createAndPublishNewGamesEvent(gamesWithPlayerNames, tournamentId);
+        createAndPublishNewGamesEvent(tournamentId);
     }
 
-    private void createAndPublishNewGamesEvent(List<? extends Game> gameWithPlayerNames, int tournamentId) {
-        GamesCreatedEvent gamesCreatedEvent = new GamesCreatedEvent(this, gameWithPlayerNames, tournamentId);
-        applicationEventPublisher.publishEvent(gamesCreatedEvent);
-    }
 
     private List<Game> requestNewGames(int tournamentId){
         List<Player> inActivePlayers = playerRepository.getPlayersWhoIsCurrentlyNotPlaying(tournamentId);
