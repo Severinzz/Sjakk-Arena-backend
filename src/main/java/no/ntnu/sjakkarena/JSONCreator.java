@@ -55,7 +55,7 @@ public class JSONCreator {
         return jsonObject.toString();
     }
 
-    public String createResponseToTournamentStatusRequester(boolean active){
+    public String createResponseToTournamentStateRequester(boolean active){
         return "{ \"active\": " + active + " }";
     }
 }

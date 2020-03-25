@@ -71,4 +71,8 @@ public class TournamentService extends EventService {
     public void onTimeToStartTournament(TimeToStartTournamentEvent timeToStartTournamentEvent){
         startTournament(timeToStartTournamentEvent.getTournamentId());
     }
+
+    public boolean isTournamentActive(int tournamentId) {
+        return tournamentRepository.isActive(tournamentId);
+    }
 }

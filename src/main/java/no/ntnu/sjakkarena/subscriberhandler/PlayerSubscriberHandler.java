@@ -7,8 +7,6 @@ import no.ntnu.sjakkarena.events.GamesCreatedEvent;
 import no.ntnu.sjakkarena.events.TournamentStartedEvent;
 import org.springframework.context.event.EventListener;
 
-import java.util.List;
-
 public class PlayerSubscriberHandler extends SubscriberHandler {
 
     private JSONCreator jsonCreator = new JSONCreator();
@@ -36,7 +34,7 @@ public class PlayerSubscriberHandler extends SubscriberHandler {
     private void informPlayerThatTournamentHasStarted(Player player) {
         try{
             sendToSubscriber(player.getId(), "/queue/player/tournament-status",
-                    jsonCreator.createResponseToTournamentStatusRequester(true));
+                    jsonCreator.createResponseToTournamentStateRequester(true));
         } catch(NullPointerException e){
             printNotSubscribingErrorMessage("tournament status", e);
         }

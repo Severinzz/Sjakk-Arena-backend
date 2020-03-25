@@ -1,4 +1,4 @@
-package no.ntnu.sjakkarena.restcontrollers;
+package no.ntnu.sjakkarena.controllers.restcontrollers;
 
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;

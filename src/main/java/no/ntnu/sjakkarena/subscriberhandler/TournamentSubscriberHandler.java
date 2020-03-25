@@ -65,7 +65,7 @@ public class TournamentSubscriberHandler extends SubscriberHandler {
     public void onTournamentStart(TournamentStartedEvent tournamentStartedEvent){
         try {
             sendToSubscriber(tournamentStartedEvent.getTournamentId(), "/queue/tournament/active",
-                    jsonCreator.createResponseToTournamentStatusRequester(true));
+                    jsonCreator.createResponseToTournamentStateRequester(true));
         } catch (NullPointerException e) {
             printNotSubscribingErrorMessage("tournament status", e);
         }
