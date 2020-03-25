@@ -45,6 +45,24 @@ public class GameRepository {
     }
 
     /**
+     * Gets any games with not valid result and belongs to a tournament.
+     * @param TournamentID for the tournament to check for
+     * @return games with invalid results.
+     */
+    public Game getInvalidResultGames(int TournamentID) {
+        String sql = "SELECT distinctrow * " +
+                "FROM sjakkarena.game " +
+                "WHERE (valid_result = 0) " +
+                "AND (white_player IN (SELECT player_id FROM sjakkarena.player WHERE tournament = " + TournamentID +") " +
+                "OR black_player IN (SELECT player_id FROM sjakkarena.player WHERE tournament = " + TournamentID +"))";
+        try {
+            return jdbcTemplate.queryForObject(sql, gameRowMapper);
+        } catch (NullPointerException | EmptyResultDataAccessException e) {
+            throw new NotInDatabaseException("No games with invalid result.");
+        }
+    }
+
+    /**
      * Add a game result to the database
      *
      * @param gameId The game id

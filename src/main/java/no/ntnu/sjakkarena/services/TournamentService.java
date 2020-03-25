@@ -42,7 +42,6 @@ public class TournamentService extends UserService{
         }
     }
 
-
     public String getGamesWithPlayerNames() {
         int tournamentId = RESTSession.getUserId();
         Collection<GameWithPlayerNames> games = gameWithPlayerNamesRepository.getGamesWithPlayerNames(tournamentId);
