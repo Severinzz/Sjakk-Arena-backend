@@ -4,6 +4,7 @@ import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.events.GamesCreatedEvent;
 import no.ntnu.sjakkarena.events.PlayerListChangeEvent;
+import no.ntnu.sjakkarena.events.TournamentStartedEvent;
 import org.springframework.context.event.EventListener;
 
 import java.util.List;
@@ -57,6 +58,16 @@ public class TournamentSubscriberHandler extends SubscriberHandler {
                     jsonCreator.writeValueAsString(gamesCreatedEvent.getActiveGames()));
         } catch (NullPointerException e) {
             printNotSubscribingErrorMessage("new games", e);
+        }
+    }
+
+    @EventListener
+    public void onTournamentStart(TournamentStartedEvent tournamentStartedEvent){
+        try {
+            sendToSubscriber(tournamentStartedEvent.getTournamentId(), "/queue/tournament/active",
+                    jsonCreator.createResponseToTournamentStatusRequester(true));
+        } catch (NullPointerException e) {
+            printNotSubscribingErrorMessage("tournament status", e);
         }
     }
 }

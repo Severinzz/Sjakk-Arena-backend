@@ -3,6 +3,7 @@ package no.ntnu.sjakkarena.restcontrollers;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.services.TournamentService;
+import no.ntnu.sjakkarena.utils.RESTSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -80,7 +81,7 @@ public class TournamentRESTController {
     @RequestMapping(value = "/start", method = RequestMethod.PATCH)
     public ResponseEntity<String> startTournament() {
         try {
-            tournamentService.startTournament();
+            tournamentService.startTournament(RESTSession.getUserId());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch(NotAbleToUpdateDBException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
