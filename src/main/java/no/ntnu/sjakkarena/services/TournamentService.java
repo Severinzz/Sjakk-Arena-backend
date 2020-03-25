@@ -5,7 +5,6 @@ import no.ntnu.sjakkarena.data.GameWithPlayerNames;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.events.PlayerRemovedEvent;
-import no.ntnu.sjakkarena.events.TournamentStartedEvent;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.utils.RESTSession;
@@ -68,6 +67,15 @@ public class TournamentService extends EventService {
         playerRepository.leaveTournament(playerId);
         createAndPublishPlayerListChangeEvent(RESTSession.getUserId());
         sendRemovedMessage(playerId, msg);
+    }
+
+    public boolean isPlayerInTournament(int playerId){
+        int tournamentId = RESTSession.getUserId();
+        Collection<Player> playerList = playerRepository.getPlayersInTournament(tournamentId);
+        for(Player player : playerList){
+            if(player.getId() == playerId){return true;}
+        }
+        return false;
     }
 
     private void sendRemovedMessage(int playerId, String msg){
