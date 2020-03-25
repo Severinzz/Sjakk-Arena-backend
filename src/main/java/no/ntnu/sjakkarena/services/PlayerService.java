@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PlayerService extends UserService{
+public class PlayerService extends EventService {
 
     @Autowired
     private TournamentRepository tournamentRepository;
@@ -70,11 +70,15 @@ public class PlayerService extends UserService{
             int playerId = RESTSession.getUserId();
             int tournamentId = playerRepository.getPlayer(playerId).getTournamentId();
             playerRepository.deletePlayer(playerId);
-            onPlayerListChange(tournamentId);
+            createAndPublishPlayerListChangeEvent(tournamentId);
         } catch (NotAbleToUpdateDBException e) {
             throw e;
         }
     }
 
-
+    public String isTournamentActive(){
+        Player player = playerRepository.getPlayer(RESTSession.getUserId());
+        boolean active =  tournamentRepository.isActive(player.getTournamentId());
+        return jsonCreator.createResponseToTournamentStatusRequester(active);
+    }
 }

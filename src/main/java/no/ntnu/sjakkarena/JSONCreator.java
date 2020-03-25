@@ -54,4 +54,8 @@ public class JSONCreator {
         jsonObject.put("jwt", JWSHelper.createJWS("PLAYER", "" + playerId));
         return jsonObject.toString();
     }
+
+    public String createResponseToTournamentStatusRequester(boolean active){
+        return "{ \"active\": " + active + " }";
+    }
 }
