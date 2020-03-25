@@ -129,5 +129,10 @@ public class TournamentRepository {
             return false;
         }
     }
+
+    public boolean isActive(int tournamentId) {
+        return jdbcTemplate.queryForObject("SELECT `active` FROM sjakkarena.tournament WHERE tournament_id = " +
+                tournamentId, Boolean.class);
+    }
 }
 

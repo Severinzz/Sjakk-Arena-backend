@@ -76,5 +76,10 @@ public class PlayerService extends UserService{
         }
     }
 
+    public String isTournamentActive(){
+        Player player = playerRepository.getPlayer(RESTSession.getUserId());
+        return "{ \"active\": " + tournamentRepository.isActive(player.getTournamentId()) + "}";
+    }
+
 
 }

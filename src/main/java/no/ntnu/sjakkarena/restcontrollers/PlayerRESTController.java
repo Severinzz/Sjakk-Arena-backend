@@ -110,4 +110,10 @@ public class PlayerRESTController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @RequestMapping(value="/active-tournament", method = RequestMethod.GET)
+    public ResponseEntity<String> isTournamentActive() {
+        String isTournamentActive = playerService.isTournamentActive();
+        return new ResponseEntity<>(isTournamentActive, HttpStatus.OK);
+    }
 }
