@@ -50,11 +50,11 @@ public class GameRepository {
      * @return games with invalid results.
      */
     public Game getInvalidResultGames(int TournamentID) {
-        String sql = "SELECT distinctrow * " +
+        String sql = "SELECT DISTINCTROW * " +
                 "FROM sjakkarena.game " +
                 "WHERE (valid_result = 0) " +
                 "AND (white_player IN (SELECT player_id FROM sjakkarena.player WHERE tournament = " + TournamentID +") " +
-                "OR black_player IN (SELECT player_id FROM sjakkarena.player WHERE tournament = " + TournamentID +"))";
+                "AND black_player IN (SELECT player_id FROM sjakkarena.player WHERE tournament = " + TournamentID +"))";
         try {
             return jdbcTemplate.queryForObject(sql, gameRowMapper);
         } catch (NullPointerException | EmptyResultDataAccessException e) {
