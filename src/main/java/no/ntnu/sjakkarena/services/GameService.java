@@ -50,7 +50,7 @@ public class GameService extends UserService {
     }
 
     // If second player does not approve game result
-    public void resultDisapporved(ResultUpdateRequest resultUpdateRequest) {
+    public void resultDisapproved(ResultUpdateRequest resultUpdateRequest) {
         if (!Validator.pointsIsValid(resultUpdateRequest.getResult())) {
             throw new IllegalArgumentException("Not a valid result");
         }
@@ -63,7 +63,7 @@ public class GameService extends UserService {
         }
     }
 
-    // If second player approves do this
+    // If second player approves, do this
     public void addResult(ResultUpdateRequest resultUpdateRequest) {
         if (!Validator.pointsIsValid(resultUpdateRequest.getResult())) {
             throw new IllegalArgumentException("Not a valid result");
