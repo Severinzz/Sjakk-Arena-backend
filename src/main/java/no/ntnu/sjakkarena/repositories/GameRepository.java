@@ -49,7 +49,7 @@ public class GameRepository {
      * @param TournamentID for the tournament to check for
      * @return games with invalid results.
      */
-    public Game getInvalidResultGames(int TournamentID) {
+    public List<Game> getInvalidResultGames(int TournamentID) {
         String sql = "SELECT DISTINCTROW * " +
                 "FROM sjakkarena.game " +
                 "WHERE (valid_result = 0) " +
@@ -57,7 +57,8 @@ public class GameRepository {
                 "AND black_player IN (SELECT player_id FROM sjakkarena.player WHERE tournament = " + TournamentID +"))";
             // Kan ta vekk en av de, men da får vi ikke sjekket at begge spillerne er i turneringen.
         try {
-            return jdbcTemplate.queryForObject(sql, gameRowMapper);
+            List<Game> games = jdbcTemplate.query(sql, gameRowMapper);
+            return games;
         } catch (NullPointerException | EmptyResultDataAccessException e) {
             throw new NotInDatabaseException("No games with invalid result.");
         }

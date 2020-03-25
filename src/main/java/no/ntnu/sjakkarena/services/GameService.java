@@ -41,6 +41,16 @@ public class GameService extends UserService {
 
     private AdaptedMonrad adaptedMonrad;
 
+    /**
+     * Get games that does not have valid result.
+     * @param tournamentID of tournament these games belong to
+     * @return List of games with invalid results.
+     */
+    public List<Game> invalidGames (int tournamentID) {
+        List<Game> games = gameRepository.getInvalidResultGames(tournamentID);
+        return games;
+    }
+
     // When first player registers a result
     public void awaitResultApproval(ResultUpdateRequest resultUpdateRequest) {
         if (!Validator.pointsIsValid(resultUpdateRequest.getResult())) {
