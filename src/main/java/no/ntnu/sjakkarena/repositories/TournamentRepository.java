@@ -131,8 +131,12 @@ public class TournamentRepository {
     }
 
     public boolean isActive(int tournamentId) {
-        return jdbcTemplate.queryForObject("SELECT `active` FROM sjakkarena.tournament WHERE tournament_id = " +
-                tournamentId, Boolean.class);
+        try {
+            return jdbcTemplate.queryForObject("SELECT `active` FROM sjakkarena.tournament WHERE tournament_id = " +
+                    tournamentId, Boolean.class);
+        } catch (NullPointerException | EmptyResultDataAccessException e) {
+            throw new NotInDatabaseException("Could not find tournament in the database");
+        }
     }
 }
 

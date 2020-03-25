@@ -69,8 +69,7 @@ public class PlayerRepository {
     public Player getPlayer(int playerId){
         try {
             return jdbcTemplate.queryForObject("CALL get_player(" + playerId + ")", playerRowMapper);
-        }
-        catch (NullPointerException | EmptyResultDataAccessException e){
+        } catch (NullPointerException | EmptyResultDataAccessException e) {
             throw new NotInDatabaseException("Could not find player in the database");
         }
     }
@@ -124,8 +123,7 @@ public class PlayerRepository {
         String updateQuery = "UPDATE sjakkarena.player SET in_tournament = 0 WHERE player_id = " + playerId;
         try {
             jdbcTemplate.update(updateQuery);
-        }
-        catch(DataAccessException e){
+        } catch(DataAccessException e){
             throw new NotAbleToUpdateDBException("Could not set 'in_tournament' field to 0");
         }
     }

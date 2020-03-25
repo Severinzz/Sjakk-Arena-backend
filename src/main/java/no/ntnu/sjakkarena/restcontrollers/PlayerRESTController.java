@@ -32,6 +32,7 @@ public class PlayerRESTController {
             playerService.pausePlayer();
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
+            e.printStackTrace();
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -47,6 +48,7 @@ public class PlayerRESTController {
             String playersTournament = playerService.getPlayersTournament();
             return new ResponseEntity<>(playersTournament, HttpStatus.OK);
         } catch (NotInDatabaseException e){
+            e.printStackTrace();
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -62,6 +64,7 @@ public class PlayerRESTController {
             String player = playerService.getPlayer();
             return new ResponseEntity<>(player, HttpStatus.OK);
         } catch(NotInDatabaseException e){
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -77,6 +80,7 @@ public class PlayerRESTController {
             playerService.unpausePlayer();
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -92,6 +96,7 @@ public class PlayerRESTController {
             playerService.letPlayerLeaveTournament();
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
@@ -107,13 +112,19 @@ public class PlayerRESTController {
             playerService.deletePlayer();
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @RequestMapping(value="/active-tournament", method = RequestMethod.GET)
     public ResponseEntity<String> isTournamentActive() {
-        String isTournamentActive = playerService.isTournamentActive();
-        return new ResponseEntity<>(isTournamentActive, HttpStatus.OK);
+        try {
+            String isTournamentActive = playerService.isTournamentActive();
+            return new ResponseEntity<>(isTournamentActive, HttpStatus.OK);
+        } catch (NotInDatabaseException e){
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }
