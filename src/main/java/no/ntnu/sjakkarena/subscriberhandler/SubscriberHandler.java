@@ -17,7 +17,8 @@ public abstract class SubscriberHandler {
      */
     protected void printNotSubscribingErrorMessage(String serviceDescription, Exception exception){
         System.out.println("User is probably not subscribing to the service providing " + serviceDescription
-                + "\n" + exception);
+                + "\n");
+        exception.printStackTrace();
     }
 
     protected void sendToSubscriber(int userId, String destination, String payload){

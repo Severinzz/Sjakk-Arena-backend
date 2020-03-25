@@ -117,7 +117,7 @@ public class PlayerRESTController {
         }
     }
 
-    @RequestMapping(value="/active-tournament", method = RequestMethod.GET)
+    @RequestMapping(value="/tournament-status", method = RequestMethod.GET)
     public ResponseEntity<String> isTournamentActive() {
         try {
             String isTournamentActive = playerService.isTournamentActive();
