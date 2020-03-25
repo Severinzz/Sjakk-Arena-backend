@@ -3,6 +3,7 @@ package no.ntnu.sjakkarena.subscriberhandler;
 import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.events.GamesCreatedEvent;
+import no.ntnu.sjakkarena.events.PlayerRemovedEvent;
 import org.springframework.context.event.EventListener;
 
 public class PlayerSubscriberHandler extends SubscriberHandler {
@@ -18,6 +19,13 @@ public class PlayerSubscriberHandler extends SubscriberHandler {
         for (Game game : gamesCreatedEvent.getActiveGames()){
             sendGameToWhiteAndBlackPlayer(game);
         }
+    }
+
+    @EventListener
+    public void onPlayerRemoved(PlayerRemovedEvent playerRemovedEvent){
+        sendToSubscriber(
+                playerRemovedEvent.getPlayerId(), "/queue/player/removed",
+                playerRemovedEvent.getRemoveReason());
     }
 
     private void sendGameToWhiteAndBlackPlayer(Game game){

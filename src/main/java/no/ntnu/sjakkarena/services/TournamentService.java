@@ -4,6 +4,7 @@ import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.GameWithPlayerNames;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
+import no.ntnu.sjakkarena.events.PlayerRemovedEvent;
 import no.ntnu.sjakkarena.events.TournamentStartedEvent;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
@@ -53,10 +54,11 @@ public class TournamentService extends UserService{
         int tournamentId = RESTSession.getUserId();
         applicationEventPublisher.publishEvent(new TournamentStartedEvent(this, tournamentId));
     }
-    public void deletePlayer(int playerId) {
+    public void deletePlayer(int playerId, String msg) {
         try {
             playerRepository.deletePlayer(playerId);
             onPlayerListChange(RESTSession.getUserId());
+            sendRemovedMessage(playerId, msg);
         } catch (NotAbleToUpdateDBException e) {
             throw e;
         }
@@ -67,8 +69,15 @@ public class TournamentService extends UserService{
         return jsonCreator.writeValueAsString(player);
     }
 
-    public void inactivatePlayer(int playerId) {
+    public void inactivatePlayer(int playerId, String msg) {
         playerRepository.leaveTournament(playerId);
         onPlayerListChange(RESTSession.getUserId());
+        // TODO: SEND REMOVED MESSAGE
+        sendRemovedMessage(playerId, msg);
+    }
+
+    private void sendRemovedMessage(int playerId, String msg){
+        PlayerRemovedEvent playerRemovedEvent = new PlayerRemovedEvent(this, playerId, msg);
+        applicationEventPublisher.publishEvent(playerRemovedEvent);
     }
 }
