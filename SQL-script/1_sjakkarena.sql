@@ -311,7 +311,7 @@ BEGIN
          get_last_played_color(player_id)     AS last_played_color,
          get_number_of_white_games(player_id) AS number_of_white_games
   FROM `sjakkarena`.`player`
-  WHERE `tournament` = `tournament_id`;
+  WHERE `tournament` = `tournament_id` AND `in_tournament` = 1;
 END//
 DELIMITER ;
 
