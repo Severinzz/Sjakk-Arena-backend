@@ -1,4 +1,4 @@
-package no.ntnu.sjakkarena.restcontrollers;
+package no.ntnu.sjakkarena.controllers.restcontrollers;
 
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
@@ -33,7 +33,7 @@ public class UnauthenticatedUserRESTController {
     @RequestMapping(value = "/new-player", method = RequestMethod.POST)
     public ResponseEntity<String> registerPlayer(@RequestBody Player player) {
         try {
-            String responseMessage = unauthenticatedUserService.addNewPlayer(player);
+            String responseMessage = unauthenticatedUserService.handleAddPlayerRequest(player);
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

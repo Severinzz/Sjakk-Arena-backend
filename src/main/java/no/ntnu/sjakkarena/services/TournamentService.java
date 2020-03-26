@@ -4,10 +4,12 @@ import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.GameWithPlayerNames;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
+import no.ntnu.sjakkarena.events.TimeToStartTournamentEvent;
 import no.ntnu.sjakkarena.events.PlayerRemovedEvent;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.utils.RESTSession;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -15,13 +17,12 @@ import java.util.Collection;
 @Service
 public class TournamentService extends EventService {
 
-
     private JSONCreator jsonCreator = new JSONCreator();
 
-    public void startTournament() {
+    public void startTournament(int tournamentId) {
         try {
-            tournamentRepository.setActive(RESTSession.getUserId());
-            onTournamentStart();
+            tournamentRepository.setActive(tournamentId);
+            onTournamentStart(tournamentId);
         } catch (NotAbleToUpdateDBException e) {
             throw e;
         }
@@ -44,8 +45,7 @@ public class TournamentService extends EventService {
         return jsonCreator.writeValueAsString(games);
     }
 
-    private void onTournamentStart() {
-        int tournamentId = RESTSession.getUserId();
+    private void onTournamentStart(int tournamentId) {
         createAndPublishTournamentStartedEvent(tournamentId);
     }
     public void deletePlayer(int playerId, String msg) {
@@ -82,5 +82,14 @@ public class TournamentService extends EventService {
     private void sendRemovedMessage(int playerId, String msg){
         PlayerRemovedEvent playerRemovedEvent = new PlayerRemovedEvent(this, playerId, msg);
         applicationEventPublisher.publishEvent(playerRemovedEvent);
+    }
+
+    @EventListener
+    public void onTimeToStartTournament(TimeToStartTournamentEvent timeToStartTournamentEvent){
+        startTournament(timeToStartTournamentEvent.getTournamentId());
+    }
+
+    public boolean isTournamentActive(int tournamentId) {
+        return tournamentRepository.isActive(tournamentId);
     }
 }
