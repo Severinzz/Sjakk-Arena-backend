@@ -309,6 +309,26 @@ BEGIN
                           SELECT DISTINCT black_player
                           FROM `sjakkarena`.`game`
                           WHERE active = 1);
+       
+END//
+DELIMITER ;
+
+-- -----------------------------------------------------
+--  get_leader_board
+-- -----------------------------------------------------
+DROP PROCEDURE IF EXISTS sjakkarena.get_leader_board;
+DELIMITER //
+CREATE PROCEDURE sjakkarena.get_leader_board(IN tournament_id INT(11))
+BEGIN
+  SELECT `player`.*,
+         get_points(player_id)                AS `points`,
+         get_rounds(player_id)                AS `rounds`,
+         get_same_color_streak(player_id)     AS `same_color_streak`,
+         get_last_played_color(player_id)     AS last_played_color,
+         get_number_of_white_games(player_id) AS number_of_white_games
+  FROM `sjakkarena`.`player`
+  WHERE `player`.`tournament` = `tournament_id`
+  ORDER BY `points` DESC;
 END//
 DELIMITER ;
 
