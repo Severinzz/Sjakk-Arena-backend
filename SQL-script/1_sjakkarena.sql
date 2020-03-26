@@ -221,7 +221,7 @@ END//
 DELIMITER ;
 
 -- -----------------------------------------------------
---  get_random_bib_number TODO find a way to throw exception when no bib numbers are available
+--  get_random_bib_number f
 -- -----------------------------------------------------
 DROP FUNCTION IF EXISTS sjakkarena.get_random_bib_number;
 DELIMITER //
@@ -250,6 +250,111 @@ DELIMITER ;
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
+--  get_player
+-- -----------------------------------------------------
+DROP PROCEDURE IF EXISTS sjakkarena.get_player;
+DELIMITER //
+CREATE PROCEDURE sjakkarena.get_player(IN `player_id` INT(11))
+BEGIN
+  SELECT `player`.*,
+         get_points(player_id)                AS `points`,
+         get_rounds(player_id)                AS `rounds`,
+         get_same_color_streak(player_id)     AS `same_color_streak`,
+         get_last_played_color(player_id)     AS `last_played_color`,
+         get_number_of_white_games(player_id) AS `number_of_white_games`
+  FROM `sjakkarena`.`player`
+  WHERE `player`.`player_id` = `player_id`;
+END//
+DELIMITER ;
+
+-- -----------------------------------------------------
+--  get_players_in_tournament
+-- -----------------------------------------------------
+DROP PROCEDURE IF EXISTS sjakkarena.get_players_in_tournament;
+DELIMITER //
+CREATE PROCEDURE sjakkarena.get_players_in_tournament(IN tournament_id INT(11))
+BEGIN
+  SELECT `player`.*,
+         get_points(player_id)                AS `points`,
+         get_rounds(player_id)                AS `rounds`,
+         get_same_color_streak(player_id)     AS `same_color_streak`,
+         get_last_played_color(player_id)     AS last_played_color,
+         get_number_of_white_games(player_id) AS `number_of_white_games`
+  FROM `sjakkarena`.`player`
+  WHERE `tournament` = `tournament_id` AND `in_tournament` = 1;
+END//
+DELIMITER ;
+
+-- -----------------------------------------------------
+--  get_players_in_tournament_not_playing
+-- -----------------------------------------------------
+DROP PROCEDURE IF EXISTS sjakkarena.get_players_in_tournament_not_playing;
+DELIMITER //
+CREATE PROCEDURE sjakkarena.get_players_in_tournament_not_playing(IN tournament_id INT(11))
+BEGIN
+  SELECT DISTINCT `player`.*,
+                  get_points(player_id)                AS `points`,
+                  get_rounds(player_id)                AS `rounds`,
+                  get_same_color_streak(player_id)     AS `same_color_streak`,
+                  get_last_played_color(player_id)     AS `last_played_color`,
+                  get_number_of_white_games(player_id) AS `number_of_white_games`
+  FROM `sjakkarena`.`player`
+  WHERE `player`.`tournament` = tournament_id
+    AND `player`.`in_tournament` = 1
+    AND `player`.`paused` = 0
+    AND player_id NOT IN (SELECT DISTINCT white_player
+                          FROM `sjakkarena`.`game`
+                          WHERE active = 1
+                          UNION
+                          SELECT DISTINCT black_player
+                          FROM `sjakkarena`.`game`
+                          WHERE active = 1);
+END//
+DELIMITER ;
+
+
+-- -----------------------------------------------------
+--  get_available_tables
+-- -----------------------------------------------------
+DROP PROCEDURE IF EXISTS sjakkarena.get_available_tables;
+DELIMITER //
+CREATE PROCEDURE sjakkarena.get_available_tables(IN `tournament_id` INT(11))
+BEGIN
+  DECLARE number_of_tables INT DEFAULT 1;
+  DECLARE i INT DEFAULT 1;
+  SET number_of_tables = (
+    SELECT tables
+    FROM `sjakkarena`.`tournament`
+    WHERE `tournament`.`tournament_id` = `tournament_id`);
+  START TRANSACTION
+    ;
+    CREATE TABLE `tables`
+    (
+      table_nr INT(11) DEFAULT NULL
+    )
+      ENGINE = InnoDB
+      DEFAULT CHARSET = utf8;
+    WHILE i <= number_of_tables
+    DO
+    INSERT INTO `tables`
+    VALUES (i);
+    SET i = i + 1;
+    END WHILE;
+    SELECT *
+    FROM tables
+    WHERE table_nr NOT IN (SELECT DISTINCT `table`
+                           FROM sjakkarena.game,
+                                sjakkarena.player
+                           WHERE active = 1
+                             AND player_id = white_player
+                             AND player.tournament = tournament_id);
+    DROP TABLE IF EXISTS `tables`;
+  COMMIT;
+END//
+DELIMITER ;
+
+
+-- -----------------------------------------------------
 --  get_previous_opponents
 -- -----------------------------------------------------
 
@@ -268,158 +373,11 @@ END//
 DELIMITER ;
 
 -- -----------------------------------------------------
---  get_player
--- -----------------------------------------------------
-DROP PROCEDURE IF EXISTS sjakkarena.get_player;
-DELIMITER //
-CREATE PROCEDURE sjakkarena.get_player(IN player_id INT(11))
-BEGIN
-  SELECT `player`.`player_id`,
-         `name`,
-         `in_tournament`,
-         `paused`,
-         `tournament`,
-         `icon`,
-         `bib_number`,
-         get_points(player_id)                AS `points`,
-         get_rounds(player_id)                AS `rounds`,
-         get_same_color_streak(player_id)     AS `same_color_streak`,
-         get_last_played_color(player_id)     AS last_played_color,
-         get_number_of_white_games(player_id) AS number_of_white_games
-  FROM `sjakkarena`.`player`
-  WHERE `player`.`player_id` = player_id;
-END//
-DELIMITER ;
-
--- -----------------------------------------------------
---  get_players_in_tournament
--- -----------------------------------------------------
-DROP PROCEDURE IF EXISTS sjakkarena.get_players_in_tournament;
-DELIMITER //
-CREATE PROCEDURE sjakkarena.get_players_in_tournament(IN tournament_id INT(11))
-BEGIN
-  SELECT `player`.`player_id`,
-         `name`,
-         `in_tournament`,
-         `paused`,
-         `tournament`,
-         `icon`,
-         `bib_number`,
-         get_points(player_id)                AS `points`,
-         get_rounds(player_id)                AS `rounds`,
-         get_same_color_streak(player_id)     AS `same_color_streak`,
-         get_last_played_color(player_id)     AS last_played_color,
-         get_number_of_white_games(player_id) AS number_of_white_games
-  FROM `sjakkarena`.`player`
-  WHERE `tournament` = `tournament_id` AND `in_tournament` = 1;
-END//
-DELIMITER ;
-
--- -----------------------------------------------------
---  get_players_in_tournament_not_playing
--- -----------------------------------------------------
-DROP PROCEDURE IF EXISTS sjakkarena.get_players_in_tournament_not_playing;
-DELIMITER //
-CREATE PROCEDURE sjakkarena.get_players_in_tournament_not_playing(IN tournament_id INT(11))
-BEGIN
-  SELECT DISTINCT `player`.`player_id`,
-                  `name`,
-                  `in_tournament`,
-                  `paused`,
-                  `tournament`,
-                  `icon`,
-                  `bib_number`,
-                  get_points(player_id)                AS `points`,
-                  get_rounds(player_id)                AS `rounds`,
-                  get_same_color_streak(player_id)     AS `same_color_streak`,
-                  get_last_played_color(player_id)     AS last_played_color,
-                  get_number_of_white_games(player_id) AS number_of_white_games
-  FROM `sjakkarena`.`player`,
-       (SELECT player_id as player_not_playing_id
-        FROM (SELECT DISTINCT player_id
-              FROM `sjakkarena`.`player`
-              WHERE `player`.`tournament` = tournament_id AND `player`.`in_tournament` = 1 AND
-                `player`.`paused` = 0) AS enrolled_player
-        WHERE player_id NOT IN (SELECT DISTINCT white_player
-                                FROM `sjakkarena`.`game`
-                                WHERE active = 1
-                                UNION
-                                SELECT DISTINCT black_player
-                                FROM `sjakkarena`.`game`
-                                WHERE active = 1)) AS player_not_playing
-  WHERE `player`.tournament = tournament_id
-    AND player_id = player_not_playing.player_not_playing_id;
-END//
-DELIMITER ;
-
--- -----------------------------------------------------
---  get_player
--- -----------------------------------------------------
-DROP PROCEDURE IF EXISTS sjakkarena.get_player;
-DELIMITER //
-CREATE PROCEDURE sjakkarena.get_player(IN `player_id` INT(11))
-BEGIN
-  SELECT `player`.`player_id`,
-         `name`,
-         `in_tournament`,
-         `paused`,
-         `tournament`,
-         `icon`,
-         `bib_number`,
-         get_points(player_id)                AS `points`,
-         get_rounds(player_id)                AS `rounds`,
-         get_same_color_streak(player_id)     AS `same_color_streak`,
-         get_last_played_color(player_id)     AS `last_played_color`,
-         get_number_of_white_games(player_id) AS number_of_white_games
-  FROM `sjakkarena`.`player`
-  WHERE `player`.`player_id` = `player_id`;
-END//
-DELIMITER ;
-
--- -----------------------------------------------------
---  get_available_tables
--- -----------------------------------------------------
-DROP PROCEDURE IF EXISTS sjakkarena.get_available_tables;
-DELIMITER //
-CREATE PROCEDURE sjakkarena.get_available_tables(IN `tournament_id` INT(11))
-BEGIN
-  DECLARE number_of_tables INT DEFAULT 1;
-  DECLARE i INT DEFAULT 1;
-  SET number_of_tables = (
-    SELECT tables
-    FROM `sjakkarena`.`tournament`
-    WHERE `tournament`.tournament_id = `tournament_id`);
-  CREATE TABLE `tables`
-  (
-    table_nr INT(11) DEFAULT NULL
-  )
-    ENGINE = InnoDB
-    DEFAULT CHARSET = utf8;
-  WHILE i <= number_of_tables
-  DO
-  INSERT INTO `tables`
-  VALUES (i);
-  SET i = i + 1;
-  END WHILE;
-  SELECT *
-  FROM tables
-  WHERE table_nr NOT IN (SELECT DISTINCT `table`
-                         FROM sjakkarena.game,
-                              sjakkarena.player
-                         WHERE active = 1
-                           AND player_id = white_player
-                           AND player.tournament = tournament_id);
-  DROP TABLE IF EXISTS `tables`;
-END//
-DELIMITER ;
-
--- -----------------------------------------------------
 --  insert_player
 -- -----------------------------------------------------
 DROP PROCEDURE IF EXISTS sjakkarena.insert_player;
 DELIMITER //
-CREATE PROCEDURE sjakkarena.insert_player
-(IN `name` VARCHAR(255), IN `tournament` INT, IN `icon` VARCHAR(255))
+CREATE PROCEDURE sjakkarena.insert_player(IN `name` VARCHAR(255), IN `tournament` INT, IN `icon` VARCHAR(255))
 BEGIN
   INSERT INTO sjakkarena.player (`player`.`name`, `player`.`tournament`, `player`.`icon`, `player`.`bib_number`)
   VALUES (`name`, `tournament`, `icon`, get_random_bib_number(tournament));
