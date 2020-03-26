@@ -31,7 +31,7 @@ public abstract class EventService {
     protected void createAndPublishPlayerListChangeEvent(int tournamentId) {
         boolean tournamentHasStarted = tournamentRepository.getTournament(tournamentId).isActive();
         List<Player> players = playerRepository.getPlayersInTournament(tournamentId);
-        List<Player> leaderBoard = playerRepository.getPlayersInTournamentSortedByPoints(tournamentId);
+        List<Player> leaderBoard = playerRepository.getLeaderBoard(tournamentId);
         applicationEventPublisher.publishEvent(new PlayerListChangeEvent(this, players, leaderBoard,
                 tournamentHasStarted, tournamentId));
     }
