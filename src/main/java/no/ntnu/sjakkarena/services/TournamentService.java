@@ -64,18 +64,19 @@ public class TournamentService extends EventService {
     }
 
     public void inactivatePlayer(int playerId, String msg) {
-        playerRepository.leaveTournament(playerId);
-        createAndPublishPlayerListChangeEvent(RESTSession.getUserId());
-        sendRemovedMessage(playerId, msg);
+        if(isPlayerInTournament(playerId)) {
+            playerRepository.leaveTournament(playerId);
+            createAndPublishPlayerListChangeEvent(RESTSession.getUserId());
+            sendRemovedMessage(playerId, msg);
+        }
+        else{
+            throw new NotAbleToUpdateDBException("Player is not in that tournament");
+        }
     }
 
-    public boolean isPlayerInTournament(int playerId){
+    private boolean isPlayerInTournament(int playerId){
         int tournamentId = RESTSession.getUserId();
-        Collection<Player> playerList = playerRepository.getPlayersInTournament(tournamentId);
-        for(Player player : playerList){
-            if(player.getId() == playerId){return true;}
-        }
-        return false;
+        return playerRepository.getPlayer(playerId).getTournamentId() == tournamentId;
     }
 
     private void sendRemovedMessage(int playerId, String msg){
