@@ -36,7 +36,7 @@ public class GameRESTController {
     }
 
     @RequestMapping(value = "tournament/invalidGames", method = RequestMethod.GET)
-    public ResponseEntity<String> invalidResult(@PathVariable(name = "invalidResultGame") int tournamentID) {
+    public ResponseEntity<String> invalidResult(@PathVariable(name = "/invalidResultGame") int tournamentID) {
         try {
             GameRepository game = new GameRepository();
             return new ResponseEntity(game.getInvalidResultGames(tournamentID), HttpStatus.OK);
