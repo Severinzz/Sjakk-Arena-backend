@@ -13,6 +13,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class TournamentService extends EventService {
@@ -61,6 +62,14 @@ public class TournamentService extends EventService {
     public String getPlayer(int playerId) {
         Player player = playerRepository.getPlayer(playerId);
         return jsonCreator.writeValueAsString(player);
+    }
+
+    public List<Player> getPlayersInTournament(int tournamentId){
+        return playerRepository.getPlayersInTournament(tournamentId);
+    }
+
+    public List<Player> getLeaderBoard(int tournamentId){
+        return playerRepository.getPlayersInTournamentSortedByPoints(tournamentId);
     }
 
     public void inactivatePlayer(int playerId, String msg) {
