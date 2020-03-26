@@ -179,9 +179,8 @@ public class PlayerRepository {
      * @param tournamentId The id of the tournament
      * @return A leaderboard of the given tournament
      */
-    public List<Player> getPlayersInTournamentSortedByPoints(int tournamentId) {
-        List<Player> players = getPlayersInTournament(tournamentId);
-        PlayerSorter.sortPlayersByPoints(players);
+    public List<Player> getLeaderBoard(int tournamentId) {
+        List<Player> players = jdbcTemplate.query("CALL get_leader_board(" + tournamentId + ")", playerRowMapper);
         return players;
     }
 }
