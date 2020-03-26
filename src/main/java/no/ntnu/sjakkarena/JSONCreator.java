@@ -46,6 +46,9 @@ public class JSONCreator {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("jwt", jws);
         jsonObject.put("tournament_id", tournament.getId());
+        jsonObject.put("tournament_name", tournament.getTournamentName());
+        jsonObject.put("tournament_start", tournament.getStart());
+        jsonObject.put("tournament_end", tournament.getEnd());
         return jsonObject.toString();
     }
 
