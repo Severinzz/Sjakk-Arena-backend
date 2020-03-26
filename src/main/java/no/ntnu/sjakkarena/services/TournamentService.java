@@ -4,7 +4,7 @@ import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.GameWithPlayerNames;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
-import no.ntnu.sjakkarena.events.TournamentStartedEvent;
+import no.ntnu.sjakkarena.events.PlayerRemovedEvent;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.utils.RESTSession;
@@ -48,11 +48,11 @@ public class TournamentService extends EventService {
         int tournamentId = RESTSession.getUserId();
         createAndPublishTournamentStartedEvent(tournamentId);
     }
-
-    public void deletePlayer(int playerId) {
+    public void deletePlayer(int playerId, String msg) {
         try {
             playerRepository.deletePlayer(playerId);
             createAndPublishPlayerListChangeEvent(RESTSession.getUserId());
+            sendRemovedMessage(playerId, msg);
         } catch (NotAbleToUpdateDBException e) {
             throw e;
         }
@@ -63,8 +63,24 @@ public class TournamentService extends EventService {
         return jsonCreator.writeValueAsString(player);
     }
 
-    public void inactivatePlayer(int playerId) {
-        playerRepository.leaveTournament(playerId);
-        createAndPublishPlayerListChangeEvent(RESTSession.getUserId());
+    public void inactivatePlayer(int playerId, String msg) {
+        if(isPlayerInTournament(playerId)) {
+            playerRepository.leaveTournament(playerId);
+            createAndPublishPlayerListChangeEvent(RESTSession.getUserId());
+            sendRemovedMessage(playerId, msg);
+        }
+        else{
+            throw new NotAbleToUpdateDBException("Player is not in that tournament");
+        }
+    }
+
+    private boolean isPlayerInTournament(int playerId){
+        int tournamentId = RESTSession.getUserId();
+        return playerRepository.getPlayer(playerId).getTournamentId() == tournamentId;
+    }
+
+    private void sendRemovedMessage(int playerId, String msg){
+        PlayerRemovedEvent playerRemovedEvent = new PlayerRemovedEvent(this, playerId, msg);
+        applicationEventPublisher.publishEvent(playerRemovedEvent);
     }
 }

@@ -4,6 +4,7 @@ import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.events.GamesCreatedEvent;
+import no.ntnu.sjakkarena.events.PlayerRemovedEvent;
 import no.ntnu.sjakkarena.events.TournamentStartedEvent;
 import org.springframework.context.event.EventListener;
 
@@ -25,6 +26,12 @@ public class PlayerSubscriberHandler extends SubscriberHandler {
     }
 
     @EventListener
+    public void onPlayerRemoved(PlayerRemovedEvent playerRemovedEvent){
+        sendToSubscriber(
+                playerRemovedEvent.getPlayerId(), "/queue/player/removed",
+                playerRemovedEvent.getRemoveReason());
+    }
+  
     public void onTournamentStart(TournamentStartedEvent tournamentStartedEvent){
         for (Player player : tournamentStartedEvent.getPlayers()){
             informPlayerThatTournamentHasStarted(player);
