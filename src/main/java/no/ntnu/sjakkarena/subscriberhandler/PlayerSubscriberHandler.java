@@ -29,7 +29,8 @@ public class PlayerSubscriberHandler extends SubscriberHandler {
                 playerRemovedEvent.getPlayerId(), "/queue/player/removed",
                 playerRemovedEvent.getRemoveReason());
     }
-  
+
+    @EventListener
     public void onTournamentStart(TournamentStartedEvent tournamentStartedEvent){
         for (Player player : tournamentStartedEvent.getPlayers()){
             informPlayerThatTournamentHasStarted(player);
