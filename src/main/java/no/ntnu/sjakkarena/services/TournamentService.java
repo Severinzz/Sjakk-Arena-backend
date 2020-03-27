@@ -69,7 +69,7 @@ public class TournamentService extends EventService {
     }
 
     public List<Player> getLeaderBoard(int tournamentId){
-        return playerRepository.getPlayersInTournamentSortedByPoints(tournamentId);
+        return playerRepository.getLeaderBoard(tournamentId);
     }
 
     public void inactivatePlayer(int playerId, String msg) {
