@@ -2,15 +2,17 @@ package no.ntnu.sjakkarena.restcontrollers;
 
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
-import no.ntnu.sjakkarena.repositories.GameRepository;
 import no.ntnu.sjakkarena.services.TournamentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
 
 /**
  * Handles requests from tournaments
@@ -21,6 +23,9 @@ public class TournamentRESTController {
 
     @Autowired
     private TournamentService tournamentService;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     /**
      * Get information about the requesting tournament
@@ -107,7 +112,6 @@ public class TournamentRESTController {
 
     @RequestMapping(value = "/changeResult/{gameID}/{whitePlayerPoints}", method = RequestMethod.PUT)
     public ResponseEntity<String> changeGameResult(@PathVariable("gameID") String gameID, @PathVariable("whitePlayerPoints") String whitePlayerPoints) {
-        GameRepository game = new GameRepository();
         int gameNR = Integer.parseInt(gameID);
         double whiteScore;
         if (whitePlayerPoints.equals("0,5")) { // "0,5" cannot be parsed, "0.5" cannot be in URL
@@ -118,8 +122,11 @@ public class TournamentRESTController {
             whiteScore = 0.0;
         }
         try {
-            game.addResult(gameNR, whiteScore);
-            game.makeGameValid(gameNR);
+            String end = LocalDateTime.now().toString();
+            jdbcTemplate.update("UPDATE `sjakkarena`.`game` SET `white_player_points` = \"" + whiteScore + "\"," +
+                    " `active` = 0, `end` = \"" + end + "\" WHERE game_id = " + gameNR);
+            String sql = "UPDATE sjakkarena.game SET valid_result = 1 WHERE game_id = " +gameID;
+            jdbcTemplate.update(sql);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException | NotInDatabaseException | NullPointerException e) {
             String message = "gameNR: " + gameNR + " whiteScore: " + whiteScore + " " + e.getMessage();
