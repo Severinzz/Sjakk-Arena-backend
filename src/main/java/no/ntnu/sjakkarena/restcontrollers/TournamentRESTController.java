@@ -110,7 +110,7 @@ public class TournamentRESTController {
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/changeResult/{gameID}/{whitePlayerPoints}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/changeResult/{gameID}/{whitePlayerPoints}", method = RequestMethod.PATCH)
     public ResponseEntity<String> changeGameResult(@PathVariable("gameID") String gameID, @PathVariable("whitePlayerPoints") String whitePlayerPoints) {
         int gameNR = Integer.parseInt(gameID);
         double whiteScore;
