@@ -109,7 +109,14 @@ public class TournamentRESTController {
     public ResponseEntity<String> changeGameResult(@PathVariable("gameID") String gameID, @PathVariable("whitePlayerPoints") String whitePlayerPoints) {
         GameRepository game = new GameRepository();
         int gameNR = Integer.parseInt(gameID);
-        double whiteScore = Double.parseDouble(whitePlayerPoints);
+        double whiteScore;
+        if (whitePlayerPoints.equals("0,5")) { // "0,5" cannot be parsed, "0.5" cannot be in URL
+            whiteScore = 0.5;
+        } else if (whitePlayerPoints.equals("1")) {
+            whiteScore = 1.0;
+        } else {
+            whiteScore = 0.0;
+        }
         try {
             game.addResult(gameNR, whiteScore);
             game.makeGameValid(gameNR);
