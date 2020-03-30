@@ -106,14 +106,17 @@ public class TournamentRESTController {
     }
 
     @RequestMapping(value = "/changeResult/{gameID}/{whitePlayerPoints}", method = RequestMethod.PUT)
-    public ResponseEntity<String> changeGameResult(int gameID, double whitePlayerPoints) {
+    public ResponseEntity<String> changeGameResult(@PathVariable("gameID") String gameID, @PathVariable("whitePlayerPoints") String whitePlayerPoints) {
         GameRepository game = new GameRepository();
+        int gameNR = Integer.parseInt(gameID);
+        double whiteScore = Double.parseDouble(whitePlayerPoints);
         try {
-            game.addResult(gameID, whitePlayerPoints);
-            game.makeGameValid(gameID);
+            game.addResult(gameNR, whiteScore);
+            game.makeGameValid(gameNR);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (NotAbleToUpdateDBException | NotInDatabaseException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (NotAbleToUpdateDBException | NotInDatabaseException | NullPointerException e) {
+            String message = "gameNR: " + gameNR + " whiteScore: " + whiteScore + " " + e.getMessage();
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
         }
 
     }

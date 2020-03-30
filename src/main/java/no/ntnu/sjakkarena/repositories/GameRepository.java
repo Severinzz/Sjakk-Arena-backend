@@ -72,8 +72,10 @@ public class GameRepository {
      */
     public void addResult(int gameId, double whitePlayerPoints) {
         String end = LocalDateTime.now().toString();
-        jdbcTemplate.update("UPDATE `sjakkarena`.`game` SET `white_player_points` = \"" + whitePlayerPoints + "\"," +
-                " `active` = 0, `end` = \"" + end + "\" WHERE game_id = " + gameId);
+        String sql = "UPDATE sjakkarena.game SET white_player_points = ?, active = 0 WHERE game_id = ?";
+       // jdbcTemplate.update("UPDATE `sjakkarena`.`game` SET `white_player_points` = \"" + whitePlayerPoints + "\"," +
+        //        " `active` = 0, `end` = \"" + end + "\" WHERE game_id = " + gameId);
+        jdbcTemplate.update(sql, whitePlayerPoints, gameId);
     }
 
     //Adapted code from https://www.baeldung.com/spring-jdbc-jdbctemplate
@@ -110,7 +112,7 @@ public class GameRepository {
      * @param gameID of game to make valid.
      */
     public void makeGameValid(int gameID){
-        String sql = "UPDATE sjakkarena.game SET valid result = 1 WHERE game_id = " +gameID;
+        String sql = "UPDATE sjakkarena.game SET valid_result = 1 WHERE game_id = " +gameID;
         jdbcTemplate.update(sql);
     }
 }
