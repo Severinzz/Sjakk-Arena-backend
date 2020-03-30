@@ -3,7 +3,6 @@ package no.ntnu.sjakkarena.restcontrollers;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.repositories.GameRepository;
-import no.ntnu.sjakkarena.services.GameService;
 import no.ntnu.sjakkarena.services.TournamentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -108,7 +107,7 @@ public class TournamentRESTController {
 
     @RequestMapping(value = "/changeResult/{gameID}/{whitePlayerPoints}", method = RequestMethod.PUT)
     public ResponseEntity<String> changeGameResult(@PathVariable("gameID") String gameID, @PathVariable("whitePlayerPoints") String whitePlayerPoints) {
-        GameService game = new GameService();
+        GameRepository game = new GameRepository();
         int gameNR = Integer.parseInt(gameID);
         double whiteScore;
         if (whitePlayerPoints.equals("0,5")) { // "0,5" cannot be parsed, "0.5" cannot be in URL

@@ -104,4 +104,13 @@ public class GameRepository {
         String sql = "UPDATE sjakkarena.game SET valid_result = 0 WHERE game_id = " + gameID;
         jdbcTemplate.update(sql);
     }
+
+    /**
+     * Sets a games valid state to valid
+     * @param gameID of game to make valid.
+     */
+    public void makeGameValid(int gameID){
+        String sql = "UPDATE sjakkarena.game SET valid_result = 1 WHERE game_id = " +gameID;
+        jdbcTemplate.update(sql);
+    }
 }
