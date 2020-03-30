@@ -60,7 +60,7 @@ public class PlayerService extends EventService {
         }
     }
 
-    public void letPlayerLeaveTournament() {
+    public void setInactive() {
         try {
             playerRepository.leaveTournament(RESTSession.getUserId());
         } catch (NotAbleToUpdateDBException e) {
