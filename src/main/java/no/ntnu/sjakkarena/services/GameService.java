@@ -41,39 +41,6 @@ public class GameService extends UserService {
 
     private AdaptedMonrad adaptedMonrad;
 
-    /**
-     * Get games that does not have valid result.
-     * @param tournamentID of tournament these games belong to
-     * @return List of games with invalid results.
-     */
-    public List<Game> invalidGames (int tournamentID) {
-        List<Game> games = gameRepository.getInvalidResultGames(tournamentID);
-        return games;
-    }
-
-    // When first player registers a result
-    public void awaitResultApproval(ResultUpdateRequest resultUpdateRequest) {
-        if (!Validator.pointsIsValid(resultUpdateRequest.getResult())) {
-            throw new IllegalArgumentException("Not a valid result");
-        }
-        // TODO: send event to opponent
-    }
-
-    // If second player does not approve game result
-    public void resultDisapproved(ResultUpdateRequest resultUpdateRequest) {
-        if (!Validator.pointsIsValid(resultUpdateRequest.getResult())) {
-            throw new IllegalArgumentException("Not a valid result");
-        }
-        try {
-            Game game = gameRepository.getActiveGame(RESTSession.getUserId(), resultUpdateRequest.getOpponent());
-            int gameId = game.getGameId();
-            gameRepository.invalidateResult(gameId);
-        } catch (NotInDatabaseException e) {
-            throw e;
-        }
-    }
-
-    // If second player approves, do this
     public void addResult(ResultUpdateRequest resultUpdateRequest) {
         if (!Validator.pointsIsValid(resultUpdateRequest.getResult())) {
             throw new IllegalArgumentException("Not a valid result");

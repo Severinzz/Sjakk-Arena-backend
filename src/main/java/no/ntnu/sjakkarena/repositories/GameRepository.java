@@ -72,10 +72,8 @@ public class GameRepository {
      */
     public void addResult(int gameId, double whitePlayerPoints) {
         String end = LocalDateTime.now().toString();
-        String sql = "UPDATE sjakkarena.game SET white_player_points = ?, active = 0 WHERE game_id = ?";
-       // jdbcTemplate.update("UPDATE `sjakkarena`.`game` SET `white_player_points` = \"" + whitePlayerPoints + "\"," +
-        //        " `active` = 0, `end` = \"" + end + "\" WHERE game_id = " + gameId);
-        jdbcTemplate.update(sql, whitePlayerPoints, gameId);
+        jdbcTemplate.update("UPDATE `sjakkarena`.`game` SET `white_player_points` = \"" + whitePlayerPoints + "\"," +
+                " `active` = 0, `end` = \"" + end + "\" WHERE game_id = " + gameId);
     }
 
     //Adapted code from https://www.baeldung.com/spring-jdbc-jdbctemplate
@@ -104,15 +102,6 @@ public class GameRepository {
      */
     public void invalidateResult(int gameID) {
         String sql = "UPDATE sjakkarena.game SET valid_result = 0 WHERE game_id = " + gameID;
-        jdbcTemplate.update(sql);
-    }
-
-    /**
-     * Sets a games valid state to valid
-     * @param gameID of game to make valid.
-     */
-    public void makeGameValid(int gameID){
-        String sql = "UPDATE sjakkarena.game SET valid_result = 1 WHERE game_id = " +gameID;
         jdbcTemplate.update(sql);
     }
 }
