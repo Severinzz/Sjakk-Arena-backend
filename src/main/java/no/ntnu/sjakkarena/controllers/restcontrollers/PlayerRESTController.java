@@ -3,6 +3,7 @@ package no.ntnu.sjakkarena.controllers.restcontrollers;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.services.PlayerService;
+import no.ntnu.sjakkarena.utils.RESTSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -120,7 +121,7 @@ public class PlayerRESTController {
     @RequestMapping(value="/tournament-status", method = RequestMethod.GET)
     public ResponseEntity<String> isTournamentActive() {
         try {
-            String isTournamentActive = playerService.isTournamentActive();
+            String isTournamentActive = playerService.isTournamentActive(RESTSession.getUserId());
             return new ResponseEntity<>(isTournamentActive, HttpStatus.OK);
         } catch (NotInDatabaseException e){
             e.printStackTrace();

@@ -76,8 +76,8 @@ public class PlayerService extends EventService {
         }
     }
 
-    public String isTournamentActive(){
-        Player player = playerRepository.getPlayer(RESTSession.getUserId());
+    public String isTournamentActive(int playerId){
+        Player player = playerRepository.getPlayer(playerId);
         boolean active =  tournamentRepository.isActive(player.getTournamentId());
         return jsonCreator.createResponseToTournamentStateRequester(active);
     }
