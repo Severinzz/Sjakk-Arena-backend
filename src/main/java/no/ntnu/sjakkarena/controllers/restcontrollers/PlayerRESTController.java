@@ -121,7 +121,7 @@ public class PlayerRESTController {
     @RequestMapping(value="/tournament-status", method = RequestMethod.GET)
     public ResponseEntity<String> isTournamentActive() {
         try {
-            String isTournamentActive = playerService.isTournamentActive(RESTSession.getUserId());
+            String isTournamentActive = playerService.getIsTournamentActiveResponse(RESTSession.getUserId());
             return new ResponseEntity<>(isTournamentActive, HttpStatus.OK);
         } catch (NotInDatabaseException e){
             e.printStackTrace();

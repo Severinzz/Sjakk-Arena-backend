@@ -1,6 +1,7 @@
 package no.ntnu.sjakkarena.services;
 
 import no.ntnu.sjakkarena.JSONCreator;
+import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
@@ -9,6 +10,8 @@ import no.ntnu.sjakkarena.repositories.TournamentRepository;
 import no.ntnu.sjakkarena.utils.RESTSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class PlayerService extends EventService {
@@ -76,9 +79,13 @@ public class PlayerService extends EventService {
         }
     }
 
-    public String isTournamentActive(int playerId){
+    public String getIsTournamentActiveResponse(int playerId){
         Player player = playerRepository.getPlayer(playerId);
         boolean active =  tournamentRepository.isActive(player.getTournamentId());
         return jsonCreator.createResponseToTournamentStateRequester(active);
+    }
+
+    public Game getActiveGame(int playerId) {
+        return gameWithPlayerNamesRepository.getActiveGame(playerId);
     }
 }
