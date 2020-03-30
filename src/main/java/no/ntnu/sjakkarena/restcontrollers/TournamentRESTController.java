@@ -2,6 +2,7 @@ package no.ntnu.sjakkarena.restcontrollers;
 
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
+import no.ntnu.sjakkarena.repositories.GameRepository;
 import no.ntnu.sjakkarena.services.TournamentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -102,5 +103,18 @@ public class TournamentRESTController {
     public ResponseEntity<String> invalidResult() {
         String responseMessage = tournamentService.getInvalidGamesWithPlayerNames();
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/changeResult/{gameID}/{whitePlayerPoints}", method = RequestMethod.PUT)
+    public ResponseEntity<String> changeGameResult(int gameID, double whitePlayerPoints) {
+        GameRepository game = new GameRepository();
+        try {
+            game.addResult(gameID, whitePlayerPoints);
+            game.makeGameValid(gameID);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NotAbleToUpdateDBException | NotInDatabaseException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+
     }
 }
