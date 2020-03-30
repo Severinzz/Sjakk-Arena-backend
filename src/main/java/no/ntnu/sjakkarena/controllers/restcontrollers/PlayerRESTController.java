@@ -91,10 +91,10 @@ public class PlayerRESTController {
      *
      * @return 200 OK if successfully set active field to 0, otherwise 400
      */
-    @RequestMapping(value = "/leave-tournament", method = RequestMethod.PATCH)
-    public ResponseEntity<String> leaveTournament() {
+    @RequestMapping(value = "/set-inactive", method = RequestMethod.PATCH)
+    public ResponseEntity<String> setInactive() {
         try {
-            playerService.letPlayerLeaveTournament();
+            playerService.setInactive();
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException e) {
             e.printStackTrace();
