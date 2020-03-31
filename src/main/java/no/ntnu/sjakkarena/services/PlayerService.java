@@ -1,6 +1,6 @@
 package no.ntnu.sjakkarena.services;
 
-import no.ntnu.sjakkarena.JSONCreator;
+import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
@@ -74,5 +74,9 @@ public class PlayerService extends EventService {
     public boolean isTournamentActive(int playerId){
         Player player = playerRepository.getPlayer(playerId);
         return  tournamentRepository.isActive(player.getTournamentId());
+    }
+
+    public Game getActiveGame(int playerId) {
+        return gameWithPlayerNamesRepository.getActiveGame(playerId);
     }
 }

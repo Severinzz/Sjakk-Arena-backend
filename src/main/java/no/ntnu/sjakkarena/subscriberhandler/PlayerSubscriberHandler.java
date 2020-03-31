@@ -74,9 +74,10 @@ public class PlayerSubscriberHandler extends SubscriberHandler {
         sendGame(game, game.getBlackPlayerId());
     }
 
-    private void sendGame(Game game, int playerId) {
+    public void sendGame(Game game, int playerId) {
         try {
-            sendToSubscriber(playerId, "/queue/player/active-game", jsonCreator.writeValueAsString(game));
+            sendToSubscriber(playerId, "/queue/player/active-game",
+                    jsonCreator.filterGameInformationAndReturnAsJson(game, playerId));
         }
         catch(NullPointerException e){
             printNotSubscribingErrorMessage("games to players", e);

@@ -1,6 +1,7 @@
 package no.ntnu.sjakkarena.controllers;
 
 import no.ntnu.sjakkarena.JSONCreator;
+import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.services.PlayerService;
 import no.ntnu.sjakkarena.subscriberhandler.PlayerSubscriberHandler;
@@ -33,5 +34,12 @@ public class PlayerController{
         int playerId = WebSocketSession.getUserId(authentication);
         Player player = playerService.getPlayer(playerId);
         playerSubscriberHandler.sendPointsToPlayer(player);
+    }
+
+    @MessageMapping("/player/active-game")
+    public void getActiveGame(Authentication authentication){
+        int playerId = WebSocketSession.getUserId(authentication);
+        Game activeGame = playerService.getActiveGame(playerId);
+        playerSubscriberHandler.sendGame(activeGame, playerId);
     }
 }
