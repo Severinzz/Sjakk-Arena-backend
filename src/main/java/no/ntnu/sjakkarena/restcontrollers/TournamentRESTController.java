@@ -111,7 +111,8 @@ public class TournamentRESTController {
     }
 
     @RequestMapping(value = "/changeResult/{gameID}/{whitePlayerPoints}", method = RequestMethod.PATCH)
-    public ResponseEntity<String> changeGameResult(@PathVariable("gameID") String gameID, @PathVariable("whitePlayerPoints") String whitePlayerPoints) {
+    public ResponseEntity<String> changeGameResult(@PathVariable("gameID") String gameID,
+                                                   @PathVariable("whitePlayerPoints") String whitePlayerPoints) {
         int gameNR = Integer.parseInt(gameID);
         double whiteScore;
         if (whitePlayerPoints.equals("0,5")) { // "0,5" cannot be parsed, "0.5" cannot be in URL
@@ -121,11 +122,12 @@ public class TournamentRESTController {
         } else {
             whiteScore = 0.0;
         }
+
         try {
             String end = LocalDateTime.now().toString();
             jdbcTemplate.update("UPDATE `sjakkarena`.`game` SET `white_player_points` = \"" + whiteScore + "\"," +
                     " `active` = 0, `end` = \"" + end + "\" WHERE game_id = " + gameNR);
-            String sql = "UPDATE sjakkarena.game SET valid_result = 1 WHERE game_id = " +gameID;
+            String sql = "UPDATE sjakkarena.game SET valid_result = 1 WHERE game_id = " + gameNR;
             jdbcTemplate.update(sql);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException | NotInDatabaseException | NullPointerException e) {
