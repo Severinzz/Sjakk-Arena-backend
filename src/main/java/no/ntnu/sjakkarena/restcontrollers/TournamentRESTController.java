@@ -120,8 +120,11 @@ public class TournamentRESTController {
             whiteScore = 0.5;
         } else if (whitePlayerPoints.equals("1")) {
             whiteScore = 1.0;
-        } else {
+        } else if (whitePlayerPoints.equals("0")) {
             whiteScore = 0.0;
+        } else { // Do not accept any other values.
+            String message = "Score cannot be: " + whitePlayerPoints;
+            return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
         }
 
         try {
