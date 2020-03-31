@@ -1,6 +1,5 @@
 package no.ntnu.sjakkarena.services;
 
-import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
@@ -11,15 +10,11 @@ import no.ntnu.sjakkarena.utils.RESTSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class PlayerService extends EventService {
 
     @Autowired
     private TournamentRepository tournamentRepository;
-
-    private JSONCreator jsonCreator = new JSONCreator();
 
     public void pausePlayer() {
         try {
@@ -30,23 +25,20 @@ public class PlayerService extends EventService {
         }
     }
 
-    public String getPlayersTournament() {
+    public Tournament getPlayersTournament() {
         try {
             int playerId = RESTSession.getUserId();
             int tournamentId = playerRepository.getPlayer(playerId).getTournamentId();
-            Tournament tournament = tournamentRepository.getTournament(tournamentId);
-            return jsonCreator.filterPlayersTournamentInformationAndReturnAsJson(tournament);
+            return tournamentRepository.getTournament(tournamentId);
         } catch (NotInDatabaseException e) {
             throw e;
         }
     }
 
 
-    public String getPlayer() {
+    public Player getPlayer(int playerId) {
         try {
-            int playerId = RESTSession.getUserId();
-            Player player = playerRepository.getPlayer(playerId);
-            return jsonCreator.filterPlayerInformationAndReturnAsJson(player);
+            return playerRepository.getPlayer(playerId);
         } catch (NotInDatabaseException e) {
             throw e;
         }
@@ -79,10 +71,9 @@ public class PlayerService extends EventService {
         }
     }
 
-    public String getIsTournamentActiveResponse(int playerId){
+    public boolean isTournamentActive(int playerId){
         Player player = playerRepository.getPlayer(playerId);
-        boolean active =  tournamentRepository.isActive(player.getTournamentId());
-        return jsonCreator.createResponseToTournamentStateRequester(active);
+        return  tournamentRepository.isActive(player.getTournamentId());
     }
   
     public List<? extends Game> getInactiveGames(int playerId) {

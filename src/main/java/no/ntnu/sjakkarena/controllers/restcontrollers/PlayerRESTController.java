@@ -2,6 +2,10 @@ package no.ntnu.sjakkarena.controllers.restcontrollers;
 
 import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Game;
+
+import no.ntnu.sjakkarena.data.Player;
+import no.ntnu.sjakkarena.data.Tournament;
+
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.services.PlayerService;
@@ -50,8 +54,9 @@ public class PlayerRESTController {
     @RequestMapping(value = "/tournament", method = RequestMethod.GET)
     public ResponseEntity<String> getTournament() {
         try {
-            String playersTournament = playerService.getPlayersTournament();
-            return new ResponseEntity<>(playersTournament, HttpStatus.OK);
+            Tournament playersTournament = playerService.getPlayersTournament();
+            return new ResponseEntity<>(jsonCreator.filterPlayersTournamentInformationAndReturnAsJson(playersTournament),
+                    HttpStatus.OK);
         } catch (NotInDatabaseException e){
             e.printStackTrace();
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -66,8 +71,8 @@ public class PlayerRESTController {
     @RequestMapping(value = "/information", method = RequestMethod.GET)
     public ResponseEntity<String> getPlayer() {
         try {
-            String player = playerService.getPlayer();
-            return new ResponseEntity<>(player, HttpStatus.OK);
+            Player player = playerService.getPlayer(RESTSession.getUserId());
+            return new ResponseEntity<>(jsonCreator.filterPlayerInformationAndReturnAsJson(player), HttpStatus.OK);
         } catch(NotInDatabaseException e){
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -125,8 +130,8 @@ public class PlayerRESTController {
     @RequestMapping(value="/tournament-status", method = RequestMethod.GET)
     public ResponseEntity<String> isTournamentActive() {
         try {
-            String isTournamentActive = playerService.getIsTournamentActiveResponse(RESTSession.getUserId());
-            return new ResponseEntity<>(isTournamentActive, HttpStatus.OK);
+            boolean active = playerService.isTournamentActive(RESTSession.getUserId());
+            return new ResponseEntity<>(jsonCreator.createResponseToTournamentStateSubscriber(active), HttpStatus.OK);
         } catch (NotInDatabaseException e){
             e.printStackTrace();
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

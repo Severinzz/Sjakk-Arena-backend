@@ -4,7 +4,9 @@ import no.ntnu.sjakkarena.data.User;
 import no.ntnu.sjakkarena.utils.UserStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Component;
 
+@Component
 public abstract class SubscriberHandler {
 
     @Autowired
