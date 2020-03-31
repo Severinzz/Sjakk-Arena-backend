@@ -93,8 +93,8 @@ public class TournamentRepository {
      */
     public Tournament getTournament(String adminUUID) {
         try {
-            String sql = "SELECT * FROM sjakkarena.tournament WHERE admin_uuid = '" + adminUUID + "'";
-            return jdbcTemplate.queryForObject(sql, tournamentRowMapper);
+            return jdbcTemplate.queryForObject("SELECT * FROM `sjakkarena`.`tournament` WHERE " +
+                    "`admin_uuid` = \"" + adminUUID + "\"", tournamentRowMapper);
         } catch (NullPointerException | EmptyResultDataAccessException e) {
             throw new NotInDatabaseException("AdminUUID is incorrect");
         }
