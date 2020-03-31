@@ -5,18 +5,14 @@ import no.ntnu.sjakkarena.adaptedmonrad.AfterTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.ResultUpdateRequest;
-import no.ntnu.sjakkarena.events.GamesCreatedEvent;
 import no.ntnu.sjakkarena.events.NewPlayerAddedEvent;
+import no.ntnu.sjakkarena.events.ResultAddedEvent;
 import no.ntnu.sjakkarena.events.TournamentStartedEvent;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.repositories.GameRepository;
-import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;
-import no.ntnu.sjakkarena.repositories.PlayerRepository;
-import no.ntnu.sjakkarena.repositories.TournamentRepository;
 import no.ntnu.sjakkarena.utils.RESTSession;
 import no.ntnu.sjakkarena.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +20,6 @@ import java.util.List;
 
 @Service
 public class GameService extends EventService {
-
-    @Autowired
-    private PlayerRepository playerRepository;
-
-    @Autowired
-    private TournamentRepository tournamentRepository;
 
     @Autowired
     private GameRepository gameRepository;
@@ -45,17 +35,24 @@ public class GameService extends EventService {
         try {
             Game game = gameRepository.getActiveGame(RESTSession.getUserId(), resultUpdateRequest.getOpponent()); // Has requesting user white pieces?
             gameRepository.addResult(game.getGameId(), resultUpdateRequest.getResult());
-            onResultAdd();
+            onResultAdd(RESTSession.getUserId(), resultUpdateRequest.getOpponent());
         } catch (NotInDatabaseException e){
             throw e;
         }
     }
 
-    private void onResultAdd() {
-        int tournamentId = playerRepository.getPlayer(RESTSession.getUserId()).getTournamentId();
+    private void onResultAdd(int requestingUserId, int opponentId) {
+        int tournamentId = playerRepository.getPlayer(requestingUserId).getTournamentId();
         createAndPublishPlayerListChangeEvent(tournamentId);
+        createAndPublishResultAddedEvent(requestingUserId, opponentId);
         this.adaptedMonrad = new AfterTournamentStartAdaptedMonrad();
         manageNewGamesRequest(tournamentId);
+    }
+
+    private void createAndPublishResultAddedEvent(int requestingUserId, int opponentId) {
+        Player requestingPlayer = playerRepository.getPlayer(requestingUserId);
+        Player opponent = playerRepository.getPlayer(opponentId);
+        applicationEventPublisher.publishEvent(new ResultAddedEvent(this, requestingPlayer, opponent));
     }
 
     @EventListener

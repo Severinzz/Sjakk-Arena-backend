@@ -7,7 +7,6 @@ import no.ntnu.sjakkarena.subscriberhandler.SubscriberHandler;
 import no.ntnu.sjakkarena.utils.WebSocketSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 
@@ -21,14 +20,11 @@ public class TournamentController extends SubscriberHandler {
 
     private JSONCreator jsonCreator = new JSONCreator();
 
-    @Autowired
-    protected SimpMessagingTemplate simpMessagingTemplate;
-
     @MessageMapping("/tournament/active")
     public void isActive(Authentication authentication){
         int tournamentId = WebSocketSession.getUserId(authentication);
         sendToSubscriber(tournamentId, "/queue/tournament/active",
-                jsonCreator.createResponseToTournamentStateRequester(tournamentService.isTournamentActive(tournamentId)));
+                jsonCreator.createResponseToTournamentStateSubscriber(tournamentService.isTournamentActive(tournamentId)));
     }
 
     @MessageMapping("/tournament/players")

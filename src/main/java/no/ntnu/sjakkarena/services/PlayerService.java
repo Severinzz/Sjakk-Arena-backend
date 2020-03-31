@@ -16,8 +16,6 @@ public class PlayerService extends EventService {
     @Autowired
     private TournamentRepository tournamentRepository;
 
-    private JSONCreator jsonCreator = new JSONCreator();
-
     public void pausePlayer() {
         try {
             int id = RESTSession.getUserId();
@@ -27,23 +25,20 @@ public class PlayerService extends EventService {
         }
     }
 
-    public String getPlayersTournament() {
+    public Tournament getPlayersTournament() {
         try {
             int playerId = RESTSession.getUserId();
             int tournamentId = playerRepository.getPlayer(playerId).getTournamentId();
-            Tournament tournament = tournamentRepository.getTournament(tournamentId);
-            return jsonCreator.filterPlayersTournamentInformationAndReturnAsJson(tournament);
+            return tournamentRepository.getTournament(tournamentId);
         } catch (NotInDatabaseException e) {
             throw e;
         }
     }
 
 
-    public String getPlayer() {
+    public Player getPlayer(int playerId) {
         try {
-            int playerId = RESTSession.getUserId();
-            Player player = playerRepository.getPlayer(playerId);
-            return jsonCreator.filterPlayerInformationAndReturnAsJson(player);
+            return playerRepository.getPlayer(playerId);
         } catch (NotInDatabaseException e) {
             throw e;
         }
@@ -76,9 +71,8 @@ public class PlayerService extends EventService {
         }
     }
 
-    public String isTournamentActive(int playerId){
+    public boolean isTournamentActive(int playerId){
         Player player = playerRepository.getPlayer(playerId);
-        boolean active =  tournamentRepository.isActive(player.getTournamentId());
-        return jsonCreator.createResponseToTournamentStateRequester(active);
+        return  tournamentRepository.isActive(player.getTournamentId());
     }
 }
