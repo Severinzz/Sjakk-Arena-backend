@@ -113,7 +113,8 @@ public class TournamentRESTController {
     @RequestMapping(value = "/changeResult/{gameID}/{whitePlayerPoints}", method = RequestMethod.PATCH)
     public ResponseEntity<String> changeGameResult(@PathVariable("gameID") String gameID,
                                                    @PathVariable("whitePlayerPoints") String whitePlayerPoints) {
-        // TODO: do all this properly
+        // TODO: do all this properly. kommenterte linjer gir nullpointerexception, tror jeg har glemt hvordan man gjør dette
+//        GameRepository game = new GameRepository();
         int gameNR = Integer.parseInt(gameID);
         double whiteScore;
         if (whitePlayerPoints.equals("0,5")) { // "0,5" cannot be parsed, "0.5" cannot be in URL
@@ -133,6 +134,8 @@ public class TournamentRESTController {
                     " `active` = 0, `end` = \"" + end + "\" WHERE game_id = " + gameNR);
             String sql = "UPDATE sjakkarena.game SET valid_result = 1 WHERE game_id = " + gameNR;
             jdbcTemplate.update(sql);
+//            game.addResult(gameNR, whiteScore);
+//            game.makeGameValid(gameNR);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotAbleToUpdateDBException | NotInDatabaseException | NullPointerException e) {
             String message = "gameNR: " + gameNR + " whiteScore: " + whiteScore + " " + e.getMessage();
