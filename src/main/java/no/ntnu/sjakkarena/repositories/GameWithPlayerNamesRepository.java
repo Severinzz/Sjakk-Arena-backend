@@ -57,7 +57,6 @@ public class GameWithPlayerNamesRepository {
                 " AND (`white`.`player_id` = " + playerId + " OR `black`.`player_id` = " + playerId + ") AND `game`.`active` = " + 1 +
                 " ORDER BY `game`.`start` DESC", gameWithPlayerNamesRowMapper);
     }
-}
 
     public List<? extends Game> getInActiveGames(int playerId) {
         return jdbcTemplate.query("SELECT `game_id`, `table`, `white_player_points`, `game`.`active`, `game`.`start`, " +

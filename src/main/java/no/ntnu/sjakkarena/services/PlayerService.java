@@ -10,6 +10,8 @@ import no.ntnu.sjakkarena.utils.RESTSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PlayerService extends EventService {
 
@@ -75,11 +77,11 @@ public class PlayerService extends EventService {
         Player player = playerRepository.getPlayer(playerId);
         return  tournamentRepository.isActive(player.getTournamentId());
     }
-  
+
     public List<? extends Game> getInactiveGames(int playerId) {
         return gameWithPlayerNamesRepository.getInActiveGames(playerId);
     }
-  
+
     public Game getActiveGame(int playerId) {
         return gameWithPlayerNamesRepository.getActiveGame(playerId);
     }
