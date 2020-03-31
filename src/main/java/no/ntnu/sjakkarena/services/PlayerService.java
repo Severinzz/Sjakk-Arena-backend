@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 @Service
 public class PlayerService extends EventService {
 
@@ -78,13 +79,17 @@ public class PlayerService extends EventService {
         }
     }
 
-    public String isTournamentActive(int playerId){
+    public String getIsTournamentActiveResponse(int playerId){
         Player player = playerRepository.getPlayer(playerId);
         boolean active =  tournamentRepository.isActive(player.getTournamentId());
         return jsonCreator.createResponseToTournamentStateRequester(active);
     }
-
+  
     public List<? extends Game> getInactiveGames(int playerId) {
         return gameWithPlayerNamesRepository.getInActiveGames(playerId);
+    }
+  
+    public Game getActiveGame(int playerId) {
+        return gameWithPlayerNamesRepository.getActiveGame(playerId);
     }
 }
