@@ -113,6 +113,7 @@ public class TournamentRESTController {
     @RequestMapping(value = "/changeResult/{gameID}/{whitePlayerPoints}", method = RequestMethod.PATCH)
     public ResponseEntity<String> changeGameResult(@PathVariable("gameID") String gameID,
                                                    @PathVariable("whitePlayerPoints") String whitePlayerPoints) {
+        // TODO: do all this properly
         int gameNR = Integer.parseInt(gameID);
         double whiteScore;
         if (whitePlayerPoints.equals("0,5")) { // "0,5" cannot be parsed, "0.5" cannot be in URL
