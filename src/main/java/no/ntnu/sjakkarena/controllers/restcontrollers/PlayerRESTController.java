@@ -1,5 +1,7 @@
 package no.ntnu.sjakkarena.controllers.restcontrollers;
 
+import no.ntnu.sjakkarena.JSONCreator;
+import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.services.PlayerService;
@@ -11,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import java.util.List;
 /**
  * Handles requests from players
  */
@@ -21,6 +23,8 @@ public class PlayerRESTController {
 
     @Autowired
     private PlayerService playerService;
+
+    private JSONCreator jsonCreator = new JSONCreator();
 
     /**
      * Set a player with a given ID to paused
@@ -127,5 +131,11 @@ public class PlayerRESTController {
             e.printStackTrace();
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @RequestMapping(value="/games", method=RequestMethod.GET)
+    public ResponseEntity<String> getInactiveGames(){
+        List<? extends Game> previousGames =  playerService.getInactiveGames(RESTSession.getUserId());
+        return new ResponseEntity<>(jsonCreator.writeValueAsString(previousGames), HttpStatus.OK);
     }
 }
