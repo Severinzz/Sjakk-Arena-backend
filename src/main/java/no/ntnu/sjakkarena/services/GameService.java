@@ -92,4 +92,12 @@ public class GameService extends UserService {
         List<Integer> availableTables = tournamentRepository.getAvailableTables(tournamentId);
         return adaptedMonrad.getNewGames(inActivePlayers, availableTables);
     }
+
+    public void updateGameResult(int gameID, double whiteScore) {
+        gameRepository.addResult(gameID, whiteScore);
+    }
+
+    public void setGameResultValid(int gameID) {
+        gameRepository.makeGameValid(gameID);
+    }
 }

@@ -7,7 +7,6 @@ import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.events.TournamentStartedEvent;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
-import no.ntnu.sjakkarena.repositories.GameRepository;
 import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;
 import no.ntnu.sjakkarena.utils.RESTSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,15 +75,5 @@ public class TournamentService extends UserService{
     public void inactivatePlayer(int playerId) {
         playerRepository.leaveTournament(playerId);
         onPlayerListChange(RESTSession.getUserId());
-    }
-
-    public void updateGameResult(int gameID, double whiteScore) {
-        GameRepository game = new GameRepository();
-        game.addResult(gameID, whiteScore);
-    }
-
-    public void setGameResultValid(int gameID) {
-        GameRepository game = new GameRepository();
-        game.makeGameValid(gameID);
     }
 }
