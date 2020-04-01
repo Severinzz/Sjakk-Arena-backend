@@ -1,6 +1,5 @@
 package no.ntnu.sjakkarena.controllers;
 
-import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.services.PlayerService;
@@ -20,7 +19,6 @@ public class PlayerController{
     @Autowired
     private PlayerSubscriberHandler playerSubscriberHandler;
 
-    private JSONCreator jsonCreator = new JSONCreator();
 
     @MessageMapping("/player/tournament-active")
     public void isTournamentActive(Authentication authentication){

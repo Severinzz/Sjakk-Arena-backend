@@ -1,5 +1,9 @@
 package no.ntnu.sjakkarena.controllers.restcontrollers;
 
+import no.ntnu.sjakkarena.JSONCreator;
+import no.ntnu.sjakkarena.data.Game;
+import no.ntnu.sjakkarena.data.Player;
+import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.services.TournamentService;
@@ -8,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
 
 /**
  * Handles requests from tournaments
@@ -19,6 +25,8 @@ public class TournamentRESTController {
     @Autowired
     private TournamentService tournamentService;
 
+    private JSONCreator jsonCreator = new JSONCreator();
+
     /**
      * Get information about the requesting tournament
      *
@@ -27,8 +35,8 @@ public class TournamentRESTController {
     @RequestMapping(value = "/information", method = RequestMethod.GET)
     public ResponseEntity<String> getTournament() {
         try {
-            String responseMessage = tournamentService.getTournament();
-            return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+            Tournament tournament =  tournamentService.getTournament();
+            return new ResponseEntity<>(jsonCreator.writeValueAsString(tournament), HttpStatus.OK);
         } catch (NotInDatabaseException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -74,8 +82,8 @@ public class TournamentRESTController {
      */
     @RequestMapping(value = "/games", method = RequestMethod.GET)
     public ResponseEntity<String> getGames() {
-        String responseMessage = tournamentService.getGamesWithPlayerNames();
-        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+        Collection<? extends Game> games = tournamentService.getGames();
+        return new ResponseEntity<>(jsonCreator.writeValueAsString(games), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/start", method = RequestMethod.PATCH)
@@ -94,7 +102,7 @@ public class TournamentRESTController {
      */
     @RequestMapping(value = "/player/{id}", method = RequestMethod.GET)
     public ResponseEntity<String> getPlayer(@PathVariable(name = "id") int playerId){
-        String player = tournamentService.getPlayer(playerId);
-        return new ResponseEntity<>(player, HttpStatus.OK);
+        Player player = tournamentService.getPlayer(playerId);
+        return new ResponseEntity<>(jsonCreator.writeValueAsString(player), HttpStatus.OK);
     }
 }
