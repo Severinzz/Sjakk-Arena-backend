@@ -2,7 +2,6 @@ package no.ntnu.sjakkarena.repositories;
 
 import no.ntnu.sjakkarena.data.GameWithPlayerNames;
 import no.ntnu.sjakkarena.mappers.GameWithPlayerNamesRowMapper;
-import no.ntnu.sjakkarena.mappers.InvalidGameWithPlayerNamesRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -17,7 +16,6 @@ public class GameWithPlayerNamesRepository {
     private JdbcTemplate jdbcTemplate;
 
     private RowMapper<GameWithPlayerNames> gameWithPlayerNamesRowMapper = new GameWithPlayerNamesRowMapper();
-    private RowMapper<GameWithPlayerNames> invalidGameWithPlayerNameRowMapper = new InvalidGameWithPlayerNamesRowMapper();
 
     /**
      * Get games by tournament
@@ -64,9 +62,9 @@ public class GameWithPlayerNamesRepository {
                 "\tAND `game`.`white_player` = `white`.`player_id` \n" +
                 "\tAND `game`.`black_player` = `black`.`player_id` \n" +
                 "\tAND `tournament`.`tournament_id` = `white`.`tournament`\n" +
-                "\tAND `tournament`.`tournament_id` = 535937\n" +
+                "\tAND `tournament`.`tournament_id` = " + TournamentID + "\n" +
                 "ORDER BY`game`.`start` DESC";
-        return jdbcTemplate.query(sql, invalidGameWithPlayerNameRowMapper);
+        return jdbcTemplate.query(sql, gameWithPlayerNamesRowMapper);
     }
 }
 
