@@ -1,11 +1,10 @@
 package no.ntnu.sjakkarena.services;
 
-import no.ntnu.sjakkarena.JSONCreator;
-import no.ntnu.sjakkarena.data.GameWithPlayerNames;
+import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
-import no.ntnu.sjakkarena.events.TimeToStartTournamentEvent;
 import no.ntnu.sjakkarena.events.PlayerRemovedEvent;
+import no.ntnu.sjakkarena.events.TimeToStartTournamentEvent;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.utils.RESTSession;
@@ -18,8 +17,6 @@ import java.util.List;
 @Service
 public class TournamentService extends EventService {
 
-    private JSONCreator jsonCreator = new JSONCreator();
-
     public void startTournament(int tournamentId) {
         try {
             tournamentRepository.setActive(tournamentId);
@@ -29,21 +26,19 @@ public class TournamentService extends EventService {
         }
     }
 
-    public String getTournament() {
+    public Tournament getTournament() {
         try {
             int tournamentId = RESTSession.getUserId();
-            Tournament tournament = tournamentRepository.getTournament(tournamentId);
-            return jsonCreator.writeValueAsString(tournament);
+            return tournamentRepository.getTournament(tournamentId);
         } catch (NotInDatabaseException e) {
             throw e;
         }
     }
 
 
-    public String getGamesWithPlayerNames() {
+    public Collection<? extends Game> getGames() {
         int tournamentId = RESTSession.getUserId();
-        Collection<GameWithPlayerNames> games = gameWithPlayerNamesRepository.getGamesWithPlayerNames(tournamentId);
-        return jsonCreator.writeValueAsString(games);
+        return gameWithPlayerNamesRepository.getGamesWithPlayerNames(tournamentId);
     }
 
     private void onTournamentStart(int tournamentId) {
@@ -59,9 +54,8 @@ public class TournamentService extends EventService {
         }
     }
 
-    public String getPlayer(int playerId) {
-        Player player = playerRepository.getPlayer(playerId);
-        return jsonCreator.writeValueAsString(player);
+    public Player getPlayer(int playerId) {
+        return playerRepository.getPlayer(playerId);
     }
 
     public List<Player> getPlayersInTournament(int tournamentId){
