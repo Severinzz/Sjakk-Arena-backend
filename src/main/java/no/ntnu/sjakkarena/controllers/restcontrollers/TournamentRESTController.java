@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
+
 /**
  * Handles requests from tournaments
  */
@@ -26,6 +27,7 @@ public class TournamentRESTController {
     private TournamentService tournamentService;
 
     private JSONCreator jsonCreator = new JSONCreator();
+
 
     /**
      * Get information about the requesting tournament

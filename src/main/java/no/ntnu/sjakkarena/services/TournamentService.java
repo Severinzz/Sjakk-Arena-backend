@@ -35,7 +35,6 @@ public class TournamentService extends EventService {
         }
     }
 
-
     public Collection<? extends Game> getGames() {
         int tournamentId = RESTSession.getUserId();
         return gameWithPlayerNamesRepository.getGamesWithPlayerNames(tournamentId);

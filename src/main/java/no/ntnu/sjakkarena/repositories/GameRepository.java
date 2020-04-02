@@ -35,12 +35,32 @@ public class GameRepository {
             return jdbcTemplate.queryForObject("SELECT * " +
                     "FROM `sjakkarena`.`game` " +
                     "WHERE (`active` = 1) " +
-                        "AND ((white_player = " + player1 + " " +
-                        "AND  black_player = " + player2 + ")" +
-                        "OR (white_player = " + player2 + " " +
-                        "AND black_player = " + player1 + "))", gameRowMapper);
+                    "AND ((white_player = " + player1 + " " +
+                    "AND  black_player = " + player2 + ")" +
+                    "OR (white_player = " + player2 + " " +
+                    "AND black_player = " + player1 + "))", gameRowMapper);
         } catch (NullPointerException | EmptyResultDataAccessException e) {
             throw new NotInDatabaseException("Player has no active games");
+        }
+    }
+
+    /**
+     * Gets any games with not valid result and belongs to a tournament.
+     * @param TournamentID for the tournament to check for
+     * @return games with invalid results.
+     */
+    public List<Game> getInvalidResultGames(int TournamentID) {
+        String sql = "SELECT DISTINCTROW * " +
+                "FROM sjakkarena.game " +
+                "WHERE (valid_result = 0) " +
+                "AND (white_player IN (SELECT player_id FROM sjakkarena.player WHERE tournament = " + TournamentID +") " +
+                "AND black_player IN (SELECT player_id FROM sjakkarena.player WHERE tournament = " + TournamentID +"))";
+            // Kan ta vekk en av de, men da får vi ikke sjekket at begge spillerne er i turneringen.
+        try {
+            List<Game> games = jdbcTemplate.query(sql, gameRowMapper);
+            return games;
+        } catch (NullPointerException | EmptyResultDataAccessException e) {
+            throw new NotInDatabaseException("No games with invalid result.");
         }
     }
 
@@ -75,4 +95,23 @@ public class GameRepository {
                     }
                 });
     }
+
+    /**
+     * Sets a games valid state to invalid.
+     * @param gameID for game to invalidate.
+     */
+    public void invalidateResult(int gameID) {
+        String sql = "UPDATE sjakkarena.game SET valid_result = 0 WHERE game_id = " + gameID;
+        jdbcTemplate.update(sql);
+    }
+
+    /**
+     * Sets a games valid state to valid
+     * @param gameID of game to make valid.
+     */
+    public void makeGameValid(int gameID){
+        String sql = "UPDATE sjakkarena.game SET valid_result = 1 WHERE game_id = " +gameID;
+        jdbcTemplate.update(sql);
+    }
+
 }

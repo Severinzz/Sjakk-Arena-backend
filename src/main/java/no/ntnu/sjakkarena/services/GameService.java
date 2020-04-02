@@ -1,8 +1,10 @@
 package no.ntnu.sjakkarena.services;
 
+import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.adaptedmonrad.AdaptedMonrad;
 import no.ntnu.sjakkarena.adaptedmonrad.AfterTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Game;
+import no.ntnu.sjakkarena.data.GameWithPlayerNames;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.ResultUpdateRequest;
 import no.ntnu.sjakkarena.events.NewPlayerAddedEvent;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -28,6 +31,8 @@ public class GameService extends EventService {
 
     private AdaptedMonrad adaptedMonrad;
 
+    private JSONCreator jsonCreator = new JSONCreator();
+
     public void addResult(ResultUpdateRequest resultUpdateRequest) {
         if (!Validator.pointsIsValid(resultUpdateRequest.getResult())) {
             throw new IllegalArgumentException("Not a valid result");
@@ -36,7 +41,7 @@ public class GameService extends EventService {
             Game game = gameRepository.getActiveGame(RESTSession.getUserId(), resultUpdateRequest.getOpponent()); // Has requesting user white pieces?
             gameRepository.addResult(game.getGameId(), resultUpdateRequest.getResult());
             onResultAdd(RESTSession.getUserId(), resultUpdateRequest.getOpponent());
-        } catch (NotInDatabaseException e){
+        } catch (NotInDatabaseException e) {
             throw e;
         }
     }
@@ -80,5 +85,19 @@ public class GameService extends EventService {
         List<Player> inActivePlayers = playerRepository.getPlayersWhoIsCurrentlyNotPlaying(tournamentId);
         List<Integer> availableTables = tournamentRepository.getAvailableTables(tournamentId);
         return adaptedMonrad.getNewGames(inActivePlayers, availableTables);
+    }
+
+    public void updateGameResult(int gameID, double whiteScore) {
+        gameRepository.addResult(gameID, whiteScore);
+    }
+
+    public void setGameResultValid(int gameID) {
+        gameRepository.makeGameValid(gameID);
+    }
+
+    public String getInvalidGamesWithPlayerNames() {
+        int tournamentId = RESTSession.getUserId();
+        Collection<GameWithPlayerNames> games = gameWithPlayerNamesRepository.getInvalidGamesWithPlayerNames((tournamentId));
+        return jsonCreator.writeValueAsString(games);
     }
 }
