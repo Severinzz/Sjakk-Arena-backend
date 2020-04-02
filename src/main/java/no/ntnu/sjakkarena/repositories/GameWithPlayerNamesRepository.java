@@ -48,7 +48,7 @@ public class GameWithPlayerNamesRepository {
     }
 
 
-    public Collection<GameWithPlayerNames> getInvalidGamesWithPlayerNames(int TournamentID) {
+    public List<GameWithPlayerNames> getGamesWithInvalidResult(int tournamentId) {
         String sql = "\tSELECT `game_id`, `table`, `white_player_points`, \n" +
                 "\t`white_player` AS `white_player_id`, \n" +
                 "\t`white`.`name` AS `white_player_name`,\n" +
@@ -58,12 +58,11 @@ public class GameWithPlayerNamesRepository {
                 "\tFROM `sjakkarena`.`game` \n" +
                 "\tAS `game`, `sjakkarena`.`player` \n" +
                 "\tAS white, `sjakkarena`.`player` \n" +
-                "\tAS `black`,`sjakkarena`.`tournament` \n" +
-                "\tAS `tournament`\n" +
+                "\tAS `black`\n" +
                 "\tWHERE (valid_result = 0)\n" +
                 "\tAND `game`.`white_player` = `white`.`player_id` \n" +
                 "\tAND `game`.`black_player` = `black`.`player_id` \n" +
-                "\tAND `tournament`.`tournament_id` = " + TournamentID + "\n" +
+                "\tAND `white`.`tournament` = " + tournamentId + "\n" +
                 "ORDER BY`game`.`start` DESC";
         return jdbcTemplate.query(sql, gameWithPlayerNamesRowMapper);
     }
@@ -79,7 +78,7 @@ public class GameWithPlayerNamesRepository {
                 " ORDER BY `game`.`start` DESC", gameWithPlayerNamesRowMapper);
     }
 
-    public List<? extends Game> getInActiveGames(int playerId) {
+    public List<GameWithPlayerNames> getInActiveGames(int playerId) {
         return jdbcTemplate.query("SELECT `game_id`, `table`, `white_player_points`, `game`.`active`, `game`.`start`, " +
                 "`game`.`end`, `white_player` AS `white_player_id`, `white`.`name` AS `white_player_name`, " +
                 "`black_player` AS `black_player_id`, `black`.`name` AS `black_player_name`" +

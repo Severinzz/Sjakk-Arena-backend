@@ -2,9 +2,10 @@ package no.ntnu.sjakkarena.repositories;
 
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
+import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.mappers.GameRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -39,7 +40,7 @@ public class GameRepository {
                     "AND  black_player = " + player2 + ")" +
                     "OR (white_player = " + player2 + " " +
                     "AND black_player = " + player1 + "))", gameRowMapper);
-        } catch (NullPointerException | EmptyResultDataAccessException e) {
+        } catch (IncorrectResultSizeDataAccessException e) {
             throw new NotInDatabaseException("Player has no active games");
         }
     }
@@ -50,16 +51,15 @@ public class GameRepository {
      * @return games with invalid results.
      */
     public List<Game> getInvalidResultGames(int TournamentID) {
-        String sql = "SELECT DISTINCTROW * " +
-                "FROM sjakkarena.game " +
-                "WHERE (valid_result = 0) " +
-                "AND (white_player IN (SELECT player_id FROM sjakkarena.player WHERE tournament = " + TournamentID +") " +
-                "AND black_player IN (SELECT player_id FROM sjakkarena.player WHERE tournament = " + TournamentID +"))";
-            // Kan ta vekk en av de, men da får vi ikke sjekket at begge spillerne er i turneringen.
         try {
-            List<Game> games = jdbcTemplate.query(sql, gameRowMapper);
+            List<Game> games = jdbcTemplate.query("SELECT DISTINCTROW * " +
+                    "FROM sjakkarena.game " +
+                    "WHERE (valid_result = 0) " +
+                    "AND (white_player IN (SELECT player_id FROM sjakkarena.player WHERE tournament = " + TournamentID +") " +
+                    "AND black_player IN (SELECT player_id FROM sjakkarena.player WHERE tournament = " + TournamentID +"))",
+                    gameRowMapper);
             return games;
-        } catch (NullPointerException | EmptyResultDataAccessException e) {
+        } catch (IncorrectResultSizeDataAccessException e) {
             throw new NotInDatabaseException("No games with invalid result.");
         }
     }
@@ -72,8 +72,11 @@ public class GameRepository {
      */
     public void addResult(int gameId, double whitePlayerPoints) {
         String end = LocalDateTime.now().toString();
-        jdbcTemplate.update("UPDATE `sjakkarena`.`game` SET `white_player_points` = \"" + whitePlayerPoints + "\"," +
-                " `active` = 0, `end` = \"" + end + "\" WHERE game_id = " + gameId);
+        int affectedRows = jdbcTemplate.update("UPDATE `sjakkarena`.`game` SET `white_player_points` = " + whitePlayerPoints + "," +
+                " `active` = 0, `end` = \"" + end + "\" WHERE valid_result = 0 AND game_id = " + gameId);
+        if (affectedRows != 1){
+            throw new TroubleUpdatingDBException("Some problems occurred while trying to make result valid");
+        }
     }
 
     //Adapted code from https://www.baeldung.com/spring-jdbc-jdbctemplate
@@ -109,9 +112,11 @@ public class GameRepository {
      * Sets a games valid state to valid
      * @param gameID of game to make valid.
      */
-    public void makeGameValid(int gameID){
-        String sql = "UPDATE sjakkarena.game SET valid_result = 1 WHERE game_id = " +gameID;
-        jdbcTemplate.update(sql);
+    public void makeResultValid(int gameID){
+        int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.game SET valid_result = 1 WHERE game_id = " +gameID);
+        if (affectedRows != 1){
+            throw new TroubleUpdatingDBException("Some problems occurred while trying to make result valid");
+        }
     }
 
 }
