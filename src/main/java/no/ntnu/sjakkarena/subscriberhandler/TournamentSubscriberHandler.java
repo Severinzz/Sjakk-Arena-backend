@@ -4,10 +4,13 @@ import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.events.GamesCreatedEvent;
 import no.ntnu.sjakkarena.events.PlayerListChangeEvent;
+import no.ntnu.sjakkarena.events.TournamentStartedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class TournamentSubscriberHandler extends SubscriberHandler {
 
     private JSONCreator jsonCreator = new JSONCreator();
@@ -29,7 +32,7 @@ public class TournamentSubscriberHandler extends SubscriberHandler {
     /**
      * Sends the tournaments leaderboard
      */
-    private void sendLeaderBoard(int tournamentId, List<Player> leaderBoard) {
+    public void sendLeaderBoard(int tournamentId, List<Player> leaderBoard) {
         try {
             sendToSubscriber(tournamentId, "/queue/tournament/leaderboard",
                     jsonCreator.writeValueAsString(leaderBoard));
@@ -38,7 +41,7 @@ public class TournamentSubscriberHandler extends SubscriberHandler {
         }
     }
 
-    private void sendPlayerList(int tournamentId, List<Player> players) {
+    public void sendPlayerList(int tournamentId, List<Player> players) {
         try {
             sendToSubscriber(tournamentId, "/queue/tournament/players",
                     jsonCreator.writeValueAsString(players));
@@ -59,4 +62,19 @@ public class TournamentSubscriberHandler extends SubscriberHandler {
             printNotSubscribingErrorMessage("new games", e);
         }
     }
+
+    @EventListener
+    public void onTournamentStart(TournamentStartedEvent tournamentStartedEvent){
+        sendActiveStateToTournament(tournamentStartedEvent.getTournamentId(), true);
+    }
+
+    public void sendActiveStateToTournament(int tournamentId, boolean active){
+        try {
+            sendToSubscriber(tournamentId, "/queue/tournament/active",
+                    jsonCreator.createResponseToTournamentStateSubscriber(active));
+        } catch (NullPointerException e) {
+            printNotSubscribingErrorMessage("tournament status", e);
+        }
+    }
+
 }

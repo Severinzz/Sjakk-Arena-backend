@@ -4,7 +4,9 @@ import no.ntnu.sjakkarena.data.User;
 import no.ntnu.sjakkarena.utils.UserStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Component;
 
+@Component
 public abstract class SubscriberHandler {
 
     @Autowired
@@ -17,7 +19,8 @@ public abstract class SubscriberHandler {
      */
     protected void printNotSubscribingErrorMessage(String serviceDescription, Exception exception){
         System.out.println("User is probably not subscribing to the service providing " + serviceDescription
-                + "\n" + exception);
+                + "\n");
+        exception.printStackTrace();
     }
 
     protected void sendToSubscriber(int userId, String destination, String payload){

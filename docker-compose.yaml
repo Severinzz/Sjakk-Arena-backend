@@ -18,6 +18,8 @@ services:
   sjakkarena_rest:
     container_name: sjakkarena_back
     restart: on-failure
+    environment:
+      - TZ = Europe/Oslo
     build:
       context: ./
       dockerfile: Dockerfile

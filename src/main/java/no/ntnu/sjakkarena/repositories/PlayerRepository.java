@@ -4,7 +4,6 @@ import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.mappers.PlayerRowMapper;
-import no.ntnu.sjakkarena.utils.PlayerSorter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -69,8 +68,7 @@ public class PlayerRepository {
     public Player getPlayer(int playerId){
         try {
             return jdbcTemplate.queryForObject("CALL get_player(" + playerId + ")", playerRowMapper);
-        }
-        catch (NullPointerException | EmptyResultDataAccessException e){
+        } catch (NullPointerException | EmptyResultDataAccessException e) {
             throw new NotInDatabaseException("Could not find player in the database");
         }
     }
@@ -124,8 +122,7 @@ public class PlayerRepository {
         String updateQuery = "UPDATE sjakkarena.player SET in_tournament = 0 WHERE player_id = " + playerId;
         try {
             jdbcTemplate.update(updateQuery);
-        }
-        catch(DataAccessException e){
+        } catch(DataAccessException e){
             throw new NotAbleToUpdateDBException("Could not set 'in_tournament' field to 0");
         }
     }
@@ -181,9 +178,8 @@ public class PlayerRepository {
      * @param tournamentId The id of the tournament
      * @return A leaderboard of the given tournament
      */
-    public List<Player> getPlayersInTournamentSortedByPoints(int tournamentId) {
-        List<Player> players = getPlayersInTournament(tournamentId);
-        PlayerSorter.sortPlayersByPoints(players);
+    public List<Player> getLeaderBoard(int tournamentId) {
+        List<Player> players = jdbcTemplate.query("CALL get_leader_board(" + tournamentId + ")", playerRowMapper);
         return players;
     }
 }

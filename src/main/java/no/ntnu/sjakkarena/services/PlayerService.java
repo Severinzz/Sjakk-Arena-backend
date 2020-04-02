@@ -1,6 +1,6 @@
 package no.ntnu.sjakkarena.services;
 
-import no.ntnu.sjakkarena.JSONCreator;
+import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
@@ -10,13 +10,13 @@ import no.ntnu.sjakkarena.utils.RESTSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class PlayerService extends UserService{
+public class PlayerService extends EventService {
 
     @Autowired
     private TournamentRepository tournamentRepository;
-
-    private JSONCreator jsonCreator = new JSONCreator();
 
     public void pausePlayer() {
         try {
@@ -27,23 +27,20 @@ public class PlayerService extends UserService{
         }
     }
 
-    public String getPlayersTournament() {
+    public Tournament getPlayersTournament() {
         try {
             int playerId = RESTSession.getUserId();
             int tournamentId = playerRepository.getPlayer(playerId).getTournamentId();
-            Tournament tournament = tournamentRepository.getTournament(tournamentId);
-            return jsonCreator.filterPlayersTournamentInformationAndReturnAsJson(tournament);
+            return tournamentRepository.getTournament(tournamentId);
         } catch (NotInDatabaseException e) {
             throw e;
         }
     }
 
 
-    public String getPlayer() {
+    public Player getPlayer(int playerId) {
         try {
-            int playerId = RESTSession.getUserId();
-            Player player = playerRepository.getPlayer(playerId);
-            return jsonCreator.filterPlayerInformationAndReturnAsJson(player);
+            return playerRepository.getPlayer(playerId);
         } catch (NotInDatabaseException e) {
             throw e;
         }
@@ -57,7 +54,7 @@ public class PlayerService extends UserService{
         }
     }
 
-    public void letPlayerLeaveTournament() {
+    public void setInactive() {
         try {
             playerRepository.leaveTournament(RESTSession.getUserId());
         } catch (NotAbleToUpdateDBException e) {
@@ -70,11 +67,22 @@ public class PlayerService extends UserService{
             int playerId = RESTSession.getUserId();
             int tournamentId = playerRepository.getPlayer(playerId).getTournamentId();
             playerRepository.deletePlayer(playerId);
-            onPlayerListChange(tournamentId);
+            createAndPublishPlayerListChangeEvent(tournamentId);
         } catch (NotAbleToUpdateDBException e) {
             throw e;
         }
     }
 
+    public boolean isTournamentActive(int playerId){
+        Player player = playerRepository.getPlayer(playerId);
+        return  tournamentRepository.isActive(player.getTournamentId());
+    }
 
+    public List<? extends Game> getInactiveGames(int playerId) {
+        return gameWithPlayerNamesRepository.getInActiveGames(playerId);
+    }
+
+    public Game getActiveGame(int playerId) {
+        return gameWithPlayerNamesRepository.getActiveGame(playerId);
+    }
 }

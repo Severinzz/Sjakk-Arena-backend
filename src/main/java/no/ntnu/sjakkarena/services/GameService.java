@@ -7,18 +7,14 @@ import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.GameWithPlayerNames;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.ResultUpdateRequest;
-import no.ntnu.sjakkarena.events.GamesCreatedEvent;
 import no.ntnu.sjakkarena.events.NewPlayerAddedEvent;
+import no.ntnu.sjakkarena.events.ResultAddedEvent;
 import no.ntnu.sjakkarena.events.TournamentStartedEvent;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.repositories.GameRepository;
-import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;
-import no.ntnu.sjakkarena.repositories.PlayerRepository;
-import no.ntnu.sjakkarena.repositories.TournamentRepository;
 import no.ntnu.sjakkarena.utils.RESTSession;
 import no.ntnu.sjakkarena.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
@@ -26,21 +22,12 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
-public class GameService extends UserService {
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
-
-    @Autowired
-    private PlayerRepository playerRepository;
-
-    @Autowired
-    private TournamentRepository tournamentRepository;
+public class GameService extends EventService {
 
     @Autowired
     private GameRepository gameRepository;
 
-    @Autowired
-    private GameWithPlayerNamesRepository gameWithPlayerNamesRepository;
+
 
     private AdaptedMonrad adaptedMonrad;
 
@@ -53,17 +40,24 @@ public class GameService extends UserService {
         try {
             Game game = gameRepository.getActiveGame(RESTSession.getUserId(), resultUpdateRequest.getOpponent()); // Has requesting user white pieces?
             gameRepository.addResult(game.getGameId(), resultUpdateRequest.getResult());
-            onResultAdd();
+            onResultAdd(RESTSession.getUserId(), resultUpdateRequest.getOpponent());
         } catch (NotInDatabaseException e) {
             throw e;
         }
     }
 
-    private void onResultAdd() {
-        int tournamentId = playerRepository.getPlayer(RESTSession.getUserId()).getTournamentId();
-        onPlayerListChange(tournamentId);
+    private void onResultAdd(int requestingUserId, int opponentId) {
+        int tournamentId = playerRepository.getPlayer(requestingUserId).getTournamentId();
+        createAndPublishPlayerListChangeEvent(tournamentId);
+        createAndPublishResultAddedEvent(requestingUserId, opponentId);
         this.adaptedMonrad = new AfterTournamentStartAdaptedMonrad();
         manageNewGamesRequest(tournamentId);
+    }
+
+    private void createAndPublishResultAddedEvent(int requestingUserId, int opponentId) {
+        Player requestingPlayer = playerRepository.getPlayer(requestingUserId);
+        Player opponent = playerRepository.getPlayer(opponentId);
+        applicationEventPublisher.publishEvent(new ResultAddedEvent(this, requestingPlayer, opponent));
     }
 
     @EventListener
@@ -83,14 +77,9 @@ public class GameService extends UserService {
     private void manageNewGamesRequest(int tournamentId){
         List<Game> newGames = requestNewGames(tournamentId);
         gameRepository.addGames(newGames);
-        List<? extends Game> gamesWithPlayerNames =  gameWithPlayerNamesRepository.getActiveGames(tournamentId);
-        createAndPublishNewGamesEvent(gamesWithPlayerNames, tournamentId);
+        createAndPublishNewGamesEvent(tournamentId);
     }
 
-    private void createAndPublishNewGamesEvent(List<? extends Game> gameWithPlayerNames, int tournamentId) {
-        GamesCreatedEvent gamesCreatedEvent = new GamesCreatedEvent(this, gameWithPlayerNames, tournamentId);
-        applicationEventPublisher.publishEvent(gamesCreatedEvent);
-    }
 
     private List<Game> requestNewGames(int tournamentId){
         List<Player> inActivePlayers = playerRepository.getPlayersWhoIsCurrentlyNotPlaying(tournamentId);
