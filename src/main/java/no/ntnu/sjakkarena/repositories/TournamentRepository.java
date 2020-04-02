@@ -1,13 +1,14 @@
 package no.ntnu.sjakkarena.repositories;
 
 import no.ntnu.sjakkarena.data.Tournament;
-import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
+import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.mappers.TournamentRowMapper;
 import no.ntnu.sjakkarena.utils.DBInteractionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -64,7 +65,7 @@ public class TournamentRepository {
                     attributes + " VALUES " + values);
 
         } catch (DataAccessException e) {
-            throw new NotAbleToUpdateDBException("Couldn't insert tournament into db");
+            throw new TroubleUpdatingDBException("Couldn't insert tournament into db");
         }
     }
 
@@ -108,7 +109,7 @@ public class TournamentRepository {
         try {
             jdbcTemplate.update("UPDATE sjakkarena.tournament SET `active` = 1 WHERE tournament_id = " + tournamentId);
         } catch (DataAccessException e){
-            throw new NotAbleToUpdateDBException("Could not start tournament");
+            throw new TroubleUpdatingDBException("Could not start tournament");
         }
     }
 
@@ -134,7 +135,7 @@ public class TournamentRepository {
         try {
             return jdbcTemplate.queryForObject("SELECT `active` FROM sjakkarena.tournament WHERE tournament_id = " +
                     tournamentId, Boolean.class);
-        } catch (NullPointerException | EmptyResultDataAccessException e) {
+        } catch (IncorrectResultSizeDataAccessException e) {
             throw new NotInDatabaseException("Could not find tournament in the database");
         }
     }

@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS sjakkarena.`game`
   `black_player`        INT                    NOT NULL,
   `white_player_points` DECIMAL(2, 1) UNSIGNED NULL,
   `active`              TINYINT(1) DEFAULT 0,
-  `valid_result`         TINYINT(1) DEFAULT 1,
+  `valid_result`         TINYINT(1) DEFAULT 0,
   PRIMARY KEY (`game_id`),
   INDEX `fk_game_white_idx` (`white_player` ASC) VISIBLE,
   INDEX `fk_game_black_idx` (`black_player` ASC) VISIBLE,
@@ -310,7 +310,7 @@ BEGIN
                           SELECT DISTINCT black_player
                           FROM `sjakkarena`.`game`
                           WHERE active = 1);
-       
+
 END//
 DELIMITER ;
 

@@ -5,7 +5,7 @@ import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.events.PlayerRemovedEvent;
 import no.ntnu.sjakkarena.events.TimeToStartTournamentEvent;
-import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
+import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.utils.RESTSession;
 import org.springframework.context.event.EventListener;
@@ -21,7 +21,7 @@ public class TournamentService extends EventService {
         try {
             tournamentRepository.setActive(tournamentId);
             onTournamentStart(tournamentId);
-        } catch (NotAbleToUpdateDBException e) {
+        } catch (TroubleUpdatingDBException e) {
             throw e;
         }
     }
@@ -48,7 +48,7 @@ public class TournamentService extends EventService {
             playerRepository.deletePlayer(playerId);
             createAndPublishPlayerListChangeEvent(RESTSession.getUserId());
             sendRemovedMessage(playerId, msg);
-        } catch (NotAbleToUpdateDBException e) {
+        } catch (TroubleUpdatingDBException e) {
             throw e;
         }
     }
@@ -72,7 +72,7 @@ public class TournamentService extends EventService {
             sendRemovedMessage(playerId, msg);
         }
         else{
-            throw new NotAbleToUpdateDBException("Player is not in that tournament");
+            throw new TroubleUpdatingDBException("Player is not in that tournament");
         }
     }
 

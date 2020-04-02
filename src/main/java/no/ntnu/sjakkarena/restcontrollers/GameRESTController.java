@@ -1,23 +1,23 @@
-package no.ntnu.sjakkarena.controllers.restcontrollers;
+package no.ntnu.sjakkarena.restcontrollers;
 
 import no.ntnu.sjakkarena.data.ResultUpdateRequest;
-import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
+import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.services.GameService;
-import no.ntnu.sjakkarena.services.TournamentService;
 import no.ntnu.sjakkarena.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
 @RestController
 public class GameRESTController {
 
-    @Autowired
-    private TournamentService tournamentService;
 
     @Autowired
     private GameService gameService;
@@ -54,7 +54,7 @@ public class GameRESTController {
                 gameService.updateGameResult(gameID, whitePlayerPoints);
                 gameService.setGameResultValid(gameID);
                 return new ResponseEntity<>(HttpStatus.OK);
-            } catch (NotAbleToUpdateDBException | NotInDatabaseException | NullPointerException e) {
+            } catch (TroubleUpdatingDBException | NotInDatabaseException | NullPointerException e) {
                 String message = "gameNR: " + gameID + " whiteScore: " + whitePlayerPoints + " " + e.getMessage();
                 return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
             }

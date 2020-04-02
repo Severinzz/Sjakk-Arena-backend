@@ -6,7 +6,7 @@ import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.events.NewPlayerAddedEvent;
 import no.ntnu.sjakkarena.exceptions.NameAlreadyExistsException;
-import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
+import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
@@ -50,7 +50,7 @@ public class UnauthenticatedUserService {
             int userId = playerRepository.addNewPlayer(player);
             onNewPlayerAdd(player.getTournamentId());
             return jsonCreator.createResponseToNewPlayer(userId);
-        } catch (NotAbleToUpdateDBException e) {
+        } catch (TroubleUpdatingDBException e) {
             throw e;
         }
     }

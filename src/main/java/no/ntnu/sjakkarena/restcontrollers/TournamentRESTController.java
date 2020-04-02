@@ -1,10 +1,10 @@
-package no.ntnu.sjakkarena.controllers.restcontrollers;
+package no.ntnu.sjakkarena.restcontrollers;
 
 import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
-import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
+import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.services.TournamentService;
 import no.ntnu.sjakkarena.utils.RESTSession;
@@ -55,7 +55,7 @@ public class TournamentRESTController {
         try {
             tournamentService.deletePlayer(id, msg);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (NotAbleToUpdateDBException e) {
+        } catch (TroubleUpdatingDBException e) {
             return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -72,7 +72,7 @@ public class TournamentRESTController {
         try {
             tournamentService.inactivatePlayer(playerId, message);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (NotAbleToUpdateDBException e) {
+        } catch (TroubleUpdatingDBException e) {
             return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -93,7 +93,7 @@ public class TournamentRESTController {
         try {
             tournamentService.startTournament(RESTSession.getUserId());
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch(NotAbleToUpdateDBException e){
+        } catch(TroubleUpdatingDBException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

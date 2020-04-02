@@ -1,14 +1,10 @@
-package no.ntnu.sjakkarena.controllers.restcontrollers;
+package no.ntnu.sjakkarena.restcontrollers.player;
 
 import no.ntnu.sjakkarena.JSONCreator;
-import no.ntnu.sjakkarena.data.Game;
-
 import no.ntnu.sjakkarena.data.Player;
-import no.ntnu.sjakkarena.data.Tournament;
-
-import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
-import no.ntnu.sjakkarena.services.PlayerService;
+import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
+import no.ntnu.sjakkarena.services.player.PlayerService;
 import no.ntnu.sjakkarena.utils.RESTSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,8 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 /**
  * Handles requests from players
  */
@@ -38,26 +32,9 @@ public class PlayerRESTController {
     @RequestMapping(value = "/pause", method = RequestMethod.PATCH)
     public ResponseEntity<String> pause() {
         try {
-            playerService.pausePlayer();
+            playerService.pausePlayer(RESTSession.getUserId());
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (NotAbleToUpdateDBException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    /**
-     * Return information about the requesting player's tournament
-     *
-     * @return information about the requesting player's tournament
-     */
-    @RequestMapping(value = "/tournament", method = RequestMethod.GET)
-    public ResponseEntity<String> getTournament() {
-        try {
-            Tournament playersTournament = playerService.getPlayersTournament();
-            return new ResponseEntity<>(jsonCreator.filterPlayersTournamentInformationAndReturnAsJson(playersTournament),
-                    HttpStatus.OK);
-        } catch (NotInDatabaseException e){
+        } catch (TroubleUpdatingDBException e) {
             e.printStackTrace();
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -68,14 +45,14 @@ public class PlayerRESTController {
      *
      * @return information relevant to the client application about the requesting user
      */
-    @RequestMapping(value = "/information", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<String> getPlayer() {
         try {
             Player player = playerService.getPlayer(RESTSession.getUserId());
             return new ResponseEntity<>(jsonCreator.filterPlayerInformationAndReturnAsJson(player), HttpStatus.OK);
         } catch(NotInDatabaseException e){
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -85,13 +62,13 @@ public class PlayerRESTController {
      * @return 200 OK if successfully unpaused, otherwise 400
      */
     @RequestMapping(value = "/unpause", method = RequestMethod.PATCH)
-    public ResponseEntity<String> setPlayerActive() {
+    public ResponseEntity<String> unpause() {
         try {
-            playerService.unpausePlayer();
+            playerService.unpausePlayer(RESTSession.getUserId());
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (NotAbleToUpdateDBException e) {
+        } catch (TroubleUpdatingDBException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -103,11 +80,11 @@ public class PlayerRESTController {
     @RequestMapping(value = "/set-inactive", method = RequestMethod.PATCH)
     public ResponseEntity<String> setInactive() {
         try {
-            playerService.setInactive();
+            playerService.leaveTournament(RESTSession.getUserId());
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (NotAbleToUpdateDBException e) {
+        } catch (TroubleUpdatingDBException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -119,28 +96,11 @@ public class PlayerRESTController {
     @RequestMapping(value = "/delete-player", method = RequestMethod.DELETE)
     public ResponseEntity<String> deletePlayer() {
         try {
-            playerService.deletePlayer();
+            playerService.deletePlayer(RESTSession.getUserId());
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (NotAbleToUpdateDBException e) {
+        } catch (TroubleUpdatingDBException | NotInDatabaseException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-    }
-
-    @RequestMapping(value="/tournament-status", method = RequestMethod.GET)
-    public ResponseEntity<String> isTournamentActive() {
-        try {
-            boolean active = playerService.isTournamentActive(RESTSession.getUserId());
-            return new ResponseEntity<>(jsonCreator.createResponseToTournamentStateSubscriber(active), HttpStatus.OK);
-        } catch (NotInDatabaseException e){
-            e.printStackTrace();
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @RequestMapping(value="/games", method=RequestMethod.GET)
-    public ResponseEntity<String> getInactiveGames(){
-        List<? extends Game> previousGames =  playerService.getInactiveGames(RESTSession.getUserId());
-        return new ResponseEntity<>(jsonCreator.writeValueAsString(previousGames), HttpStatus.OK);
     }
 }

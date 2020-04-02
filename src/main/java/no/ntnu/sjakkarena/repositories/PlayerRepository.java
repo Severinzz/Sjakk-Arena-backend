@@ -1,12 +1,13 @@
 package no.ntnu.sjakkarena.repositories;
 
 import no.ntnu.sjakkarena.data.Player;
-import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
+import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.mappers.PlayerRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -53,7 +54,7 @@ public class PlayerRepository {
             return keyHolder.getKey().intValue();
         } catch (DataAccessException e) {
             System.out.println(e.getMessage());
-            throw new NotAbleToUpdateDBException("Could not add user to database. Possible reasons: \n" +
+            throw new TroubleUpdatingDBException("Could not add user to database. Possible reasons: \n" +
                     "1. User is already registered in database \n" +
                     "2. Name/value pairs in JSON are missing");
         }
@@ -68,7 +69,7 @@ public class PlayerRepository {
     public Player getPlayer(int playerId){
         try {
             return jdbcTemplate.queryForObject("CALL get_player(" + playerId + ")", playerRowMapper);
-        } catch (NullPointerException | EmptyResultDataAccessException e) {
+        } catch (IncorrectResultSizeDataAccessException e) {
             throw new NotInDatabaseException("Could not find player in the database");
         }
     }
@@ -76,13 +77,12 @@ public class PlayerRepository {
     /**
      * Deletes a player from the database
      *
-     * @param id
+     * @param playerId
      */
-    public void deletePlayer(int id) {
-        try {
-            jdbcTemplate.update("DELETE FROM sjakkarena.player WHERE `player_id` = " + id);
-        } catch (DataAccessException e) {
-            throw new NotAbleToUpdateDBException("Couldn't delete player from database");
+    public void deletePlayer(int playerId) {
+        int affectedRows = jdbcTemplate.update("DELETE FROM sjakkarena.player WHERE `player_id` = " + playerId);
+        if (affectedRows != 1){
+            throw new TroubleUpdatingDBException("Some problem occurred when trying to pause player");
         }
     }
 
@@ -91,12 +91,9 @@ public class PlayerRepository {
      * @param playerId id the of the player to pause.
      */
     public void pausePlayer(int playerId) {
-        String updateQuery = "UPDATE `sjakkarena`.`player` SET paused = 1 WHERE player_id = " + playerId;
-        try {
-            jdbcTemplate.update(updateQuery);
-        }
-        catch(DataAccessException e){
-            throw new NotAbleToUpdateDBException("Could not pause player");
+        int affectedRows = jdbcTemplate.update("UPDATE `sjakkarena`.`player` SET paused = 1 WHERE player_id = " + playerId);
+        if (affectedRows != 1){
+            throw new TroubleUpdatingDBException("Some problem occurred when trying to pause player");
         }
     }
 
@@ -105,12 +102,9 @@ public class PlayerRepository {
      * @param playerId  The id of the player to unpause.
      */
     public void unpausePlayer(int playerId) {
-        String updateQuery = "UPDATE sjakkarena.player SET paused = 0 WHERE player_id = " + playerId;
-        try {
-            jdbcTemplate.update(updateQuery);
-        }
-        catch(DataAccessException e){
-            throw new NotAbleToUpdateDBException("Could not unpause player");
+        int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.player SET paused = 0 WHERE player_id = " + playerId);
+        if (affectedRows != 1){
+            throw new TroubleUpdatingDBException("Some problem occurred when trying to pause player");
         }
     }
 
@@ -119,11 +113,9 @@ public class PlayerRepository {
      * @param playerId The id of the player to be removed from the tournament
      */
     public void leaveTournament(int playerId) {
-        String updateQuery = "UPDATE sjakkarena.player SET in_tournament = 0 WHERE player_id = " + playerId;
-        try {
-            jdbcTemplate.update(updateQuery);
-        } catch(DataAccessException e){
-            throw new NotAbleToUpdateDBException("Could not set 'in_tournament' field to 0");
+        int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.player SET in_tournament = 0 WHERE player_id = " + playerId);
+        if (affectedRows != 1) {
+            throw new TroubleUpdatingDBException("Some problem occurred when trying to leave tournament");
         }
     }
 

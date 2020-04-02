@@ -5,4 +5,8 @@ public class NotInDatabaseException extends RuntimeException {
     public NotInDatabaseException(String message){
         super(message);
     }
+
+    public NotInDatabaseException(Throwable cause) {
+        super(cause);
+    }
 }
