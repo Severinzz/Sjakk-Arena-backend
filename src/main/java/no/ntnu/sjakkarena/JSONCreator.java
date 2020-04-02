@@ -49,9 +49,11 @@ public class JSONCreator {
         JSONObject jsonObject = new JSONObject();
         if (game.getWhitePlayerId() == playerId){
             jsonObject.put("opponent", ((GameWithPlayerNames) game).getBlackPlayerName());
+            jsonObject.put("opponent_id", game.getBlackPlayerId());
             jsonObject.put("colour", "Hvit");
         } else {
             jsonObject.put("opponent", ((GameWithPlayerNames) game).getWhitePlayerName());
+            jsonObject.put("opponent_id", game.getWhitePlayerId());
             jsonObject.put("colour", "Sort");
         }
         jsonObject.put("table", game.getTable());
