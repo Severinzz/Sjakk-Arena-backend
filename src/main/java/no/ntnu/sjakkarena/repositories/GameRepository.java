@@ -113,4 +113,5 @@ public class GameRepository {
         String sql = "UPDATE sjakkarena.game SET valid_result = 1 WHERE game_id = " +gameID;
         jdbcTemplate.update(sql);
     }
+
 }

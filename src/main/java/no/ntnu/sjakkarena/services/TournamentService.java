@@ -48,12 +48,6 @@ public class TournamentService extends UserService{
         return jsonCreator.writeValueAsString(games);
     }
 
-    public String getInvalidGamesWithPlayerNames() {
-        int tournamentId = RESTSession.getUserId();
-        Collection<GameWithPlayerNames> games = gameWithPlayerNamesRepository.getInvalidGamesWithPlayerNames((tournamentId));
-        return jsonCreator.writeValueAsString(games);
-    }
-
     private void onTournamentStart() {
         int tournamentId = RESTSession.getUserId();
         applicationEventPublisher.publishEvent(new TournamentStartedEvent(this, tournamentId));

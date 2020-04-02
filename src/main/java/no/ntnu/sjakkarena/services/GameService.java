@@ -1,8 +1,10 @@
 package no.ntnu.sjakkarena.services;
 
+import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.adaptedmonrad.AdaptedMonrad;
 import no.ntnu.sjakkarena.adaptedmonrad.AfterTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Game;
+import no.ntnu.sjakkarena.data.GameWithPlayerNames;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.ResultUpdateRequest;
 import no.ntnu.sjakkarena.events.GamesCreatedEvent;
@@ -20,6 +22,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -40,6 +43,8 @@ public class GameService extends UserService {
     private GameWithPlayerNamesRepository gameWithPlayerNamesRepository;
 
     private AdaptedMonrad adaptedMonrad;
+
+    private JSONCreator jsonCreator = new JSONCreator();
 
     public void addResult(ResultUpdateRequest resultUpdateRequest) {
         if (!Validator.pointsIsValid(resultUpdateRequest.getResult())) {
@@ -99,5 +104,11 @@ public class GameService extends UserService {
 
     public void setGameResultValid(int gameID) {
         gameRepository.makeGameValid(gameID);
+    }
+
+    public String getInvalidGamesWithPlayerNames() {
+        int tournamentId = RESTSession.getUserId();
+        Collection<GameWithPlayerNames> games = gameWithPlayerNamesRepository.getInvalidGamesWithPlayerNames((tournamentId));
+        return jsonCreator.writeValueAsString(games);
     }
 }

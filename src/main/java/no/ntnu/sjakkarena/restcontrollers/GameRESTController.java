@@ -42,7 +42,7 @@ public class GameRESTController {
 
     @RequestMapping(value = "tournament/invalidGames", method = RequestMethod.GET)
     public ResponseEntity<String> invalidResult() {
-        String responseMessage = tournamentService.getInvalidGamesWithPlayerNames();
+        String responseMessage = gameService.getInvalidGamesWithPlayerNames();
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
 
