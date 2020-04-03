@@ -22,6 +22,7 @@ VALUES (1, "Bjarne", 535937, "fas fa-chess-pawn fa-3x"),
        (4, "Espen", 535937, "fas fa-chess-bishop fa-3x"),
        (5, "Hans", 1923, "fas fa-chess-knight fa-3x"),
        (6, "Grete", 1923, "fas fa-chess-knight fa-3x"),
+       (7, "123", 535937, "fas fa-chess-knight fa-3x"),
        (48, "Ole", 535937, "fas fa-chess-bishop fa-3x"); -- jwt: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTEFZRVIiLCJqdGkiOiI0OCJ9.-kZd6IlAA1f6nYPxyQWH3-6KfXSFRWBdwE9oH7TqqoA
 
 -- -----------------------------------------------------

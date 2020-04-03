@@ -77,7 +77,7 @@ public class PlayerRESTController {
      *
      * @return 200 OK if successfully set active field to 0, otherwise 400
      */
-    @RequestMapping(value = "/set-inactive", method = RequestMethod.PATCH)
+    @RequestMapping(value = "/inactivate", method = RequestMethod.PATCH)
     public ResponseEntity<String> setInactive() {
         try {
             playerService.leaveTournament(RESTSession.getUserId());
@@ -93,7 +93,7 @@ public class PlayerRESTController {
      *
      * @return 200 OK if the player is successfully deleted, otherwise 400
      */
-    @RequestMapping(value = "/delete-player", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public ResponseEntity<String> deletePlayer() {
         try {
             playerService.deletePlayer(RESTSession.getUserId());

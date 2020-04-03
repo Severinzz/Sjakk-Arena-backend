@@ -1,15 +1,20 @@
 package no.ntnu.sjakkarena.utils;
 
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Random;
 
 /**
  * Generates ids
  */
+@Component
 public class IDGenerator {
 
-    private static TournamentRepository tournamentRepository = new TournamentRepository();
+    @Autowired
+    private TournamentRepository tournamentRepository;
+
     private static int maxNumberOfTournaments = 1000000; // maximum allowed tournaments
 
 
@@ -18,7 +23,7 @@ public class IDGenerator {
      *
      * @return a unique tournament ID
      */
-    public static int generateTournamentID() {
+    public int generateTournamentID() {
         Random random = new Random();
         int tournamentId;
         int i = 0;
@@ -35,7 +40,7 @@ public class IDGenerator {
      *
      * @return a unique admin UUID
      */
-    public static String generateAdminUUID() {
+    public String generateAdminUUID() {
         int stringLength = 5;
         String adminUUID;
         int i = 0;

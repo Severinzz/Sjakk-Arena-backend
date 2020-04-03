@@ -68,7 +68,7 @@ public class PlayerRepository {
      */
     public Player getPlayer(int playerId){
         try {
-            return jdbcTemplate.queryForObject("CALL get_player(" + playerId + ")", playerRowMapper);
+            return jdbcTemplate.queryForObject("CALL sjakkarena.get_player(" + playerId + ")", playerRowMapper);
         } catch (IncorrectResultSizeDataAccessException e) {
             throw new NotInDatabaseException("Could not find player in the database");
         }
@@ -82,7 +82,7 @@ public class PlayerRepository {
     public void deletePlayer(int playerId) {
         int affectedRows = jdbcTemplate.update("DELETE FROM sjakkarena.player WHERE `player_id` = " + playerId);
         if (affectedRows != 1){
-            throw new TroubleUpdatingDBException("Some problem occurred when trying to pause player");
+            throw new TroubleUpdatingDBException("Some problem occurred when trying to delete player");
         }
     }
 

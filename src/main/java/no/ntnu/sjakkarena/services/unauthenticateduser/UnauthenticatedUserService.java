@@ -1,4 +1,4 @@
-package no.ntnu.sjakkarena.services;
+package no.ntnu.sjakkarena.services.unauthenticateduser;
 
 import no.ntnu.sjakkarena.EmailSender;
 import no.ntnu.sjakkarena.JSONCreator;
@@ -6,8 +6,8 @@ import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.events.NewPlayerAddedEvent;
 import no.ntnu.sjakkarena.exceptions.NameAlreadyExistsException;
-import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
+import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
 import no.ntnu.sjakkarena.tasks.StartTournamentTask;
@@ -38,6 +38,9 @@ public class UnauthenticatedUserService {
 
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
+
+    @Autowired
+    private IDGenerator idGenerator;
 
     private JSONCreator jsonCreator = new JSONCreator();
 
@@ -109,8 +112,8 @@ public class UnauthenticatedUserService {
      * @param tournament the tournament to be given IDs
      */
     private void addTournamentIDs(Tournament tournament) {
-        tournament.setId(IDGenerator.generateTournamentID());
-        tournament.setAdminUUID(IDGenerator.generateAdminUUID());
+        tournament.setId(idGenerator.generateTournamentID());
+        tournament.setAdminUUID(idGenerator.generateAdminUUID());
     }
 
     /**

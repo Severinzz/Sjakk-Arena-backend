@@ -8,10 +8,11 @@ import no.ntnu.sjakkarena.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
-public class TournamentGameService {
+public class TournamentsGameService {
 
     @Autowired
     private GameRepository gameRepository;
@@ -33,5 +34,9 @@ public class TournamentGameService {
         } catch (TroubleUpdatingDBException e){
             throw new TroubleUpdatingDBException(e);
         }
+    }
+
+    public Collection<? extends Game> getGames(int tournamentId) {
+        return gameWithPlayerNamesRepository.getGamesWithPlayerNames(tournamentId);
     }
 }

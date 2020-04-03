@@ -1,4 +1,4 @@
-package no.ntnu.sjakkarena.restcontrollers;
+package no.ntnu.sjakkarena.restcontrollers.unauthenticateduser;
 
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
@@ -6,7 +6,7 @@ import no.ntnu.sjakkarena.exceptions.ImproperlyFormedDataException;
 import no.ntnu.sjakkarena.exceptions.NameAlreadyExistsException;
 import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
-import no.ntnu.sjakkarena.services.UnauthenticatedUserService;
+import no.ntnu.sjakkarena.services.unauthenticateduser.UnauthenticatedUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
