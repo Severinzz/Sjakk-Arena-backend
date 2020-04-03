@@ -40,4 +40,21 @@ public class TournamentService extends EventService {
     public boolean isTournamentActive(int tournamentId) {
         return tournamentRepository.isActive(tournamentId);
     }
+
+    public void setTournamentPaused(int tournamentId) {
+        try {
+            tournamentRepository.setInactive(tournamentId);
+        } catch (TroubleUpdatingDBException e) {
+            throw e;
+        }
+    }
+
+    public void setTournamentUnpause(int tournamentId) {
+        try {
+            tournamentRepository.setActive(tournamentId);
+        } catch (TroubleUpdatingDBException e) {
+            throw e;
+        }
+    }
+
 }

@@ -112,6 +112,14 @@ public class TournamentRepository {
         }
     }
 
+    public void setInactive(int tournamentId){
+        try{
+            jdbcTemplate.update("UPDATE sjakkarena.tournament SET `active` = 0 WHERE tournament_id = " + tournamentId);
+        }catch(DataAccessException e){
+            throw new TroubleUpdatingDBException("Could not pause tournament");
+        }
+    }
+
     public boolean exists(int tournamentId) {
         try {
             getTournament(tournamentId);

@@ -51,4 +51,24 @@ public class TournamentRESTController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @RequestMapping(value="/pause",method=RequestMethod.PATCH)
+    public ResponseEntity<String> pauseTournament() {
+        try {
+            tournamentService.setTournamentPaused(RESTSession.getUserId());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch(TroubleUpdatingDBException e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value="/unpause", method = RequestMethod.PATCH)
+    public ResponseEntity<String> unpauseTournament() {
+        try {
+            tournamentService.setTournamentUnpause(RESTSession.getUserId());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (TroubleUpdatingDBException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }
