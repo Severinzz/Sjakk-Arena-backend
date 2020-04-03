@@ -1,10 +1,8 @@
-package no.ntnu.sjakkarena.services;
+package no.ntnu.sjakkarena.services.player;
 
-import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.adaptedmonrad.AdaptedMonrad;
 import no.ntnu.sjakkarena.adaptedmonrad.AfterTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Game;
-import no.ntnu.sjakkarena.data.GameWithPlayerNames;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.ResultUpdateRequest;
 import no.ntnu.sjakkarena.events.NewPlayerAddedEvent;
@@ -12,26 +10,34 @@ import no.ntnu.sjakkarena.events.ResultAddedEvent;
 import no.ntnu.sjakkarena.events.TournamentStartedEvent;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.repositories.GameRepository;
+import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;
+import no.ntnu.sjakkarena.services.EventService;
 import no.ntnu.sjakkarena.utils.RESTSession;
 import no.ntnu.sjakkarena.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 
 @Service
-public class GameService extends EventService {
+public class PlayersGameService extends EventService {
+
+    @Autowired
+    private GameWithPlayerNamesRepository gameWithPlayerNamesRepository;
 
     @Autowired
     private GameRepository gameRepository;
 
-
-
     private AdaptedMonrad adaptedMonrad;
 
-    private JSONCreator jsonCreator = new JSONCreator();
+    public List<? extends Game> getInactiveGames(int playerId) {
+        return gameWithPlayerNamesRepository.getInActiveGames(playerId);
+    }
+
+    public Game getActiveGame(int playerId) {
+        return gameWithPlayerNamesRepository.getActiveGame(playerId);
+    }
 
     public void addResult(ResultUpdateRequest resultUpdateRequest) {
         if (!Validator.pointsIsValid(resultUpdateRequest.getResult())) {
@@ -42,7 +48,7 @@ public class GameService extends EventService {
             gameRepository.addResult(game.getGameId(), resultUpdateRequest.getResult());
             onResultAdd(RESTSession.getUserId(), resultUpdateRequest.getOpponent());
         } catch (NotInDatabaseException e) {
-            throw e;
+            throw new NotInDatabaseException(e);
         }
     }
 
@@ -54,16 +60,23 @@ public class GameService extends EventService {
         manageNewGamesRequest(tournamentId);
     }
 
+
     private void createAndPublishResultAddedEvent(int requestingUserId, int opponentId) {
         Player requestingPlayer = playerRepository.getPlayer(requestingUserId);
         Player opponent = playerRepository.getPlayer(opponentId);
         applicationEventPublisher.publishEvent(new ResultAddedEvent(this, requestingPlayer, opponent));
     }
 
-    @EventListener
-    public void onTournamentStart(TournamentStartedEvent tournamentStartedEvent){
-        this.adaptedMonrad = tournamentStartedEvent.getAdaptedMonrad();
-        manageNewGamesRequest(tournamentStartedEvent.getTournamentId());
+    private void manageNewGamesRequest(int tournamentId){
+        List<Game> newGames = requestNewGames(tournamentId);
+        gameRepository.addGames(newGames);
+        createAndPublishNewGamesEvent(tournamentId);
+    }
+
+    private List<Game> requestNewGames(int tournamentId){
+        List<Player> inActivePlayers = playerRepository.getPlayersWhoIsCurrentlyNotPlaying(tournamentId);
+        List<Integer> availableTables = tournamentRepository.getAvailableTables(tournamentId);
+        return adaptedMonrad.getNewGames(inActivePlayers, availableTables);
     }
 
     @EventListener
@@ -74,30 +87,9 @@ public class GameService extends EventService {
         }
     }
 
-    private void manageNewGamesRequest(int tournamentId){
-        List<Game> newGames = requestNewGames(tournamentId);
-        gameRepository.addGames(newGames);
-        createAndPublishNewGamesEvent(tournamentId);
-    }
-
-
-    private List<Game> requestNewGames(int tournamentId){
-        List<Player> inActivePlayers = playerRepository.getPlayersWhoIsCurrentlyNotPlaying(tournamentId);
-        List<Integer> availableTables = tournamentRepository.getAvailableTables(tournamentId);
-        return adaptedMonrad.getNewGames(inActivePlayers, availableTables);
-    }
-
-    public void updateGameResult(int gameID, double whiteScore) {
-        gameRepository.addResult(gameID, whiteScore);
-    }
-
-    public void setGameResultValid(int gameID) {
-        gameRepository.makeGameValid(gameID);
-    }
-
-    public String getInvalidGamesWithPlayerNames() {
-        int tournamentId = RESTSession.getUserId();
-        Collection<GameWithPlayerNames> games = gameWithPlayerNamesRepository.getInvalidGamesWithPlayerNames((tournamentId));
-        return jsonCreator.writeValueAsString(games);
+    @EventListener
+    public void onTournamentStart(TournamentStartedEvent tournamentStartedEvent){
+        this.adaptedMonrad = tournamentStartedEvent.getAdaptedMonrad();
+        manageNewGamesRequest(tournamentStartedEvent.getTournamentId());
     }
 }

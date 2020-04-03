@@ -1,12 +1,12 @@
-package no.ntnu.sjakkarena.controllers.restcontrollers;
+package no.ntnu.sjakkarena.restcontrollers.unauthenticateduser;
 
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.exceptions.ImproperlyFormedDataException;
 import no.ntnu.sjakkarena.exceptions.NameAlreadyExistsException;
-import no.ntnu.sjakkarena.exceptions.NotAbleToUpdateDBException;
+import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
-import no.ntnu.sjakkarena.services.UnauthenticatedUserService;
+import no.ntnu.sjakkarena.services.unauthenticateduser.UnauthenticatedUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +35,7 @@ public class UnauthenticatedUserRESTController {
         try {
             String responseMessage = unauthenticatedUserService.handleAddPlayerRequest(player);
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
-        } catch (NotAbleToUpdateDBException e) {
+        } catch (TroubleUpdatingDBException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (NameAlreadyExistsException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT); // frontend leter etter kode 409
@@ -54,7 +54,7 @@ public class UnauthenticatedUserRESTController {
         try {
             String responseMessage = unauthenticatedUserService.handleAddTournamentRequest(tournament);
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
-        } catch (NotAbleToUpdateDBException | ImproperlyFormedDataException | NullPointerException e) {
+        } catch (TroubleUpdatingDBException | ImproperlyFormedDataException | NullPointerException e) {
             return new ResponseEntity<>("Couldn't register tournament", HttpStatus.BAD_REQUEST);
         }
     }

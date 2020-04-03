@@ -40,7 +40,7 @@ public class PlayerSubscriberHandler extends SubscriberHandler {
     @EventListener
     public void onTournamentStart(TournamentStartedEvent tournamentStartedEvent){
         for (Player player : tournamentStartedEvent.getPlayers()){
-            informPlayerAboutTournamentState(player, true);
+            informPlayerAboutTournamentState(player.getId(), true);
         }
 
     }
@@ -60,9 +60,9 @@ public class PlayerSubscriberHandler extends SubscriberHandler {
         }
     }
 
-    public void informPlayerAboutTournamentState(Player player, boolean active) {
+    public void informPlayerAboutTournamentState(int playerId, boolean active) {
         try{
-            sendToSubscriber(player.getId(), "/queue/player/tournament-active",
+            sendToSubscriber(playerId, "/queue/player/tournament-active",
                     jsonCreator.createResponseToTournamentStateSubscriber(active));
         } catch(NullPointerException e){
             printNotSubscribingErrorMessage("tournament status", e);
