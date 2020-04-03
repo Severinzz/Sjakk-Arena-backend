@@ -119,4 +119,16 @@ public class GameRepository {
         }
     }
 
+    /**
+     * Sets a games valid state to valid
+     * @param gameId of game to make valid.
+     */
+    public void makeGameValid(int gameId){
+        String sql = "UPDATE sjakkarena.game SET valid_result = 1 WHERE game_id = " +gameId;
+        jdbcTemplate.update(sql);
+    }
+
+    public Game getGame(int gameId) {
+        return jdbcTemplate.queryForObject("SELECT * FROM sjakkarena.game WHERE game_id = " +gameId, gameRowMapper);
+    }
 }

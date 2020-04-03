@@ -1,15 +1,17 @@
 package no.ntnu.sjakkarena.services;
 
+import no.ntnu.sjakkarena.adaptedmonrad.AdaptedMonrad;
+import no.ntnu.sjakkarena.adaptedmonrad.AfterTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
-import no.ntnu.sjakkarena.events.GamesCreatedEvent;
-import no.ntnu.sjakkarena.events.PlayerListChangeEvent;
-import no.ntnu.sjakkarena.events.TournamentStartedEvent;
+import no.ntnu.sjakkarena.events.*;
+import no.ntnu.sjakkarena.repositories.GameRepository;
 import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +29,12 @@ public abstract class EventService {
 
     @Autowired
     protected GameWithPlayerNamesRepository gameWithPlayerNamesRepository;
+
+    // TODO Remove field.
+    private AdaptedMonrad adaptedMonrad;
+
+    @Autowired
+    private GameRepository gameRepository;
 
     protected void createAndPublishPlayerListChangeEvent(int tournamentId) {
         boolean tournamentHasStarted = tournamentRepository.getTournament(tournamentId).isActive();
@@ -46,5 +54,50 @@ public abstract class EventService {
     protected void createAndPublishTournamentStartedEvent(int tournamentId){
         List<Player> players = playerRepository.getPlayersInTournament(tournamentId);
         applicationEventPublisher.publishEvent(new TournamentStartedEvent(this, tournamentId, players));
+    }
+
+    @EventListener
+    public void onNewPlayerAdd(NewPlayerAddedEvent newPlayerAddedEvent){
+        if (newPlayerAddedEvent.hasTournamentStarted()) {
+            this.adaptedMonrad = newPlayerAddedEvent.getAdaptedMonrad();
+            manageNewGamesRequest(newPlayerAddedEvent.getTournamentId());
+        }
+    }
+
+    @EventListener
+    public void onTournamentStart(TournamentStartedEvent tournamentStartedEvent) {
+        this.adaptedMonrad = tournamentStartedEvent.getAdaptedMonrad();
+        manageNewGamesRequest(tournamentStartedEvent.getTournamentId());
+    }
+
+
+    public void onResultAdd(int playerId, int opponentId) {
+        int tournamentId = playerRepository.getPlayer(playerId).getTournamentId();
+        createAndPublishPlayerListChangeEvent(tournamentId);
+        createAndPublishResultAddedEvent(playerId, opponentId);
+        this.adaptedMonrad = new AfterTournamentStartAdaptedMonrad();
+        manageNewGamesRequest(tournamentId);
+    }
+
+    private void createAndPublishResultAddedEvent(int requestingUserId, int opponentId) {
+        Player requestingPlayer = playerRepository.getPlayer(requestingUserId);
+        Player opponent = playerRepository.getPlayer(opponentId);
+        applicationEventPublisher.publishEvent(new ResultAddedEvent(this, requestingPlayer, opponent));
+    }
+
+    private void manageNewGamesRequest(int tournamentId){
+        List<Game> newGames = requestNewGames(tournamentId);
+        gameRepository.addGames(newGames);
+        createAndPublishNewGamesEvent(tournamentId);
+    }
+
+    private List<Game> requestNewGames(int tournamentId){
+        List<Player> inActivePlayers = playerRepository.getPlayersWhoIsCurrentlyNotPlaying(tournamentId);
+        List<Integer> availableTables = tournamentRepository.getAvailableTables(tournamentId);
+        return adaptedMonrad.getNewGames(inActivePlayers, availableTables);
+    }
+
+    protected void onSuggestedResult(int opponentId, double result, int gameId) {
+        applicationEventPublisher.publishEvent(new ResultSuggestedEvent(this, gameId, opponentId, result));
     }
 }

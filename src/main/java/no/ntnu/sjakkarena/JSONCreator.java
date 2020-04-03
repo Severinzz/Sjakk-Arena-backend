@@ -85,4 +85,13 @@ public class JSONCreator {
     }
 
     public String createResponseToPlayerPointsSubscriber(double points) { return "{ \"points\": " + points + " }"; }
+
+    public String createResponseToResultSubscriber(double result, int gameId, boolean suggestedResult, boolean validResult){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result", result);
+        jsonObject.put("game_id", gameId);
+        jsonObject.put("result_is_suggested", suggestedResult);
+        jsonObject.put("result_is_valid", validResult);
+        return jsonObject.toString();
+    }
 }
