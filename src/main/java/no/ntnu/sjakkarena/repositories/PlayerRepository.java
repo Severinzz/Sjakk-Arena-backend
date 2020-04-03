@@ -104,7 +104,7 @@ public class PlayerRepository {
     public void unpausePlayer(int playerId) {
         int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.player SET paused = 0 WHERE player_id = " + playerId);
         if (affectedRows != 1){
-            throw new TroubleUpdatingDBException("Some problem occurred when trying to pause player");
+            throw new TroubleUpdatingDBException("Some problem occurred when trying to unpause player");
         }
     }
 
