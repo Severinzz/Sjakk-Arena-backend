@@ -31,7 +31,7 @@ public class PlayersGameService extends EventService {
         return gameWithPlayerNamesRepository.getActiveGame(playerId);
     }
 
-    public void suggestResult(ResultUpdateRequest resultUpdateRequest) {
+    public void addResult(ResultUpdateRequest resultUpdateRequest) {
         if (!Validator.pointsIsValid(resultUpdateRequest.getResult())) {
             throw new IllegalArgumentException("Not a valid result");
         }
@@ -52,10 +52,11 @@ public class PlayersGameService extends EventService {
         if (game.isValidResult()){
             throw new IllegalArgumentException("Game has already been validated");
         }
-        gameRepository.makeGameValid(gameID);
+        gameRepository.makeResultValid(gameID);
+        onResultValidated(gameID);
     }
 
     public void invalidateResult(int gameId) {
-        onResultInvalidation(gameId);
+        onResultInvalidated(gameId);
     }
 }

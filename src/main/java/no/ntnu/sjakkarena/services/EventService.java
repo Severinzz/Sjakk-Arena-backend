@@ -71,10 +71,11 @@ public abstract class EventService {
     }
 
 
-    public void onResultAdd(int playerId, int opponentId) {
-        int tournamentId = playerRepository.getPlayer(playerId).getTournamentId();
+    public void onResultValidated(int gameId) {
+        Game game = gameRepository.getGame(gameId);
+        int tournamentId = playerRepository.getPlayer(game.getWhitePlayerId()).getTournamentId();
         createAndPublishPlayerListChangeEvent(tournamentId);
-        createAndPublishResultAddedEvent(playerId, opponentId);
+        createAndPublishResultAddedEvent(game.getWhitePlayerId(), game.getBlackPlayerId());
         this.adaptedMonrad = new AfterTournamentStartAdaptedMonrad();
         manageNewGamesRequest(tournamentId);
     }
@@ -101,7 +102,7 @@ public abstract class EventService {
         applicationEventPublisher.publishEvent(new ResultSuggestedEvent(this, gameId, opponentId, result));
     }
 
-    protected void onResultInvalidation(int gameId){
+    protected void onResultInvalidated(int gameId){
         Game game = gameWithPlayerNamesRepository.getGame(gameId);
         Player player = playerRepository.getPlayer(game.getWhitePlayerId());
         applicationEventPublisher.publishEvent(new InvalidResultEvent(this, game, player.getTournamentId()));

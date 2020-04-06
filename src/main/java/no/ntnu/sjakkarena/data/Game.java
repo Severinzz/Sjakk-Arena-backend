@@ -24,9 +24,6 @@ public class Game {
 
     public Game(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId,
                 Integer whitePlayerPoints, boolean active, boolean validResult) {
-        if (active && whitePlayerPoints == 0){
-            whitePlayerPoints = null;
-        }
         this.gameId = gameId;
         this.table = table;
         this.start = start;

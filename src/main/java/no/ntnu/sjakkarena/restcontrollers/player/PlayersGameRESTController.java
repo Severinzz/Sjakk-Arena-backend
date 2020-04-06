@@ -41,7 +41,7 @@ public class PlayersGameRESTController {
     @RequestMapping(value = "/add-result", method = RequestMethod.PUT)
     public ResponseEntity<String> addResult(@Valid ResultUpdateRequest resultUpdateRequest) {
         try {
-            playersGameService.suggestResult(resultUpdateRequest);
+            playersGameService.addResult(resultUpdateRequest);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NotInDatabaseException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
