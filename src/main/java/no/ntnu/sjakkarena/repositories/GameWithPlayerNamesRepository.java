@@ -79,4 +79,13 @@ public class GameWithPlayerNamesRepository {
                 " AND (`white`.`player_id` = " + playerId + " OR `black`.`player_id` = " + playerId +  ") AND `game`.`active` = 0" +
                 " ORDER BY `game`.`start` DESC", gameWithPlayerNamesRowMapper);
     }
+
+    public Game getGame(int gameId) {
+        return jdbcTemplate.queryForObject("SELECT `game`.*, `white`.`name` AS `white_player_name`, " +
+                "`black`.`name` AS `black_player_name`" +
+                " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black`" +
+                " WHERE `game`.`white_player` = `white`.`player_id` AND " +
+                " `game`.`black_player` = `black`.`player_id`" +
+                " AND `game`.`game_id` = " + gameId, gameWithPlayerNamesRowMapper);
+    }
 }

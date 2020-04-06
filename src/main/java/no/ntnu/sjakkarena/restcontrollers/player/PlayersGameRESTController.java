@@ -60,4 +60,10 @@ public class PlayersGameRESTController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @RequestMapping(value="/{game-id}/invalidate", method = RequestMethod.PATCH)
+    public ResponseEntity<String> invalidateResult(@PathVariable("game-id") int gameId){
+        playersGameService.invalidateResult(gameId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

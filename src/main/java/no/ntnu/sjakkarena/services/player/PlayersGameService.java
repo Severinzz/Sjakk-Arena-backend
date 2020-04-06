@@ -54,4 +54,8 @@ public class PlayersGameService extends EventService {
         }
         gameRepository.makeGameValid(gameID);
     }
+
+    public void invalidateResult(int gameId) {
+        onResultInvalidation(gameId);
+    }
 }

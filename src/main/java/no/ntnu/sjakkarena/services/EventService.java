@@ -100,4 +100,10 @@ public abstract class EventService {
     protected void onSuggestedResult(int opponentId, double result, int gameId) {
         applicationEventPublisher.publishEvent(new ResultSuggestedEvent(this, gameId, opponentId, result));
     }
+
+    protected void onResultInvalidation(int gameId){
+        Game game = gameWithPlayerNamesRepository.getGame(gameId);
+        Player player = playerRepository.getPlayer(game.getWhitePlayerId());
+        applicationEventPublisher.publishEvent(new InvalidResultEvent(this, game, player.getTournamentId()));
+    }
 }

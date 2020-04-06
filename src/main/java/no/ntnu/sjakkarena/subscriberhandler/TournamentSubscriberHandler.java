@@ -3,6 +3,7 @@ package no.ntnu.sjakkarena.subscriberhandler;
 import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.events.GamesCreatedEvent;
+import no.ntnu.sjakkarena.events.InvalidResultEvent;
 import no.ntnu.sjakkarena.events.PlayerListChangeEvent;
 import no.ntnu.sjakkarena.events.TournamentStartedEvent;
 import org.springframework.context.event.EventListener;
@@ -77,4 +78,13 @@ public class TournamentSubscriberHandler extends SubscriberHandler {
         }
     }
 
+    @EventListener
+    public void onResultInvalidation(InvalidResultEvent invalidResultEvent){
+        try{
+            sendToSubscriber(invalidResultEvent.getTournamentId(), "/queue/tournament/games/invalid",
+                    jsonCreator.writeValueAsString(invalidResultEvent.getGame()));
+        } catch (NullPointerException e){
+            printNotSubscribingErrorMessage("games with invalid result", e);
+        }
+    }
 }
