@@ -57,4 +57,11 @@ public class TournamentService extends EventService {
         }
     }
 
+    public void endTournament(int tournamentId) {
+        try {
+            tournamentRepository.endTournament(tournamentId);
+        } catch (TroubleUpdatingDBException e){
+            throw new TroubleUpdatingDBException(e);
+        }
+    }
 }

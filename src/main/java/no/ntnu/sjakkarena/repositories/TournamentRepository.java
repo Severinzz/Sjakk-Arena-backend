@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -108,7 +109,7 @@ public class TournamentRepository {
         try {
             jdbcTemplate.update("UPDATE sjakkarena.tournament SET `active` = 1 WHERE tournament_id = " + tournamentId);
         } catch (DataAccessException e){
-            throw new TroubleUpdatingDBException("Could not start tournament");
+            throw new TroubleUpdatingDBException("Could not activate tournament");
         }
     }
 
@@ -144,6 +145,15 @@ public class TournamentRepository {
                     tournamentId, Boolean.class);
         } catch (IncorrectResultSizeDataAccessException e) {
             throw new NotInDatabaseException("Could not find tournament in the database");
+        }
+    }
+
+    public void endTournament(int tournamentId) {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.tournament SET `active` = 0, `end` = \"" +
+                    localDateTime.toString() + "\" WHERE tournament_id = " + tournamentId);
+        if (affectedRows != 1){
+            throw new TroubleUpdatingDBException("Could not end tournament");
         }
     }
 }
