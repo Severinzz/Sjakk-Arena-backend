@@ -12,7 +12,7 @@ public class Tournament extends User {
     @JsonAlias("tournament_name")
     private String tournamentName;
 
-    @Pattern(regexp = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", flags=Pattern.Flag.CASE_INSENSITIVE) // regex from https://stackoverflow.com/questions/8204680/java-regex-email
+    @Pattern(regexp = "^[A-Z\\WÆØÅ0-9._%+-]+@[A-Z\\WÆØÅ0-9.-]+\\.[A-Z\\WÆØÅ]{2,6}$", flags=Pattern.Flag.CASE_INSENSITIVE) // regex from https://stackoverflow.com/questions/8204680/java-regex-email
     @JsonAlias("admin_email")
     private String adminEmail; // the email of the tournament administrator
     private String start; // point in time when tournament starts
