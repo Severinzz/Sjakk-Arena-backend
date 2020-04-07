@@ -54,7 +54,7 @@ public class PlayerSubscriberHandler extends SubscriberHandler {
     @EventListener
     public void onResultSuggested(ResultSuggestedEvent resultSuggestedEvent){
         sendResultInformationToPlayer(resultSuggestedEvent.getOpponentId(), resultSuggestedEvent.getResult(), resultSuggestedEvent.getGameId(),
-                true, false, false);
+                false, false);
     }
 
     @EventListener
@@ -65,22 +65,20 @@ public class PlayerSubscriberHandler extends SubscriberHandler {
     }
 
     private void sendValidResultInformationToPlayer(int playerId){
-        sendResultInformationToPlayer(playerId, 0, 0, false, false,
-                true);
+        sendResultInformationToPlayer(playerId, null, null, false, true);
     }
 
     private void sendInvalidResultInformationToPlayer(int playerId, Game game){
-        sendResultInformationToPlayer(playerId, game.getWhitePlayerPoints(), game.getGameId(),
-                false, true, false);
+        sendResultInformationToPlayer(playerId, null, game.getGameId(),
+                true, false);
     }
 
-    private void sendResultInformationToPlayer(int playerId, double result, int gameId,
-                                                      boolean suggestedResult, boolean opponentsDisagree,
+    private void sendResultInformationToPlayer(int playerId, Double result, Integer gameId, boolean opponentsDisagree,
                                                boolean validResult){
         try{
             sendToSubscriber(playerId, "/queue/player/result",
                     jsonCreator.createResponseToResultSubscriber(result,
-                            gameId, suggestedResult, opponentsDisagree, validResult));
+                            gameId, opponentsDisagree, validResult));
         } catch(NullPointerException e){
             printNotSubscribingErrorMessage("player's result", e);
         }
