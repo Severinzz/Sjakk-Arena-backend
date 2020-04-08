@@ -2,6 +2,7 @@ package no.ntnu.sjakkarena.subscriberhandler;
 
 import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Player;
+import no.ntnu.sjakkarena.events.gameevents.InvalidResultEvent;
 import no.ntnu.sjakkarena.events.gameevents.GamesCreatedEvent;
 import no.ntnu.sjakkarena.events.playerevents.PlayerListChangeEvent;
 import no.ntnu.sjakkarena.events.tournamentevents.TimeToEndTournamentEvent;
