@@ -19,7 +19,7 @@ public class TournamentSubscriberHandler extends SubscriberHandler {
     private JSONCreator jsonCreator = new JSONCreator();
 
     /**
-     * Sends all the names of the players in the tournamentevents
+     * Sends all the names of the players in the tournament
      */
     @EventListener
     public void onPlayerListChange(PlayerListChangeEvent playerListChangeEvent) {

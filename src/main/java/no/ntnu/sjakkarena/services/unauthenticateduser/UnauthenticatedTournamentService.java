@@ -2,18 +2,12 @@ package no.ntnu.sjakkarena.services.unauthenticateduser;
 
 import no.ntnu.sjakkarena.EmailSender;
 import no.ntnu.sjakkarena.JSONCreator;
-import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
-import no.ntnu.sjakkarena.events.playerevents.NewPlayerAddedEvent;
-import no.ntnu.sjakkarena.exceptions.NameAlreadyExistsException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
-import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
-import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
 import no.ntnu.sjakkarena.tasks.EndTournamentTask;
 import no.ntnu.sjakkarena.tasks.StartTournamentTask;
 import no.ntnu.sjakkarena.utils.IDGenerator;
-import no.ntnu.sjakkarena.utils.PlayerIcons;
 import no.ntnu.sjakkarena.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -23,39 +17,32 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.concurrent.Executors;
 
 @Service
-public class UnauthenticatedUserService {
+public class UnauthenticatedTournamentService {
 
     @Autowired
-    private TournamentRepository tournamentRepository;
-
-    @Autowired
-    private PlayerRepository playerRepository;
+    private IDGenerator idGenerator;
 
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
-    private IDGenerator idGenerator;
+    private TournamentRepository tournamentRepository;
 
     private JSONCreator jsonCreator = new JSONCreator();
 
-    public String handleAddPlayerRequest(Player player) {
-        if (playerRepository.doesPlayerExist(player)){
-            throw new NameAlreadyExistsException("Name already take, try a new one!");
-        }
+    public String signIn(String adminUUID){
         try {
-            player.setIcon(PlayerIcons.getRandomFontAwesomeIcon());
-            int userId = playerRepository.addNewPlayer(player);
-            onNewPlayerAdd(player.getTournamentId());
-            return jsonCreator.createResponseToNewPlayer(userId);
-        } catch (TroubleUpdatingDBException e) {
+            Tournament tournament = tournamentRepository.getTournament(adminUUID);
+            return jsonCreator.createResponseToNewTournament(tournament);
+        } catch(NotInDatabaseException e){
             throw e;
         }
     }
+
+
 
     public String handleAddTournamentRequest(Tournament tournament) {
         Validator.validateThatStartIsBeforeEnd(tournament);
@@ -96,27 +83,6 @@ public class UnauthenticatedUserService {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-    }
-
-    public String signIn(String adminUUID){
-        try {
-            Tournament tournament = tournamentRepository.getTournament(adminUUID);
-            return jsonCreator.createResponseToNewTournament(tournament);
-        } catch(NotInDatabaseException e){
-            throw e;
-        }
-    }
-
-    private void onNewPlayerAdd(int tournamentId) {
-        NewPlayerAddedEvent newPlayerAddedEvent = createNewPlayerAddedEvent(tournamentId);
-        applicationEventPublisher.publishEvent(newPlayerAddedEvent);
-    }
-
-    private NewPlayerAddedEvent createNewPlayerAddedEvent(int tournamentId){
-        boolean tournamentHasStarted = tournamentRepository.getTournament(tournamentId).isActive();
-        List<Player> players = playerRepository.getPlayersInTournament(tournamentId);
-        List<Player> leaderBoard = playerRepository.getLeaderBoard(tournamentId);
-        return new NewPlayerAddedEvent(this, players, leaderBoard, tournamentId, tournamentHasStarted);
     }
 
     /**
