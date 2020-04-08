@@ -42,11 +42,6 @@ public class TournamentService extends EventService {
         startTournament(timeToStartTournamentEvent.getTournamentId());
     }
 
-    @EventListener
-    public void onTimeToEndTournament(TimeToEndTournamentEvent timeToEndTournamentEvent){
-        endTournament(timeToEndTournamentEvent.getTournamentId());
-    }
-
     public boolean isTournamentActive(int tournamentId) {
         return tournamentRepository.isActive(tournamentId);
     }

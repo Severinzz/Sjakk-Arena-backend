@@ -50,6 +50,7 @@ public abstract class EventService {
     }
 
     protected void createAndPublishTournamentEndedEvent(int tournamentId){
-        applicationEventPublisher.publishEvent((new TournamentEndedEvent(this, tournamentId)));
+        List<Player> players = playerRepository.getPlayersInTournament(tournamentId);
+        applicationEventPublisher.publishEvent((new TournamentEndedEvent(this, tournamentId, players)));
     }
 }

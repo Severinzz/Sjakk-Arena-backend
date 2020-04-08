@@ -6,6 +6,7 @@ import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.events.gameevents.GamesCreatedEvent;
 import no.ntnu.sjakkarena.events.gameevents.ResultAddedEvent;
 import no.ntnu.sjakkarena.events.playerevents.PlayerRemovedEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TournamentEndedEvent;
 import no.ntnu.sjakkarena.events.tournamentevents.TournamentStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -43,6 +44,13 @@ public class PlayerSubscriberHandler extends SubscriberHandler {
             informPlayerAboutTournamentState(player.getId(), true);
         }
 
+    }
+
+    @EventListener
+    public void onTournamentEnd(TournamentEndedEvent tournamentEndedEvent){
+        for (Player player: tournamentEndedEvent.getPlayers()){
+            informPlayerAboutTournamentState(player.getId(), false);
+        }
     }
 
     @EventListener
