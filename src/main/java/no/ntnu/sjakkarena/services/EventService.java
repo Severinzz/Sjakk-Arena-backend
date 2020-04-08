@@ -2,9 +2,10 @@ package no.ntnu.sjakkarena.services;
 
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
-import no.ntnu.sjakkarena.events.GamesCreatedEvent;
-import no.ntnu.sjakkarena.events.PlayerListChangeEvent;
-import no.ntnu.sjakkarena.events.TournamentStartedEvent;
+import no.ntnu.sjakkarena.events.gameevents.GamesCreatedEvent;
+import no.ntnu.sjakkarena.events.playerevents.PlayerListChangeEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TournamentEndedEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TournamentStartedEvent;
 import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
@@ -46,5 +47,9 @@ public abstract class EventService {
     protected void createAndPublishTournamentStartedEvent(int tournamentId){
         List<Player> players = playerRepository.getPlayersInTournament(tournamentId);
         applicationEventPublisher.publishEvent(new TournamentStartedEvent(this, tournamentId, players));
+    }
+
+    protected void createAndPublishTournamentEndedEvent(int tournamentId){
+        applicationEventPublisher.publishEvent((new TournamentEndedEvent(this, tournamentId)));
     }
 }

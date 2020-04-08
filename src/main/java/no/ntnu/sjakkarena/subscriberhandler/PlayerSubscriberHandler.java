@@ -3,10 +3,10 @@ package no.ntnu.sjakkarena.subscriberhandler;
 import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
-import no.ntnu.sjakkarena.events.GamesCreatedEvent;
-import no.ntnu.sjakkarena.events.PlayerRemovedEvent;
-import no.ntnu.sjakkarena.events.ResultAddedEvent;
-import no.ntnu.sjakkarena.events.TournamentStartedEvent;
+import no.ntnu.sjakkarena.events.gameevents.GamesCreatedEvent;
+import no.ntnu.sjakkarena.events.gameevents.ResultAddedEvent;
+import no.ntnu.sjakkarena.events.playerevents.PlayerRemovedEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TournamentStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 

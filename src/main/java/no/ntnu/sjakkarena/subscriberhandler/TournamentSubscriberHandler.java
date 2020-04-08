@@ -2,9 +2,10 @@ package no.ntnu.sjakkarena.subscriberhandler;
 
 import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Player;
-import no.ntnu.sjakkarena.events.GamesCreatedEvent;
-import no.ntnu.sjakkarena.events.PlayerListChangeEvent;
-import no.ntnu.sjakkarena.events.TournamentStartedEvent;
+import no.ntnu.sjakkarena.events.gameevents.GamesCreatedEvent;
+import no.ntnu.sjakkarena.events.playerevents.PlayerListChangeEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TournamentEndedEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TournamentStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,7 @@ public class TournamentSubscriberHandler extends SubscriberHandler {
     private JSONCreator jsonCreator = new JSONCreator();
 
     /**
-     * Sends all the names of the players in the tournament
+     * Sends all the names of the players in the tournamentevents
      */
     @EventListener
     public void onPlayerListChange(PlayerListChangeEvent playerListChangeEvent) {
@@ -66,6 +67,11 @@ public class TournamentSubscriberHandler extends SubscriberHandler {
     @EventListener
     public void onTournamentStart(TournamentStartedEvent tournamentStartedEvent){
         sendActiveStateToTournament(tournamentStartedEvent.getTournamentId(), true);
+    }
+
+    @EventListener
+    public void onTournamentEnd(TournamentEndedEvent tournamentEndedEvent){
+        sendActiveStateToTournament(tournamentEndedEvent.getTournamentId(), false);
     }
 
     public void sendActiveStateToTournament(int tournamentId, boolean active){

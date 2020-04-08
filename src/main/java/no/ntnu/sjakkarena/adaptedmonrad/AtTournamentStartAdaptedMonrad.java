@@ -15,7 +15,7 @@ public class AtTournamentStartAdaptedMonrad extends AdaptedMonrad{
      * @return New games
      */
     @Override
-    protected List<Game> setupGames(ArrayDeque<Player> playersNotPlaying, Queue<Integer> availableTables) {
+    protected List<Game> setupGames(Deque<Player> playersNotPlaying, Queue<Integer> availableTables) {
         List<Player> players = new ArrayList<>(playersNotPlaying);
         List<Game> games = new ArrayList<>();
         int i = 0;

@@ -22,7 +22,7 @@ public class AfterTournamentStartAdaptedMonrad extends AdaptedMonrad {
      * @return New games
      */
     @Override
-    protected List<Game> setupGames(ArrayDeque<Player> playersNotPlaying, Queue<Integer> availableTables) {
+    protected List<Game> setupGames(Deque<Player> playersNotPlaying, Queue<Integer> availableTables) {
         List<Game> games = new ArrayList<>();
         while (!playersNotPlaying.isEmpty() && !availableTables.isEmpty()) {
             try {
@@ -32,8 +32,10 @@ public class AfterTournamentStartAdaptedMonrad extends AdaptedMonrad {
                 playersNotPlaying.remove(opponent);
                 ColorDistribution colorDistribution = ColorDistributor.distribute(challenger, opponent);
                 games.add(new Game(availableTables.poll(), LocalDateTime.now().withNano(0).toString(),
-                        colorDistribution.getWhitePlayer().getId(), colorDistribution.getBlackPlayer().getId(), true));
+                        colorDistribution.getWhitePlayer().getId(), colorDistribution.getBlackPlayer().getId(),
+                        true));
             } catch (NoSuchElementException e) {
+                e.printStackTrace();
             }
         }
         return games;
@@ -85,7 +87,7 @@ public class AfterTournamentStartAdaptedMonrad extends AdaptedMonrad {
      * @param player2
      * @return True if the players don't have played against each other earlier in the tournament
      */
-    public boolean hasNotPlayedAgainstEachOther(Player player1, Player player2) {
+    private boolean hasNotPlayedAgainstEachOther(Player player1, Player player2) {
         boolean hasNotPlayed = true;
         for (Integer playerId : player1.getPreviousOpponents()) {
             if (player2.getId() == playerId) {

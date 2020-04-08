@@ -16,22 +16,10 @@ public abstract class AdaptedMonrad {
      * @return New games.
      */
     public List<Game> getNewGames(List<Player> playersNotPlaying, Collection<Integer> availableTables) {
-        PlayerSorter.sortPlayersByAvgPoints(playersNotPlaying);
+        PlayerSorter.sortPlayersByAvgPointsAndBibNumber(playersNotPlaying);
         return setupGames(new ArrayDeque<>(playersNotPlaying), new PriorityQueue<>(availableTables));
     }
 
-    /**
-     * Gives each player a random bib number
-     *
-     * @param players The players to be given a random bib number.
-     */
-    public void provideBibNumber(List<Player> players) {
-        Collections.shuffle(players);
-        for (int i = 0; i < players.size(); i++) {
-            players.get(i).setBibNumber(i + 1);
-        }
-    }
-
-    protected abstract List<Game> setupGames(ArrayDeque<Player> playersNotPlaying, Queue<Integer> availableTables);
+    protected abstract List<Game> setupGames(Deque<Player> playersNotPlaying, Queue<Integer> availableTables);
 
 }

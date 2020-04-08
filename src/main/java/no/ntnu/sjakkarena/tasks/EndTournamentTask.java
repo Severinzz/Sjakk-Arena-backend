@@ -1,17 +1,17 @@
 package no.ntnu.sjakkarena.tasks;
 
-import no.ntnu.sjakkarena.events.tournamentevents.TimeToStartTournamentEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TimeToEndTournamentEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @Component
-public class StartTournamentTask implements Runnable {
+public class EndTournamentTask implements Runnable {
 
     private ApplicationEventPublisher applicationEventPublisher;
 
     private int tournamentId;
 
-    public StartTournamentTask(ApplicationEventPublisher applicationEventPublisher){
+    public EndTournamentTask(ApplicationEventPublisher applicationEventPublisher){
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
@@ -21,6 +21,6 @@ public class StartTournamentTask implements Runnable {
 
     @Override
     public void run() {
-        applicationEventPublisher.publishEvent(new TimeToStartTournamentEvent(this, tournamentId));
+        applicationEventPublisher.publishEvent(new TimeToEndTournamentEvent(this, tournamentId));
     }
 }
