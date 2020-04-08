@@ -4,12 +4,13 @@ import no.ntnu.sjakkarena.EmailSender;
 import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
-import no.ntnu.sjakkarena.events.NewPlayerAddedEvent;
+import no.ntnu.sjakkarena.events.playerevents.NewPlayerAddedEvent;
 import no.ntnu.sjakkarena.exceptions.NameAlreadyExistsException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
+import no.ntnu.sjakkarena.tasks.EndTournamentTask;
 import no.ntnu.sjakkarena.tasks.StartTournamentTask;
 import no.ntnu.sjakkarena.utils.IDGenerator;
 import no.ntnu.sjakkarena.utils.PlayerIcons;
@@ -27,8 +28,6 @@ import java.util.concurrent.Executors;
 
 @Service
 public class UnauthenticatedUserService {
-
-    private TaskScheduler taskScheduler;
 
     @Autowired
     private TournamentRepository tournamentRepository;
@@ -62,14 +61,16 @@ public class UnauthenticatedUserService {
         Validator.validateThatStartIsBeforeEnd(tournament);
         addTournamentIDs(tournament);
         tournamentRepository.addNewTournament(tournament);
-        setUpTaskSchedulerAndScheduleStartTournamentTask(tournament);
+        scheduleTasks(tournament);
         //sendEmailToTournamentAdmin(tournament); //Remove comment to send email
         return jsonCreator.createResponseToNewTournament(tournament);
     }
 
-    private void setUpTaskSchedulerAndScheduleStartTournamentTask(Tournament tournament) {
-        taskScheduler = new ConcurrentTaskScheduler(Executors.newScheduledThreadPool(10));
+    private void scheduleTasks(Tournament tournament) {
         scheduleStartTournamentTask(tournament);
+        if(tournament.getEnd() != null) {
+            scheduleEndTournamentTask(tournament);
+        }
     }
 
     private void scheduleStartTournamentTask(Tournament tournament) {
@@ -78,8 +79,20 @@ public class UnauthenticatedUserService {
             startTournamentTask.setTournamentId(tournament.getId());
 
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-
+            TaskScheduler taskScheduler = new ConcurrentTaskScheduler(Executors.newScheduledThreadPool(10));
             taskScheduler.schedule(startTournamentTask, simpleDateFormat.parse(tournament.getStart()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void scheduleEndTournamentTask(Tournament tournament){
+        try {
+            EndTournamentTask endTournamentTask = new EndTournamentTask(applicationEventPublisher);
+            endTournamentTask.setTournamentId(tournament.getId());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+            TaskScheduler taskScheduler = new ConcurrentTaskScheduler(Executors.newScheduledThreadPool(10));
+            taskScheduler.schedule(endTournamentTask, simpleDateFormat.parse(tournament.getEnd()));
         } catch (ParseException e) {
             e.printStackTrace();
         }

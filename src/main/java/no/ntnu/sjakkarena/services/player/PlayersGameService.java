@@ -2,6 +2,9 @@ package no.ntnu.sjakkarena.services.player;
 
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.ResultUpdateRequest;
+import no.ntnu.sjakkarena.events.playerevents.NewPlayerAddedEvent;
+import no.ntnu.sjakkarena.events.gameevents.ResultAddedEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TournamentStartedEvent;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.repositories.GameRepository;
 import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;

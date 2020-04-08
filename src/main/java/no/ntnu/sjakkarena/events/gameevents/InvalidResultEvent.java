@@ -1,4 +1,4 @@
-package no.ntnu.sjakkarena.events;
+package no.ntnu.sjakkarena.events.gameevents;
 
 import no.ntnu.sjakkarena.data.Game;
 import org.springframework.context.ApplicationEvent;

@@ -1,7 +1,8 @@
 package no.ntnu.sjakkarena.services.tournament;
 
 import no.ntnu.sjakkarena.data.Tournament;
-import no.ntnu.sjakkarena.events.TimeToStartTournamentEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TimeToEndTournamentEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TimeToStartTournamentEvent;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.services.EventService;
@@ -32,6 +33,10 @@ public class TournamentService extends EventService {
         createAndPublishTournamentStartedEvent(tournamentId);
     }
 
+    private void onTournamentEnd(int tournamentId) {
+        createAndPublishTournamentEndedEvent(tournamentId);
+    }
+
     @EventListener
     public void onTimeToStartTournament(TimeToStartTournamentEvent timeToStartTournamentEvent){
         startTournament(timeToStartTournamentEvent.getTournamentId());
@@ -57,4 +62,12 @@ public class TournamentService extends EventService {
         }
     }
 
+    public void endTournament(int tournamentId) {
+        try {
+            tournamentRepository.endTournament(tournamentId);
+            onTournamentEnd(tournamentId);
+        } catch (TroubleUpdatingDBException e){
+            throw new TroubleUpdatingDBException(e);
+        }
+    }
 }

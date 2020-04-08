@@ -1,7 +1,7 @@
 package no.ntnu.sjakkarena.services.tournament;
 
 import no.ntnu.sjakkarena.data.Player;
-import no.ntnu.sjakkarena.events.PlayerRemovedEvent;
+import no.ntnu.sjakkarena.events.playerevents.PlayerRemovedEvent;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.services.EventService;

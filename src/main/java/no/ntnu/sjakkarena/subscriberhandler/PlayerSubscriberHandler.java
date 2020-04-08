@@ -3,7 +3,13 @@ package no.ntnu.sjakkarena.subscriberhandler;
 import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
-import no.ntnu.sjakkarena.events.*;
+import no.ntnu.sjakkarena.events.gameevents.InvalidResultEvent;
+import no.ntnu.sjakkarena.events.gameevents.ResultSuggestedEvent;
+import no.ntnu.sjakkarena.events.gameevents.GamesCreatedEvent;
+import no.ntnu.sjakkarena.events.gameevents.ResultAddedEvent;
+import no.ntnu.sjakkarena.events.playerevents.PlayerRemovedEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TournamentEndedEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TournamentStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +49,15 @@ public class PlayerSubscriberHandler extends SubscriberHandler {
     }
 
     @EventListener
+    public void onTournamentEnd(TournamentEndedEvent tournamentEndedEvent){
+        for (Player player: tournamentEndedEvent.getPlayers()){
+            informPlayerAboutTournamentState(player.getId(), false);
+        }
+    }
+
+    @EventListener
     public void onResultAdded(ResultAddedEvent resultAddedEvent){
+
         sendPointsToPlayer(resultAddedEvent.getPlayer1());
         sendValidResultInformationToPlayer(resultAddedEvent.getPlayer1().getId());
         sendPointsToPlayer(resultAddedEvent.getPlayer2());

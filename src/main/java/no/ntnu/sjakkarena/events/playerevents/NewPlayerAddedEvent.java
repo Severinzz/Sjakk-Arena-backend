@@ -1,4 +1,4 @@
-package no.ntnu.sjakkarena.events;
+package no.ntnu.sjakkarena.events.playerevents;
 
 import no.ntnu.sjakkarena.adaptedmonrad.AdaptedMonrad;
 import no.ntnu.sjakkarena.adaptedmonrad.AfterTournamentStartAdaptedMonrad;

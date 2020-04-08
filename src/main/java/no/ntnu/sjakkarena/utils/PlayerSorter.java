@@ -15,7 +15,7 @@ public class PlayerSorter {
      *
      * @param players The list to be sorted.
      */
-    public static void sortPlayersByAvgPoints(List<Player> players) {
+    public static void sortPlayersByAvgPointsAndBibNumber(List<Player> players) {
         Collections.sort(players, new Comparator() {
             @Override
             public int compare(Object o1, Object o2) {

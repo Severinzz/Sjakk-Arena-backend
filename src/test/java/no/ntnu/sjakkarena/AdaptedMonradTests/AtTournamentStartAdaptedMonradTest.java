@@ -16,23 +16,6 @@ public class AtTournamentStartAdaptedMonradTest extends AdaptedMonradTest{
 
     private AdaptedMonrad adaptedMonrad = new AtTournamentStartAdaptedMonrad();
 
-    @Test
-    public void provideBibNumber() {
-        provideBibNumberInit();
-        adaptedMonrad.provideBibNumber(players);
-        for (int i = 0; i < players.size(); i++) {
-            assertEquals(players.get(i).getBibNumber(), i + 1);
-        }
-    }
-
-    private void provideBibNumberInit() {
-        players = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            players.add(new Player(i, "", true, 1, 1, 1, "",
-                    true, 0, "", 0));
-        }
-    }
-
     /**
      * Test that no games is created at the start of the tournament with no enrolled players.
      */

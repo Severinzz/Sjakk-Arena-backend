@@ -4,7 +4,14 @@ import no.ntnu.sjakkarena.adaptedmonrad.AdaptedMonrad;
 import no.ntnu.sjakkarena.adaptedmonrad.AfterTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
-import no.ntnu.sjakkarena.events.*;
+import no.ntnu.sjakkarena.events.gameevents.GamesCreatedEvent;
+import no.ntnu.sjakkarena.events.gameevents.InvalidResultEvent;
+import no.ntnu.sjakkarena.events.gameevents.ResultAddedEvent;
+import no.ntnu.sjakkarena.events.gameevents.ResultSuggestedEvent;
+import no.ntnu.sjakkarena.events.playerevents.NewPlayerAddedEvent;
+import no.ntnu.sjakkarena.events.playerevents.PlayerListChangeEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TournamentEndedEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TournamentStartedEvent;
 import no.ntnu.sjakkarena.repositories.GameRepository;
 import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
@@ -54,6 +61,12 @@ public abstract class EventService {
     protected void createAndPublishTournamentStartedEvent(int tournamentId){
         List<Player> players = playerRepository.getPlayersInTournament(tournamentId);
         applicationEventPublisher.publishEvent(new TournamentStartedEvent(this, tournamentId, players));
+    }
+
+
+    protected void createAndPublishTournamentEndedEvent(int tournamentId) {
+        List<Player> players = playerRepository.getPlayersInTournament(tournamentId);
+        applicationEventPublisher.publishEvent((new TournamentEndedEvent(this, tournamentId, players)));
     }
 
     @EventListener
@@ -106,5 +119,6 @@ public abstract class EventService {
         Game game = gameWithPlayerNamesRepository.getGame(gameId);
         Player player = playerRepository.getPlayer(game.getWhitePlayerId());
         applicationEventPublisher.publishEvent(new InvalidResultEvent(this, game, player.getTournamentId()));
+
     }
 }
