@@ -89,4 +89,13 @@ public class TournamentSubscriberHandler extends SubscriberHandler {
         }
     }
 
+    @EventListener
+    public void onResultInvalidation(InvalidResultEvent invalidResultEvent){
+        try{
+            sendToSubscriber(invalidResultEvent.getTournamentId(), "/queue/tournament/games/invalid",
+                    jsonCreator.writeValueAsString(invalidResultEvent.getGame()));
+        } catch (NullPointerException e){
+            printNotSubscribingErrorMessage("games with invalid result", e);
+        }
+    }
 }

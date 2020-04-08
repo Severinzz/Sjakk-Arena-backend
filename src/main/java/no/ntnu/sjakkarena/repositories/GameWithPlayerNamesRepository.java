@@ -25,36 +25,29 @@ public class GameWithPlayerNamesRepository {
      * @return The games in the tournament
      */
     public Collection<GameWithPlayerNames> getGamesWithPlayerNames(int tournamentId) {
-        return jdbcTemplate.query("SELECT `game_id`, `table`, `white_player_points`, `game`.`active`, `game`.`start`, " +
-                "`game`.`end`, `white_player` AS `white_player_id`, `white`.`name` AS `white_player_name`, " +
-                "`black_player` AS `black_player_id`, `black`.`name` AS `black_player_name`" +
-                " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black`, " +
-                " `sjakkarena`.`tournament` AS `tournament` " +
+        return jdbcTemplate.query("SELECT `game`.*, `white`.`name` AS `white_player_name`, " +
+                "`black`.`name` AS `black_player_name`" +
+                " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black` "+
                 " WHERE `game`.`white_player` = `white`.`player_id` AND " +
-                "`game`.`black_player` = `black`.`player_id` AND `tournament`.`tournament_id` = `white`.`tournament`" +
-                " AND `tournament`.`tournament_id` = " + tournamentId +
+                "`game`.`black_player` = `black`.`player_id` AND `white`.`tournament` = " + tournamentId +
                 " ORDER BY `game`.`start` DESC", gameWithPlayerNamesRowMapper);
     }
 
     public List<GameWithPlayerNames> getActiveGames(int tournamentId) {
-        return jdbcTemplate.query("SELECT `game_id`, `table`, `white_player_points`, `game`.`active`, `game`.`start`, " +
-                "`game`.`end`, `white_player` AS `white_player_id`, `white`.`name` AS `white_player_name`, " +
-                "`black_player` AS `black_player_id`, `black`.`name` AS `black_player_name`" +
-                " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black`" +
+        return jdbcTemplate.query("SELECT `game`.*, `white`.`name` AS `white_player_name`, " +
+                "`black`.`name` AS `black_player_name`" +
+                " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black` "+
                 " WHERE `game`.`white_player` = `white`.`player_id` AND " +
-                " `game`.`black_player` = `black`.`player_id`" +
-                " AND `white`.`tournament` = " + tournamentId + " AND `game`.`active` = " + 1 +
+                "`game`.`black_player` = `black`.`player_id` AND `white`.`tournament` = " + tournamentId +
+                " AND `game`.`active` = " + 1 +
                 " ORDER BY `game`.`start` DESC", gameWithPlayerNamesRowMapper);
     }
 
 
     public List<GameWithPlayerNames> getGamesWithInvalidResult(int tournamentId) {
-        String sql = "\tSELECT `game_id`, `table`, `white_player_points`, \n" +
-                "\t`white_player` AS `white_player_id`, \n" +
+        String sql = "\tSELECT `game`.*, " +
                 "\t`white`.`name` AS `white_player_name`,\n" +
-                "\t`black_player` AS `black_player_id`, \n" +
-                "\t`black`.`name` AS `black_player_name`,\n" +
-                "\t`game`.`start`, `game`.`end`, `game`.`active`\n" +
+                "\t`black`.`name` AS `black_player_name`\n" +
                 "\tFROM `sjakkarena`.`game` \n" +
                 "\tAS `game`, `sjakkarena`.`player` \n" +
                 "\tAS white, `sjakkarena`.`player` \n" +
@@ -63,14 +56,14 @@ public class GameWithPlayerNamesRepository {
                 "\tAND `game`.`white_player` = `white`.`player_id` \n" +
                 "\tAND `game`.`black_player` = `black`.`player_id` \n" +
                 "\tAND `white`.`tournament` = " + tournamentId + "\n" +
+                "\tAND `game`.`white_player_points`IS NOT NULL \n " +
                 "ORDER BY`game`.`start` DESC";
         return jdbcTemplate.query(sql, gameWithPlayerNamesRowMapper);
     }
 
     public GameWithPlayerNames getActiveGame(int playerId) {
-        return jdbcTemplate.queryForObject("SELECT `game_id`, `table`, `white_player_points`, `game`.`active`, `game`.`start`, " +
-                "`game`.`end`, `white_player` AS `white_player_id`, `white`.`name` AS `white_player_name`, " +
-                "`black_player` AS `black_player_id`, `black`.`name` AS `black_player_name`" +
+        return jdbcTemplate.queryForObject("SELECT `game`.*, `white`.`name` AS `white_player_name`, " +
+                "`black`.`name` AS `black_player_name`" +
                 " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black`" +
                 " WHERE `game`.`white_player` = `white`.`player_id` AND " +
                 " `game`.`black_player` = `black`.`player_id`" +
@@ -79,13 +72,21 @@ public class GameWithPlayerNamesRepository {
     }
 
     public List<GameWithPlayerNames> getInActiveGames(int playerId) {
-        return jdbcTemplate.query("SELECT `game_id`, `table`, `white_player_points`, `game`.`active`, `game`.`start`, " +
-                "`game`.`end`, `white_player` AS `white_player_id`, `white`.`name` AS `white_player_name`, " +
-                "`black_player` AS `black_player_id`, `black`.`name` AS `black_player_name`" +
+        return jdbcTemplate.query("SELECT `game`.*, `white`.`name` AS `white_player_name`, " +
+                "`black`.`name` AS `black_player_name`" +
                 " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black`" +
                 " WHERE `game`.`white_player` = `white`.`player_id` AND " +
                 " `game`.`black_player` = `black`.`player_id`" +
                 " AND (`white`.`player_id` = " + playerId + " OR `black`.`player_id` = " + playerId +  ") AND `game`.`active` = 0" +
                 " ORDER BY `game`.`start` DESC", gameWithPlayerNamesRowMapper);
+    }
+
+    public Game getGame(int gameId) {
+        return jdbcTemplate.queryForObject("SELECT `game`.*, `white`.`name` AS `white_player_name`, " +
+                "`black`.`name` AS `black_player_name`" +
+                " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black`" +
+                " WHERE `game`.`white_player` = `white`.`player_id` AND " +
+                " `game`.`black_player` = `black`.`player_id`" +
+                " AND `game`.`game_id` = " + gameId, gameWithPlayerNamesRowMapper);
     }
 }

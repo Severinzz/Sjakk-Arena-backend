@@ -7,10 +7,10 @@ DELETE FROM `sjakkarena`.`tournament`;
 -- Table `sjakkarena`.`tournament`
 -- -----------------------------------------------------
 INSERT INTO sjakkarena.tournament (`tournament_id`, `tournament_name`, `admin_email`, `start`, `end`,
-                                   `tables`, `max_rounds`, `admin_uuid`, `early_start`)
-VALUES (535937, "sjakkturnering", "sjakk@turnering.no", "2020-02-23 22:03", "2020-02-23 23:04", 4, 5, "fsa32", 1), -- jwt: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJUT1VSTkFNRU5UIiwianRpIjoiNTM1OTM3In0.wct6xzanPitCfQ7nSMa4KMq1bIsFnp0vthRcZhRhG18
+                                   `tables`, `max_rounds`, `admin_uuid`, `early_start`, `active`)
+VALUES (535937, "sjakkturnering", "sjakk@turnering.no", "2020-02-23 22:03", "2020-02-23 23:04", 100, 5, "fsa32", 1, 1), -- jwt: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJUT1VSTkFNRU5UIiwianRpIjoiNTM1OTM3In0.wct6xzanPitCfQ7nSMa4KMq1bIsFnp0vthRcZhRhG18
        (1923, "En annen sjakkturnering", "turnering@sjakk.com", "1996-01-01 00:00:00", "2000-01-01 00:00:00", 100, 5,
-        "dfa34", 0);
+        "dfa34", 0, 0);
 
 -- -----------------------------------------------------
 -- Table `sjakkarena`.`player`
