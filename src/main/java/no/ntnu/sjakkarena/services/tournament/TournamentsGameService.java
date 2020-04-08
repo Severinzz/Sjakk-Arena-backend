@@ -39,4 +39,7 @@ public class TournamentsGameService {
     public Collection<? extends Game> getGames(int tournamentId) {
         return gameWithPlayerNamesRepository.getGamesWithPlayerNames(tournamentId);
     }
+    public Collection<? extends Game> getActiveGames(int tournamentId) {
+        return gameWithPlayerNamesRepository.getActiveGames(tournamentId);
+    }
 }
