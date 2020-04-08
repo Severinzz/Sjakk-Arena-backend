@@ -3,10 +3,7 @@ package no.ntnu.sjakkarena.subscriberhandler;
 import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
-import no.ntnu.sjakkarena.events.GamesCreatedEvent;
-import no.ntnu.sjakkarena.events.PlayerRemovedEvent;
-import no.ntnu.sjakkarena.events.ResultAddedEvent;
-import no.ntnu.sjakkarena.events.TournamentStartedEvent;
+import no.ntnu.sjakkarena.events.*;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -46,9 +43,45 @@ public class PlayerSubscriberHandler extends SubscriberHandler {
     }
 
     @EventListener
-    public void onPointsAdded(ResultAddedEvent resultAddedEvent){
+    public void onResultAdded(ResultAddedEvent resultAddedEvent){
         sendPointsToPlayer(resultAddedEvent.getPlayer1());
+        sendValidResultInformationToPlayer(resultAddedEvent.getPlayer1().getId());
         sendPointsToPlayer(resultAddedEvent.getPlayer2());
+        sendValidResultInformationToPlayer(resultAddedEvent.getPlayer2().getId());
+
+    }
+
+    @EventListener
+    public void onResultSuggested(ResultSuggestedEvent resultSuggestedEvent){
+        sendResultInformationToPlayer(resultSuggestedEvent.getOpponentId(), resultSuggestedEvent.getResult(), resultSuggestedEvent.getGameId(),
+                false, false);
+    }
+
+    @EventListener
+    public void onResultInvalidated(InvalidResultEvent invalidResultEvent){
+        Game game = invalidResultEvent.getGame();
+        sendInvalidResultInformationToPlayer(game.getWhitePlayerId(), game);
+        sendInvalidResultInformationToPlayer(game.getBlackPlayerId(), game);
+    }
+
+    private void sendValidResultInformationToPlayer(int playerId){
+        sendResultInformationToPlayer(playerId, null, null, false, true);
+    }
+
+    private void sendInvalidResultInformationToPlayer(int playerId, Game game){
+        sendResultInformationToPlayer(playerId, null, game.getGameId(),
+                true, false);
+    }
+
+    private void sendResultInformationToPlayer(int playerId, Double result, Integer gameId, boolean opponentsDisagree,
+                                               boolean validResult){
+        try{
+            sendToSubscriber(playerId, "/queue/player/result",
+                    jsonCreator.createResponseToResultSubscriber(result,
+                            gameId, opponentsDisagree, validResult));
+        } catch(NullPointerException e){
+            printNotSubscribingErrorMessage("player's result", e);
+        }
     }
 
     public void sendPointsToPlayer(Player player){

@@ -12,6 +12,7 @@ public class Game {
     private int blackPlayerId;
     private Integer whitePlayerPoints;
     private boolean active;
+    private boolean validResult;
 
     public Game(int table, String start, int whitePlayerId, int blackPlayerId, boolean active) {
         this.table = table;
@@ -22,10 +23,7 @@ public class Game {
     }
 
     public Game(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId,
-                Integer whitePlayerPoints, boolean active) {
-        if (active && whitePlayerPoints == 0){
-            whitePlayerPoints = null;
-        }
+                Integer whitePlayerPoints, boolean active, boolean validResult) {
         this.gameId = gameId;
         this.table = table;
         this.start = start;
@@ -34,6 +32,7 @@ public class Game {
         this.blackPlayerId = blackPlayerId;
         this.whitePlayerPoints = whitePlayerPoints;
         this.active = active;
+        this.validResult = validResult;
     }
     @JsonProperty("game_id")
     public int getGameId() {
@@ -101,5 +100,9 @@ public class Game {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public boolean isValidResult() {
+        return validResult;
     }
 }
