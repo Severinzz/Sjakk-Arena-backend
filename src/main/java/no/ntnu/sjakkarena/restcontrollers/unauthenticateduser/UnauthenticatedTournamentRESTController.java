@@ -1,12 +1,10 @@
 package no.ntnu.sjakkarena.restcontrollers.unauthenticateduser;
 
-import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.exceptions.ImproperlyFormedDataException;
-import no.ntnu.sjakkarena.exceptions.NameAlreadyExistsException;
-import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
-import no.ntnu.sjakkarena.services.unauthenticateduser.UnauthenticatedUserService;
+import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
+import no.ntnu.sjakkarena.services.unauthenticateduser.UnauthenticatedTournamentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,33 +12,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-/**
- * Handles requests from users who don't have a token to identify them.  All methods in this class will return a
- * token to the user.
- */
 @RestController
-public class UnauthenticatedUserRESTController {
+public class UnauthenticatedTournamentRESTController {
 
     @Autowired
-    private UnauthenticatedUserService unauthenticatedUserService;
-
-    /**
-     * Register a new user
-     *
-     * @param player
-     * @return
-     */
-    @RequestMapping(value = "/new-player", method = RequestMethod.POST)
-    public ResponseEntity<String> registerPlayer(@RequestBody Player player) {
-        try {
-            String responseMessage = unauthenticatedUserService.handleAddPlayerRequest(player);
-            return new ResponseEntity<>(responseMessage, HttpStatus.OK);
-        } catch (TroubleUpdatingDBException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (NameAlreadyExistsException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT); // frontend leter etter kode 409
-        }
-    }
+    private UnauthenticatedTournamentService unauthenticatedTournamentService;
 
     /**
      * Register a tournament
@@ -52,7 +28,7 @@ public class UnauthenticatedUserRESTController {
     @RequestMapping(value = "/new-tournament", method = RequestMethod.POST)
     public ResponseEntity<String> registerTournament(@Valid @RequestBody Tournament tournament) {
         try {
-            String responseMessage = unauthenticatedUserService.handleAddTournamentRequest(tournament);
+            String responseMessage = unauthenticatedTournamentService.handleAddTournamentRequest(tournament);
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
         } catch (TroubleUpdatingDBException | ImproperlyFormedDataException | NullPointerException e) {
             return new ResponseEntity<>("Couldn't register tournament", HttpStatus.BAD_REQUEST);
@@ -70,7 +46,7 @@ public class UnauthenticatedUserRESTController {
     @RequestMapping(value = "/sign-in/{uuid}", method = RequestMethod.GET)
     public ResponseEntity<String> signIn(@PathVariable(name = "uuid") String adminUUID) {
         try{
-            String responseMessage = unauthenticatedUserService.signIn(adminUUID);
+            String responseMessage = unauthenticatedTournamentService.signIn(adminUUID);
             return new ResponseEntity<>(responseMessage, HttpStatus.OK);
         } catch(NotInDatabaseException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

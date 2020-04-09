@@ -57,12 +57,10 @@ public class PlayerSubscriberHandler extends SubscriberHandler {
 
     @EventListener
     public void onResultAdded(ResultAddedEvent resultAddedEvent){
-
         sendPointsToPlayer(resultAddedEvent.getPlayer1());
         sendValidResultInformationToPlayer(resultAddedEvent.getPlayer1().getId());
         sendPointsToPlayer(resultAddedEvent.getPlayer2());
         sendValidResultInformationToPlayer(resultAddedEvent.getPlayer2().getId());
-
     }
 
     @EventListener

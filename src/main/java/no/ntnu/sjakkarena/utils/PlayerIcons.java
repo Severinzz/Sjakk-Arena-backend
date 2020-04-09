@@ -15,7 +15,7 @@ public class PlayerIcons {
      *
      * @return a random fontawesome icon css class
      */
-    public static String getRandomFontAwesomeIcon() {
+    public static String getRandomIcon() {
         Random random = new Random();
         return ICONS.get(random.nextInt(ICONS.size()));
     }

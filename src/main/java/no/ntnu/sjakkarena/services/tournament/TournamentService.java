@@ -1,16 +1,28 @@
 package no.ntnu.sjakkarena.services.tournament;
 
+import no.ntnu.sjakkarena.GameCreator;
 import no.ntnu.sjakkarena.data.Tournament;
-import no.ntnu.sjakkarena.events.tournamentevents.TimeToEndTournamentEvent;
+import no.ntnu.sjakkarena.eventcreators.TournamentEventCreator;
 import no.ntnu.sjakkarena.events.tournamentevents.TimeToStartTournamentEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TournamentStartedEvent;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
-import no.ntnu.sjakkarena.services.EventService;
+import no.ntnu.sjakkarena.repositories.TournamentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TournamentService extends EventService {
+public class TournamentService {
+
+    @Autowired
+    private TournamentRepository tournamentRepository;
+
+    @Autowired
+    private TournamentEventCreator tournamentEventCreator;
+
+    @Autowired
+    private GameCreator gameCreator;
 
     public void startTournament(int tournamentId) {
         try {
@@ -30,16 +42,21 @@ public class TournamentService extends EventService {
     }
 
     private void onTournamentStart(int tournamentId) {
-        createAndPublishTournamentStartedEvent(tournamentId);
+        tournamentEventCreator.createAndPublishTournamentStartedEvent(tournamentId);
     }
 
     private void onTournamentEnd(int tournamentId) {
-        createAndPublishTournamentEndedEvent(tournamentId);
+        tournamentEventCreator.createAndPublishTournamentEndedEvent(tournamentId);
     }
 
     @EventListener
     public void onTimeToStartTournament(TimeToStartTournamentEvent timeToStartTournamentEvent){
         startTournament(timeToStartTournamentEvent.getTournamentId());
+    }
+
+    @EventListener
+    public void onTournamentStart(TournamentStartedEvent tournamentStartedEvent) {
+        gameCreator.createAndPublishNewGames(tournamentStartedEvent.getTournamentId(), tournamentStartedEvent.getAdaptedMonrad());
     }
 
     public boolean isTournamentActive(int tournamentId) {

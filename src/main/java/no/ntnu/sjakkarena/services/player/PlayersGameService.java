@@ -1,14 +1,15 @@
 package no.ntnu.sjakkarena.services.player;
 
+import no.ntnu.sjakkarena.GameCreator;
+import no.ntnu.sjakkarena.adaptedmonrad.AfterTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.ResultUpdateRequest;
-import no.ntnu.sjakkarena.events.playerevents.NewPlayerAddedEvent;
-import no.ntnu.sjakkarena.events.gameevents.ResultAddedEvent;
-import no.ntnu.sjakkarena.events.tournamentevents.TournamentStartedEvent;
+import no.ntnu.sjakkarena.eventcreators.GameEventCreator;
+import no.ntnu.sjakkarena.eventcreators.PlayerEventCreator;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.repositories.GameRepository;
 import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;
-import no.ntnu.sjakkarena.services.EventService;
+import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.utils.RESTSession;
 import no.ntnu.sjakkarena.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,25 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class PlayersGameService extends EventService {
+public class PlayersGameService {
 
     @Autowired
     private GameWithPlayerNamesRepository gameWithPlayerNamesRepository;
 
     @Autowired
     private GameRepository gameRepository;
+
+    @Autowired
+    private GameEventCreator gameEventCreator;
+
+    @Autowired
+    private PlayerRepository playerRepository;
+
+    @Autowired
+    private PlayerEventCreator playerEventCreator;
+
+    @Autowired
+    private GameCreator gameCreator;
 
 
     public List<? extends Game> getInactiveGames(int playerId) {
@@ -59,7 +72,20 @@ public class PlayersGameService extends EventService {
         onResultValidated(gameID);
     }
 
+
     public void invalidateResult(int gameId) {
-        onResultInvalidated(gameId);
+        gameEventCreator.createAnPublishInvalidResultEvent(gameId);
+    }
+
+    private void onSuggestedResult(int opponentId, double result, int gameId) {
+        gameEventCreator.createAndPublishResultSuggestedEvent(opponentId, result, gameId);
+    }
+
+    private void onResultValidated(int gameId) {
+        Game game = gameRepository.getGame(gameId);
+        int tournamentId = playerRepository.getPlayer(game.getWhitePlayerId()).getTournamentId();
+        playerEventCreator.createAndPublishPlayerListChangeEvent(tournamentId);
+        gameEventCreator.createAndPublishResultAddedEvent(game.getWhitePlayerId(), game.getBlackPlayerId());
+        gameCreator.createAndPublishNewGames(tournamentId, new AfterTournamentStartAdaptedMonrad());
     }
 }

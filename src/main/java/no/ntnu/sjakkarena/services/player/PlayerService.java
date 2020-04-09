@@ -1,14 +1,21 @@
 package no.ntnu.sjakkarena.services.player;
 
+import no.ntnu.sjakkarena.eventcreators.PlayerEventCreator;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
-import no.ntnu.sjakkarena.services.EventService;
+import no.ntnu.sjakkarena.repositories.PlayerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PlayerService extends EventService {
+public class PlayerService {
 
+    @Autowired
+    private PlayerRepository playerRepository;
+
+    @Autowired
+    private PlayerEventCreator playerEventCreator;
 
     public void pausePlayer(int playerId) {
         try {
@@ -46,7 +53,7 @@ public class PlayerService extends EventService {
         try {
             int tournamentId = playerRepository.getPlayer(playerId).getTournamentId();
             playerRepository.deletePlayer(playerId);
-            createAndPublishPlayerListChangeEvent(tournamentId);
+            playerEventCreator.createAndPublishPlayerListChangeEvent(tournamentId);
         } catch (TroubleUpdatingDBException e) {
             throw new TroubleUpdatingDBException(e);
         } catch (NotInDatabaseException e){
