@@ -74,6 +74,7 @@ public class PlayersGameService {
 
 
     public void invalidateResult(int gameId) {
+        gameRepository.setNotifyTournamentHost(true, gameId);
         gameEventCreator.createAnPublishInvalidResultEvent(gameId);
     }
 
@@ -85,7 +86,7 @@ public class PlayersGameService {
         Game game = gameRepository.getGame(gameId);
         int tournamentId = playerRepository.getPlayer(game.getWhitePlayerId()).getTournamentId();
         playerEventCreator.createAndPublishPlayerListChangeEvent(tournamentId);
-        gameEventCreator.createAndPublishResultAddedEvent(game.getWhitePlayerId(), game.getBlackPlayerId());
+        gameEventCreator.createAndPublishValidResultAddedEvent(gameId);
         gameCreator.createAndPublishNewGames(tournamentId, new AfterTournamentStartAdaptedMonrad());
     }
 }

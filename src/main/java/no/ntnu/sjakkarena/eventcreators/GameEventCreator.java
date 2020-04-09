@@ -4,7 +4,7 @@ import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.events.gameevents.GamesCreatedEvent;
 import no.ntnu.sjakkarena.events.gameevents.InvalidResultEvent;
-import no.ntnu.sjakkarena.events.gameevents.ResultAddedEvent;
+import no.ntnu.sjakkarena.events.gameevents.ValidResultAddedEvent;
 import no.ntnu.sjakkarena.events.gameevents.ResultSuggestedEvent;
 import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
@@ -32,10 +32,11 @@ public class GameEventCreator {
         applicationEventPublisher.publishEvent(gamesCreatedEvent);
     }
 
-    public void createAndPublishResultAddedEvent(int requestingUserId, int opponentId) {
-        Player requestingPlayer = playerRepository.getPlayer(requestingUserId);
-        Player opponent = playerRepository.getPlayer(opponentId);
-        applicationEventPublisher.publishEvent(new ResultAddedEvent(this, requestingPlayer, opponent));
+    public void createAndPublishValidResultAddedEvent(int gameId) {
+        Game game = gameWithPlayerNamesRepository.getGame(gameId);
+        Player whitePlayer = playerRepository.getPlayer(game.getWhitePlayerId());
+        Player blackPlayer = playerRepository.getPlayer(game.getBlackPlayerId());
+        applicationEventPublisher.publishEvent(new ValidResultAddedEvent(this, whitePlayer, blackPlayer));
     }
 
     public void createAndPublishResultSuggestedEvent(int opponentId, double result, int gameId) {

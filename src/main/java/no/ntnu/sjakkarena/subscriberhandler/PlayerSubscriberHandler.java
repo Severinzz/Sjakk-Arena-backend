@@ -6,7 +6,7 @@ import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.events.gameevents.InvalidResultEvent;
 import no.ntnu.sjakkarena.events.gameevents.ResultSuggestedEvent;
 import no.ntnu.sjakkarena.events.gameevents.GamesCreatedEvent;
-import no.ntnu.sjakkarena.events.gameevents.ResultAddedEvent;
+import no.ntnu.sjakkarena.events.gameevents.ValidResultAddedEvent;
 import no.ntnu.sjakkarena.events.playerevents.PlayerRemovedEvent;
 import no.ntnu.sjakkarena.events.tournamentevents.TournamentEndedEvent;
 import no.ntnu.sjakkarena.events.tournamentevents.TournamentStartedEvent;
@@ -56,11 +56,11 @@ public class PlayerSubscriberHandler extends SubscriberHandler {
     }
 
     @EventListener
-    public void onResultAdded(ResultAddedEvent resultAddedEvent){
-        sendPointsToPlayer(resultAddedEvent.getPlayer1());
-        sendValidResultInformationToPlayer(resultAddedEvent.getPlayer1().getId());
-        sendPointsToPlayer(resultAddedEvent.getPlayer2());
-        sendValidResultInformationToPlayer(resultAddedEvent.getPlayer2().getId());
+    public void onResultAdded(ValidResultAddedEvent validResultAddedEvent){
+        sendPointsToPlayer(validResultAddedEvent.getPlayer1());
+        sendValidResultInformationToPlayer(validResultAddedEvent.getPlayer1().getId());
+        sendPointsToPlayer(validResultAddedEvent.getPlayer2());
+        sendValidResultInformationToPlayer(validResultAddedEvent.getPlayer2().getId());
     }
 
     @EventListener

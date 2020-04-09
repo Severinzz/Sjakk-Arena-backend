@@ -83,6 +83,7 @@ CREATE TABLE IF NOT EXISTS sjakkarena.`game`
   `white_player_points` DECIMAL(2, 1) UNSIGNED NULL,
   `active`              TINYINT(1) DEFAULT 0,
   `valid_result`         TINYINT(1) DEFAULT 0,
+  `notify_tournament_host` TINYINT(1) DEFAULT 0,
   PRIMARY KEY (`game_id`),
   INDEX `fk_game_white_idx` (`white_player` ASC) VISIBLE,
   INDEX `fk_game_black_idx` (`black_player` ASC) VISIBLE,
