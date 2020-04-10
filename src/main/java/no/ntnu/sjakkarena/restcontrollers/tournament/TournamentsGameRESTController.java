@@ -28,7 +28,7 @@ public class TournamentsGameRESTController {
 
     @RequestMapping(value = "/invalid", method = RequestMethod.GET)
     public ResponseEntity<String> invalidResult() {
-        List<? extends Game> invalidGame = tournamentsGameService.getGamesWithInvalidResult(RESTSession.getUserId());
+        List<? extends Game> invalidGame = tournamentsGameService.getGamesWithInvalidResultToBeSentToTournamentHost(RESTSession.getUserId());
         return new ResponseEntity<>(jsonCreator.writeValueAsString(invalidGame), HttpStatus.OK);
     }
 
@@ -36,7 +36,7 @@ public class TournamentsGameRESTController {
     public ResponseEntity<String> changeGameResult(@PathVariable("gameID") int gameId,
                                                    @PathVariable("whitePlayerPoints") double whitePlayerPoints) {
         try {
-            tournamentsGameService.changeGameResult(gameId, whitePlayerPoints);
+            tournamentsGameService.changeGameResult(RESTSession.getUserId(), gameId, whitePlayerPoints);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch(IllegalArgumentException | TroubleUpdatingDBException e){
             e.printStackTrace();

@@ -3,12 +3,12 @@ package no.ntnu.sjakkarena.events.gameevents;
 import no.ntnu.sjakkarena.data.Player;
 import org.springframework.context.ApplicationEvent;
 
-public class ResultAddedEvent extends ApplicationEvent {
+public class ValidResultAddedEvent extends ApplicationEvent {
 
     Player player1;
     Player player2;
 
-    public ResultAddedEvent(Object source, Player player1, Player player2) {
+    public ValidResultAddedEvent(Object source, Player player1, Player player2) {
         super(source);
         this.player1 = player1;
         this.player2 = player2;

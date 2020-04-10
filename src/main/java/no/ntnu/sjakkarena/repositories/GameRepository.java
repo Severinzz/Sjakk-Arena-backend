@@ -46,25 +46,6 @@ public class GameRepository {
     }
 
     /**
-     * Gets any games with not valid result and belongs to a tournament.
-     * @param TournamentID for the tournament to check for
-     * @return games with invalid results.
-     */
-    public List<Game> getInvalidResultGames(int TournamentID) {
-        try {
-            List<Game> games = jdbcTemplate.query("SELECT DISTINCTROW * " +
-                    "FROM sjakkarena.game " +
-                    "WHERE (valid_result = 0) " +
-                    "AND (white_player IN (SELECT player_id FROM sjakkarena.player WHERE tournament = " + TournamentID +") " +
-                    "AND black_player IN (SELECT player_id FROM sjakkarena.player WHERE tournament = " + TournamentID +"))",
-                    gameRowMapper);
-            return games;
-        } catch (IncorrectResultSizeDataAccessException e) {
-            throw new NotInDatabaseException("No games with invalid result.");
-        }
-    }
-
-    /**
      * Add a game result to the database
      *
      * @param gameId The game id
@@ -72,8 +53,8 @@ public class GameRepository {
      */
     public void addResult(int gameId, double whitePlayerPoints) {
         String end = LocalDateTime.now().toString();
-        int affectedRows = jdbcTemplate.update("UPDATE `sjakkarena`.`game` SET `white_player_points` = " + whitePlayerPoints + "," +
-                " `end` = \"" + end + "\" WHERE valid_result = 0 AND game_id = " + gameId);
+        int affectedRows = jdbcTemplate.update("UPDATE `sjakkarena`.`game` SET `white_player_points` = " + whitePlayerPoints  + ", " +
+                " `end` = \"" + end + "\" WHERE game_id = " + gameId);
         if (affectedRows != 1){
             throw new TroubleUpdatingDBException("Some problems occurred while trying to make result valid");
         }
@@ -99,15 +80,36 @@ public class GameRepository {
                 });
     }
 
+
+    /**
+     * Sets a games valid state to invalid
+     * @param gameID of game to make invalidvalid.
+     */
+    public void makeResultInvalid(int gameID){
+        int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.game SET valid_result = 0 "+
+                "WHERE game_id = " +gameID);
+        if (affectedRows != 1){
+            throw new TroubleUpdatingDBException("Some problems occurred while trying to make result invalid");
+        }
+    }
+
     /**
      * Sets a games valid state to valid
      * @param gameID of game to make valid.
      */
     public void makeResultValid(int gameID){
-        int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.game SET valid_result = 1, `active` = 0 "+
+        int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.game SET valid_result = 1 "+
                 "WHERE game_id = " +gameID);
         if (affectedRows != 1){
             throw new TroubleUpdatingDBException("Some problems occurred while trying to make result valid");
+        }
+    }
+
+    public void deactivateGame(int gameId){
+        int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.game SET `active` = 0 "+
+            "WHERE game_id = " + gameId);
+        if (affectedRows != 1){
+            throw new TroubleUpdatingDBException("Some problems occurred while trying to deactivate game");
         }
     }
 

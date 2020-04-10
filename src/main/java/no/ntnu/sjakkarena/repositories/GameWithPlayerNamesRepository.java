@@ -53,11 +53,9 @@ public class GameWithPlayerNamesRepository {
                 "\tAS white, `sjakkarena`.`player` \n" +
                 "\tAS `black`\n" +
                 "\tWHERE (valid_result = 0)\n" +
-                "\tAND (active = 0)\n" +
                 "\tAND `game`.`white_player` = `white`.`player_id` \n" +
                 "\tAND `game`.`black_player` = `black`.`player_id` \n" +
                 "\tAND `white`.`tournament` = " + tournamentId + "\n" +
-                "\tAND `game`.`white_player_points`IS NOT NULL \n " +
                 "ORDER BY`game`.`start` DESC";
         return jdbcTemplate.query(sql, gameWithPlayerNamesRowMapper);
     }
