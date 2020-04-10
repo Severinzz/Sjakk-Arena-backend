@@ -74,7 +74,7 @@ public class PlayersGameService {
 
 
     public void invalidateResult(int gameId) {
-        gameRepository.setNotifyTournamentHost(true, gameId);
+        gameRepository.makeResultInvalid(gameId);
         gameEventCreator.createAnPublishInvalidResultEvent(gameId);
     }
 

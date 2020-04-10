@@ -44,7 +44,7 @@ public class GameWithPlayerNamesRepository {
     }
 
 
-    public List<GameWithPlayerNames> getGamesWithInvalidResultToBeSentToTournamentHost(int tournamentId) {
+    public List<GameWithPlayerNames> getGamesWithInvalidResult(int tournamentId) {
         String sql = "\tSELECT `game`.*, " +
                 "\t`white`.`name` AS `white_player_name`,\n" +
                 "\t`black`.`name` AS `black_player_name`\n" +
@@ -53,7 +53,6 @@ public class GameWithPlayerNamesRepository {
                 "\tAS white, `sjakkarena`.`player` \n" +
                 "\tAS `black`\n" +
                 "\tWHERE (valid_result = 0)\n" +
-                "\tAND (`notify_tournament_host` = 1)\n" +
                 "\tAND `game`.`white_player` = `white`.`player_id` \n" +
                 "\tAND `game`.`black_player` = `black`.`player_id` \n" +
                 "\tAND `white`.`tournament` = " + tournamentId + "\n" +

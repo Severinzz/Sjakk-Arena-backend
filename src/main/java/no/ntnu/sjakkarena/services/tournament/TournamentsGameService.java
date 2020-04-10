@@ -34,7 +34,7 @@ public class TournamentsGameService {
     private PlayerEventCreator playerEventCreator;
 
     public List<? extends Game> getGamesWithInvalidResultToBeSentToTournamentHost(int tournamentId) {
-        return gameWithPlayerNamesRepository.getGamesWithInvalidResultToBeSentToTournamentHost(tournamentId);
+        return gameWithPlayerNamesRepository.getGamesWithInvalidResult(tournamentId);
     }
 
     public void changeGameResult(int tournamentId, int gameId, double whitePlayerPoints) {
@@ -44,7 +44,7 @@ public class TournamentsGameService {
         try {
             gameRepository.addResult(gameId, whitePlayerPoints);
             gameRepository.makeResultValid(gameId);
-            gameRepository.setNotifyTournamentHost(false, gameId);
+            gameRepository.deactivateGame(gameId);
             onValidResultAdd(tournamentId, gameId);
         } catch (TroubleUpdatingDBException e){
             throw new TroubleUpdatingDBException(e);
