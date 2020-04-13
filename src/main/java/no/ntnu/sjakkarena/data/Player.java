@@ -17,7 +17,7 @@ public class Player extends User{
     private int tournamentId;
     private String icon;
     private boolean inTournament;
-    private int bibNumber;
+    private double bibNumber;
     private Collection<Integer> previousOpponents = new ArrayList<>();
     private int numberOfWhiteGames;
     private String lastPlayedColor;
@@ -28,7 +28,8 @@ public class Player extends User{
 
 
     public Player(int playerId, String name, boolean paused, double points, int rounds, int tournamentId, String icon,
-                  boolean inTournament, int numberOfWhiteGames, String lastPlayedColor, int sameColorStreak){
+                  boolean inTournament, int numberOfWhiteGames, String lastPlayedColor, int sameColorStreak,
+                  double bibNumber){
         super(playerId);
         if (lastPlayedColor == null){
             lastPlayedColor = "Ingen spilte parti";
@@ -43,6 +44,7 @@ public class Player extends User{
         this.numberOfWhiteGames = numberOfWhiteGames;
         this.lastPlayedColor = lastPlayedColor;
         this.sameColorStreak = sameColorStreak;
+        this.bibNumber = bibNumber;
     }
 
     public String getName() {
@@ -105,11 +107,11 @@ public class Player extends User{
     }
 
     @JsonIgnore
-    public int getBibNumber() {
+    public double getBibNumber() {
         return bibNumber;
     }
 
-    public void setBibNumber(int bibNumber) {
+    public void setBibNumber(double bibNumber) {
         this.bibNumber = bibNumber;
     }
 
