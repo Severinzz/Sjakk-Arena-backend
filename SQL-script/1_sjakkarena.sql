@@ -345,6 +345,7 @@ BEGIN
     SELECT tables
     FROM `sjakkarena`.`tournament`
     WHERE `tournament`.`tournament_id` = `tournament_id`);
+  DROP TABLE IF EXISTS `tables`;
   START TRANSACTION
     ;
     CREATE TABLE `tables`
