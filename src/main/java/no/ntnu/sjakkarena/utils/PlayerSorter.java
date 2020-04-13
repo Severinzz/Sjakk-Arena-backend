@@ -26,8 +26,8 @@ public class PlayerSorter {
                 int comparison = avgPoints2.compareTo(avgPoints1);
 
                 if (comparison == 0) {
-                    Integer bibNumber1 = ((Player) o1).getBibNumber();
-                    Integer bibNumber2 = ((Player) o2).getBibNumber();
+                    Double bibNumber1 = ((Player) o1).getBibNumber();
+                    Double bibNumber2 = ((Player) o2).getBibNumber();
                     comparison = bibNumber1.compareTo(bibNumber2);
                 }
                 return comparison;

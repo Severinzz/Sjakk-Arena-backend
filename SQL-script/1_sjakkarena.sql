@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `sjakkarena`.`player`
   `paused`        TINYINT(1) UNSIGNED DEFAULT 0,
   `tournament`    INT          NOT NULL,
   `icon`          VARCHAR(255) NOT NULL,
-  `bib_number`    INT          NULL,
+  `bib_number`    FLOAT          NULL,
   PRIMARY KEY (`player_id`),
   UNIQUE INDEX `Id_UNIQUE` (`player_id` ASC) VISIBLE,
   UNIQUE KEY `name_tournament` (`name`, `tournament`),
@@ -222,25 +222,23 @@ END//
 DELIMITER ;
 
 -- -----------------------------------------------------
---  get_random_bib_number f
+--  get_random_bib_number
 -- -----------------------------------------------------
 DROP FUNCTION IF EXISTS sjakkarena.get_random_bib_number;
 DELIMITER //
 CREATE FUNCTION sjakkarena.get_random_bib_number(tournament_id INT(11))
-  RETURNS INT
-  DETERMINISTIC
+  RETURNS FLOAT
+  READS SQL DATA
 BEGIN
-  DECLARE bib_number INT;
-  DECLARE max_number_of_players_in_tournament INT;
+  DECLARE bib_number FLOAT;
   DECLARE i INT DEFAULT 0;
-  SET max_number_of_players_in_tournament = 10000;
-  SET bib_number = FLOOR(RAND() * max_number_of_players_in_tournament);
-  WHILE (i < max_number_of_players_in_tournament) AND (bib_number IN (SELECT bib_number
-                                                                      FROM sjakkarena.player
-                                                                      WHERE player.tournament = tournament_id))
+  SET bib_number = RAND();
+  WHILE (i < POWER(2,32)) AND EXISTS (SELECT player.bib_number
+                                      FROM sjakkarena.player
+                                      WHERE player.tournament = tournament_id AND player.bib_number = bib_number)
   DO
-  SET bib_number = FLOOR(RAND() * max_number_of_players_in_tournament) + 1;
   SET i = i + 1;
+  SET bib_number = RAND();
   END WHILE;
   RETURN bib_number;
 END//
