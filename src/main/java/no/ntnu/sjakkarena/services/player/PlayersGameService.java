@@ -65,10 +65,8 @@ public class PlayersGameService {
         if (game.getWhitePlayerId() != RESTSession.getUserId() && game.getBlackPlayerId() != RESTSession.getUserId()){
             throw new IllegalArgumentException("Requesting user is not playing the game with gameId " + gameID);
         }
-        if (game.isValidResult()){
-            throw new IllegalArgumentException("Game has already been validated");
-        }
         gameRepository.makeResultValid(gameID);
+        gameRepository.deactivateGame(gameID);
         onResultValidated(gameID);
     }
 
