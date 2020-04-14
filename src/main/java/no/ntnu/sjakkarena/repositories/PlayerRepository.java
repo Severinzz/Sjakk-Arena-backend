@@ -1,12 +1,11 @@
 package no.ntnu.sjakkarena.repositories;
 
 import no.ntnu.sjakkarena.data.Player;
-import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
+import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.mappers.PlayerRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -173,5 +172,20 @@ public class PlayerRepository {
     public List<Player> getLeaderBoard(int tournamentId) {
         List<Player> players = jdbcTemplate.query("CALL get_leader_board(" + tournamentId + ")", playerRowMapper);
         return players;
+    }
+
+    /**
+     * Returns true if a there is a player with given ID and belongs to specified tournament ID.
+     * Return false if not.
+     * @param playerId ID of player
+     * @param tournamentId ID of tournament
+     * @return true if belongs, false if not.
+     */
+    public boolean playerBelongInTournament(int playerId, int tournamentId) {
+        boolean belongInTournament = false;
+        if(getPlayer(playerId).getTournamentId() == tournamentId) {
+            belongInTournament = true;
+        }
+        return belongInTournament;
     }
 }
