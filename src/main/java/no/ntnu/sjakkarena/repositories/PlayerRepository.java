@@ -183,9 +183,7 @@ public class PlayerRepository {
      */
     public boolean playerBelongInTournament(int playerId, int tournamentId) {
         boolean match = false;
-        String sql = "SELECT * FROM sjakkarena.player WHERE player_id = ? AND player.tournament = ? LIMIT 1";
-        List<Map<String, Object>> player = jdbcTemplate.queryForList(sql, new Object[] {playerId, tournamentId});
-        if (player.size() != 0) {
+        if(getPlayer(playerId).getTournamentId() == tournamentId) {
             match = true;
         }
         return match;
