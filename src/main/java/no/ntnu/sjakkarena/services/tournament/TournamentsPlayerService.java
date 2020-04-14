@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 public class TournamentsPlayerService {
@@ -72,7 +71,7 @@ public class TournamentsPlayerService {
     public Boolean playerBelongsInTournament(int playerId) {
         int tournamentId = RESTSession.getUserId();
         if(!playerRepository.playerBelongInTournament(playerId, tournamentId)) {
-            throw new NoSuchElementException();
+            throw new NotInDatabaseException("Player, host combo does not exist");
         }
         return null;
     }

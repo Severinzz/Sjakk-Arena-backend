@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.NoSuchElementException;
-
 @RestController
 @RequestMapping("/tournament/player")
 public class TournamentsPlayerRESTController {
@@ -66,11 +64,8 @@ public class TournamentsPlayerRESTController {
             tournamentsPlayerService.playerBelongsInTournament(playerId);
             Player player = tournamentsPlayerService.getPlayer(playerId);
             return new ResponseEntity<>(jsonCreator.writeValueAsString(player), HttpStatus.OK);
-        } catch (NotInDatabaseException | NoSuchElementException e){
+        } catch (NotInDatabaseException e){
             e.printStackTrace();
-            if (e instanceof NoSuchElementException) {
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            }
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
