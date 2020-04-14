@@ -48,7 +48,10 @@ public class TournamentsPlayerService {
         return playerRepository.getPlayer(playerId).getTournamentId() == tournamentId;
     }
 
-    public Player getPlayer(int playerId) {
+    public Player getPlayer(int playerId, int tournamentId) {
+        if(!playerBelongInTournament(playerId, tournamentId)){
+            throw new NoSuchElementException();
+        }
         try {
             return playerRepository.getPlayer(playerId);
         } catch (NotInDatabaseException e){
@@ -69,11 +72,7 @@ public class TournamentsPlayerService {
      * @param playerId player ID to check for
      * @return true if player ID belongs to tournament ID
      */
-    public Boolean playerBelongsInTournament(int playerId) {
-        int tournamentId = RESTSession.getUserId();
-        if(!playerRepository.playerBelongInTournament(playerId, tournamentId)) {
-            throw new NoSuchElementException();
-        }
-        return null;
+    private boolean playerBelongInTournament(int playerId, int tournamentId){
+        return playerRepository.playerBelongInTournament(playerId, tournamentId);
     }
 }

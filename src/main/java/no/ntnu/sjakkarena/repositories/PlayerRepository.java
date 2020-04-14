@@ -182,10 +182,10 @@ public class PlayerRepository {
      * @return true if belongs, false if not.
      */
     public boolean playerBelongInTournament(int playerId, int tournamentId) {
-        boolean match = false;
+        boolean belongInTournament = false;
         if(getPlayer(playerId).getTournamentId() == tournamentId) {
-            match = true;
+            belongInTournament = true;
         }
-        return match;
+        return belongInTournament;
     }
 }
