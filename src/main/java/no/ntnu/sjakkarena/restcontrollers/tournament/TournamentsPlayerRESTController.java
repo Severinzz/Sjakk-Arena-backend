@@ -55,11 +55,12 @@ public class TournamentsPlayerRESTController {
 
     /**
      * Returns information about a specific player
-     * @return Information about a specific player
+     * -or error message if playerID and tournamentID does not exist
+     * @return Information about a specific player or error message
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<String> getPlayer(@PathVariable(name = "id") int playerId){
-        if(!tournamentsPlayerService.passPrivilegeCheck(playerId)) {
+        if(!tournamentsPlayerService.playerBelongsInTournament(playerId)) {
             String message = "Privilege error, You do not have permission to make this call!";
             return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
         }

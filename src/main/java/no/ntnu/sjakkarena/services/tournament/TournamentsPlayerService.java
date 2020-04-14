@@ -63,8 +63,13 @@ public class TournamentsPlayerService {
         return playerRepository.getLeaderBoard(tournamentId);
     }
 
-    public boolean passPrivilegeCheck(int playerId) {
+    /**
+     * Check if player ID belongs to tournament ID.
+     * @param playerId player ID to check for
+     * @return true if player ID belongs to tournament ID
+     */
+    public boolean playerBelongsInTournament(int playerId) {
         int tournamentId = RESTSession.getUserId();
-        return playerRepository.playerBelongsInTournament(playerId, tournamentId);
+        return playerRepository.playerBelongInTournament(playerId, tournamentId);
     }
 }
