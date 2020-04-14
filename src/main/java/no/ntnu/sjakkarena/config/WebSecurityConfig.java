@@ -28,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/new-tournament").permitAll()
                 .antMatchers("/new-player").permitAll()
-                .antMatchers("/ws/**").permitAll()
+                .antMatchers("/wss/**").permitAll()
                 .antMatchers("/sign-in/**").permitAll()
                 .antMatchers("/tournament/**").hasAuthority("TOURNAMENT")
                 .antMatchers("/player/**").hasAuthority("PLAYER")
