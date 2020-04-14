@@ -59,6 +59,10 @@ public class TournamentsPlayerRESTController {
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<String> getPlayer(@PathVariable(name = "id") int playerId){
+        if(!tournamentsPlayerService.passPrivilegeCheck(playerId)) {
+            String message = "Privilege error, You do not have permission to make this call!";
+            return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
+        }
         try {
             Player player = tournamentsPlayerService.getPlayer(playerId);
             return new ResponseEntity<>(jsonCreator.writeValueAsString(player), HttpStatus.OK);

@@ -2,7 +2,6 @@ package no.ntnu.sjakkarena.services.tournament;
 
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.eventcreators.PlayerEventCreator;
-import no.ntnu.sjakkarena.events.playerevents.PlayerRemovedEvent;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
@@ -64,4 +63,8 @@ public class TournamentsPlayerService {
         return playerRepository.getLeaderBoard(tournamentId);
     }
 
+    public boolean passPrivilegeCheck(int playerId) {
+        int tournamentId = RESTSession.getUserId();
+        return playerRepository.playerBelongsInTournament(playerId, tournamentId);
+    }
 }
