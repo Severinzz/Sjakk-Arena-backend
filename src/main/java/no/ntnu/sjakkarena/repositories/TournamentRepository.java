@@ -80,7 +80,7 @@ public class TournamentRepository {
      */
     public Tournament getTournament(int tournamentId) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM `DATABASE`.`tournament` WHERE " +
+            return jdbcTemplate.queryForObject("SELECT * FROM " + DATABASE + ".`tournament` WHERE " +
                     "`tournament_id` = " + tournamentId, tournamentRowMapper);
         } catch (IncorrectResultSizeDataAccessException e) {
             throw new NotInDatabaseException("Couldn't find tournament in the database");
@@ -96,7 +96,7 @@ public class TournamentRepository {
      */
     public Tournament getTournament(String adminUUID) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM `DATABASE`.`tournament` WHERE " +
+            return jdbcTemplate.queryForObject("SELECT * FROM " + DATABASE + " .`tournament` WHERE " +
                     "`admin_uuid` = \"" + adminUUID + "\"", tournamentRowMapper);
         } catch (IncorrectResultSizeDataAccessException e) {
             throw new NotInDatabaseException("AdminUUID is incorrect");
