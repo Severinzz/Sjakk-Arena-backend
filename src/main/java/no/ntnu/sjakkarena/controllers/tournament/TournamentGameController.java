@@ -1,12 +1,12 @@
 package no.ntnu.sjakkarena.controllers.tournament;
 
 import no.ntnu.sjakkarena.JSONCreator;
+import no.ntnu.sjakkarena.MessageSender;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.events.gameevents.GamesCreatedEvent;
 import no.ntnu.sjakkarena.events.gameevents.InvalidResultEvent;
 import no.ntnu.sjakkarena.exceptions.NotSubscribingException;
 import no.ntnu.sjakkarena.services.tournament.TournamentsGameService;
-import no.ntnu.sjakkarena.MessageSender;
 import no.ntnu.sjakkarena.utils.WebSocketSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 
 import java.util.Collection;
+import java.util.List;
 
 @Controller
 public class TournamentGameController {
@@ -33,6 +34,22 @@ public class TournamentGameController {
         int tournamentId = WebSocketSession.getUserId(authentication);
         Collection<? extends Game> games = tournamentsGameService.getActiveGames(tournamentId);
         sendActiveGamesList(tournamentId, games);
+    }
+
+    @MessageMapping("/tournament/games/invalid")
+    public void getGamesWithInvalidResult(Authentication authentication){
+        int tournamentId = WebSocketSession.getUserId(authentication);
+        List<? extends Game> gamesWithInvalidResult = tournamentsGameService.getGamesWithInvalidResult(tournamentId);
+        sendGamesWithInvalidResult(tournamentId, gamesWithInvalidResult);
+    }
+
+    private void sendGamesWithInvalidResult(int tournamentId, Object gamesWithInvalidResult){
+        try{
+            messageSender.sendToSubscriber(tournamentId, "/queue/tournament/games/invalid",
+                    jsonCreator.writeValueAsString(gamesWithInvalidResult));
+        } catch (NotSubscribingException e){
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -59,11 +76,6 @@ public class TournamentGameController {
 
     @EventListener
     public void onResultInvalidation(InvalidResultEvent invalidResultEvent){
-        try{
-            messageSender.sendToSubscriber(invalidResultEvent.getTournamentId(), "/queue/tournament/games/invalid",
-                    jsonCreator.writeValueAsString(invalidResultEvent.getGame()));
-        } catch (NotSubscribingException e){
-            e.printStackTrace();
-        }
+        sendGamesWithInvalidResult(invalidResultEvent.getTournamentId(), invalidResultEvent.getGame());
     }
 }
