@@ -1,6 +1,7 @@
 package no.ntnu.sjakkarena.services.tournament;
 
 import no.ntnu.sjakkarena.GameCreator;
+import no.ntnu.sjakkarena.adaptedmonrad.AtTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.eventcreators.TournamentEventCreator;
 import no.ntnu.sjakkarena.events.tournamentevents.TimeToStartTournamentEvent;
@@ -43,6 +44,7 @@ public class TournamentService {
 
     private void onTournamentStart(int tournamentId) {
         tournamentEventCreator.createAndPublishTournamentStartedEvent(tournamentId);
+        gameCreator.createAndPublishNewGames(tournamentId, new AtTournamentStartAdaptedMonrad());
     }
 
     private void onTournamentEnd(int tournamentId) {
@@ -52,11 +54,6 @@ public class TournamentService {
     @EventListener
     public void onTimeToStartTournament(TimeToStartTournamentEvent timeToStartTournamentEvent){
         startTournament(timeToStartTournamentEvent.getTournamentId());
-    }
-
-    @EventListener
-    public void onTournamentStart(TournamentStartedEvent tournamentStartedEvent) {
-        gameCreator.createAndPublishNewGames(tournamentStartedEvent.getTournamentId(), tournamentStartedEvent.getAdaptedMonrad());
     }
 
     public boolean isTournamentActive(int tournamentId) {

@@ -33,7 +33,7 @@ public class TournamentsGameService {
     @Autowired
     private PlayerEventCreator playerEventCreator;
 
-    public List<? extends Game> getGamesWithInvalidResultToBeSentToTournamentHost(int tournamentId) {
+    public List<? extends Game> getGamesWithInvalidResult(int tournamentId) {
         return gameWithPlayerNamesRepository.getGamesWithInvalidResult(tournamentId);
     }
 

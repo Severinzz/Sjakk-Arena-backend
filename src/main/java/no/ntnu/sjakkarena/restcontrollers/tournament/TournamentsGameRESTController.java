@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
-import java.util.List;
 
 @RestController
 @RequestMapping("/tournament/games")
@@ -25,12 +24,6 @@ public class TournamentsGameRESTController {
     private TournamentsGameService tournamentsGameService;
 
     private JSONCreator jsonCreator = new JSONCreator();
-
-    @RequestMapping(value = "/invalid", method = RequestMethod.GET)
-    public ResponseEntity<String> invalidResult() {
-        List<? extends Game> invalidGame = tournamentsGameService.getGamesWithInvalidResultToBeSentToTournamentHost(RESTSession.getUserId());
-        return new ResponseEntity<>(jsonCreator.writeValueAsString(invalidGame), HttpStatus.OK);
-    }
 
     @RequestMapping(value = "/result/{gameID}/{whitePlayerPoints}/", method = RequestMethod.PATCH)
     public ResponseEntity<String> changeGameResult(@PathVariable("gameID") int gameId,

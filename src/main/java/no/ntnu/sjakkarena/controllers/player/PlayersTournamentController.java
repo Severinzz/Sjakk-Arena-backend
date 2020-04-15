@@ -38,7 +38,6 @@ public class PlayersTournamentController {
         for (Player player : tournamentStartedEvent.getPlayers()){
             informPlayerAboutTournamentState(player.getId(), true);
         }
-
     }
 
     @EventListener
