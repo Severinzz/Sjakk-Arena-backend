@@ -5,10 +5,13 @@ import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.services.tournament.TournamentsPlayerService;
+import no.ntnu.sjakkarena.utils.RESTSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/tournament/player")
@@ -55,16 +58,20 @@ public class TournamentsPlayerRESTController {
 
     /**
      * Returns information about a specific player
-     * @return Information about a specific player
+     * -or error message if playerID and tournamentID does not exist
+     * @return Information about a specific player or error message
      */
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<String> getPlayer(@PathVariable(name = "id") int playerId){
         try {
-            Player player = tournamentsPlayerService.getPlayer(playerId);
+            Player player = tournamentsPlayerService.getPlayer(playerId, RESTSession.getUserId());
             return new ResponseEntity<>(jsonCreator.writeValueAsString(player), HttpStatus.OK);
         } catch (NotInDatabaseException e){
             e.printStackTrace();
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch(NoSuchElementException e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 }

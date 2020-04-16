@@ -8,7 +8,9 @@ import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.utils.JWSHelper;
 import org.json.JSONObject;
+import org.springframework.stereotype.Component;
 
+@Component
 public class JSONCreator {
 
     ObjectMapper objectMapper = new ObjectMapper();

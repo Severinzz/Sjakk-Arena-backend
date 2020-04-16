@@ -2,7 +2,6 @@ package no.ntnu.sjakkarena.services.tournament;
 
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.eventcreators.PlayerEventCreator;
-import no.ntnu.sjakkarena.events.playerevents.PlayerRemovedEvent;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class TournamentsPlayerService {
@@ -48,7 +48,10 @@ public class TournamentsPlayerService {
         return playerRepository.getPlayer(playerId).getTournamentId() == tournamentId;
     }
 
-    public Player getPlayer(int playerId) {
+    public Player getPlayer(int playerId, int tournamentId) {
+        if(!playerBelongInTournament(playerId, tournamentId)){
+            throw new NoSuchElementException();
+        }
         try {
             return playerRepository.getPlayer(playerId);
         } catch (NotInDatabaseException e){
@@ -64,4 +67,12 @@ public class TournamentsPlayerService {
         return playerRepository.getLeaderBoard(tournamentId);
     }
 
+    /**
+     * Check if player ID belongs to tournament ID.
+     * @param playerId player ID to check for
+     * @return true if player ID belongs to tournament ID
+     */
+    private boolean playerBelongInTournament(int playerId, int tournamentId){
+        return playerRepository.playerBelongInTournament(playerId, tournamentId);
+    }
 }
