@@ -63,7 +63,7 @@ public class TournamentRepository {
      */
     private void executeUpdateQuery(String attributes, String values) {
         try {
-            jdbcTemplate.update("INSERT INTO `sjakkarena`.`tournament` " +
+            jdbcTemplate.update("INSERT INTO " + DATABASE + ".`tournament` " +
                     attributes + " VALUES " + values);
 
         } catch (DataAccessException e) {
@@ -109,7 +109,7 @@ public class TournamentRepository {
 
     public void setActive(int tournamentId) {
         try {
-            jdbcTemplate.update("UPDATE sjakkarena.tournament SET `active` = 1 WHERE tournament_id = " + tournamentId);
+            jdbcTemplate.update("UPDATE " + DATABASE + ".tournament SET `active` = 1 WHERE tournament_id = " + tournamentId);
         } catch (DataAccessException e){
             throw new TroubleUpdatingDBException("Could not activate tournament");
         }
@@ -117,7 +117,7 @@ public class TournamentRepository {
 
     public void setInactive(int tournamentId){
         try{
-            jdbcTemplate.update("UPDATE sjakkarena.tournament SET `active` = 0 WHERE tournament_id = " + tournamentId);
+            jdbcTemplate.update("UPDATE " + DATABASE + ".tournament SET `active` = 0 WHERE tournament_id = " + tournamentId);
         }catch(DataAccessException e){
             throw new TroubleUpdatingDBException("Could not pause tournament");
         }
@@ -143,7 +143,7 @@ public class TournamentRepository {
 
     public boolean isActive(int tournamentId) {
         try {
-            return jdbcTemplate.queryForObject("SELECT `active` FROM sjakkarena.tournament WHERE tournament_id = " +
+            return jdbcTemplate.queryForObject("SELECT `active` FROM " + DATABASE + ".tournament WHERE tournament_id = " +
                     tournamentId, Boolean.class);
         } catch (IncorrectResultSizeDataAccessException e) {
             throw new NotInDatabaseException("Could not find tournament in the database");
@@ -152,7 +152,7 @@ public class TournamentRepository {
 
     public void endTournament(int tournamentId) {
         LocalDateTime localDateTime = LocalDateTime.now();
-        int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.tournament SET `active` = 0, `end` = \"" +
+        int affectedRows = jdbcTemplate.update("UPDATE " + DATABASE + ".tournament SET `active` = 0, `end` = \"" +
                     localDateTime.toString() + "\" WHERE tournament_id = " + tournamentId);
         if (affectedRows != 1){
             throw new TroubleUpdatingDBException("Could not end tournament");

@@ -24,6 +24,9 @@ public class GameRepository {
 
     private RowMapper<Game> gameRowMapper = new GameRowMapper();
 
+    private static final String DATABASE = System.getenv("SJAKK_ARENA_DATABASE");
+
+
     /**
      * Gets an active game where the provided players are playing
      *
@@ -34,7 +37,7 @@ public class GameRepository {
     public Game getActiveGame(int player1, int player2) {
         try {
             return jdbcTemplate.queryForObject("SELECT * " +
-                    "FROM `sjakkarena`.`game` " +
+                    "FROM " + DATABASE + ".`game` " +
                     "WHERE (`active` = 1) " +
                     "AND ((white_player = " + player1 + " " +
                     "AND  black_player = " + player2 + ")" +
@@ -53,7 +56,7 @@ public class GameRepository {
      */
     public void addResult(int gameId, double whitePlayerPoints) {
         String end = LocalDateTime.now().toString();
-        int affectedRows = jdbcTemplate.update("UPDATE `sjakkarena`.`game` SET `white_player_points` = " + whitePlayerPoints  + ", " +
+        int affectedRows = jdbcTemplate.update("UPDATE " + DATABASE + ".`game` SET `white_player_points` = " + whitePlayerPoints  + ", " +
                 " `end` = \"" + end + "\" WHERE game_id = " + gameId);
         if (affectedRows != 1){
             throw new TroubleUpdatingDBException("Some problems occurred while trying to make result valid");
@@ -62,7 +65,7 @@ public class GameRepository {
 
     //Adapted code from https://www.baeldung.com/spring-jdbc-jdbctemplate
     public void addGames(List<Game> newGames) {
-         jdbcTemplate.batchUpdate("INSERT INTO `sjakkarena`.`game` (`table`, `start`, `white_player`, " +
+         jdbcTemplate.batchUpdate("INSERT INTO " + DATABASE + ".`game` (`table`, `start`, `white_player`, " +
                         "`black_player`, `active`) VALUES (?, ?, ?, ?, ?)",
                 new BatchPreparedStatementSetter() {
                     @Override
@@ -86,7 +89,7 @@ public class GameRepository {
      * @param gameID of game to make invalidvalid.
      */
     public void makeResultInvalid(int gameID){
-        int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.game SET valid_result = 0 "+
+        int affectedRows = jdbcTemplate.update("UPDATE " + DATABASE + ".game SET valid_result = 0 "+
                 "WHERE game_id = " +gameID);
         if (affectedRows != 1){
             throw new TroubleUpdatingDBException("Some problems occurred while trying to make result invalid");
@@ -98,7 +101,7 @@ public class GameRepository {
      * @param gameID of game to make valid.
      */
     public void makeResultValid(int gameID){
-        int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.game SET valid_result = 1 "+
+        int affectedRows = jdbcTemplate.update("UPDATE " + DATABASE + ".game SET valid_result = 1 "+
                 "WHERE game_id = " +gameID);
         if (affectedRows != 1){
             throw new TroubleUpdatingDBException("Some problems occurred while trying to make result valid");
@@ -106,7 +109,7 @@ public class GameRepository {
     }
 
     public void deactivateGame(int gameId){
-        int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.game SET `active` = 0 "+
+        int affectedRows = jdbcTemplate.update("UPDATE " + DATABASE + ".game SET `active` = 0 "+
             "WHERE game_id = " + gameId);
         if (affectedRows != 1){
             throw new TroubleUpdatingDBException("Some problems occurred while trying to deactivate game");
@@ -114,6 +117,6 @@ public class GameRepository {
     }
 
     public Game getGame(int gameId) {
-        return jdbcTemplate.queryForObject("SELECT * FROM sjakkarena.game WHERE game_id = " +gameId, gameRowMapper);
+        return jdbcTemplate.queryForObject("SELECT * FROM " + DATABASE + ".game WHERE game_id = " +gameId, gameRowMapper);
     }
 }

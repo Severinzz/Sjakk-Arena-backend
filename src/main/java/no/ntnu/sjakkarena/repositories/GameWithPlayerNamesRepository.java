@@ -18,6 +18,9 @@ public class GameWithPlayerNamesRepository {
 
     private RowMapper<GameWithPlayerNames> gameWithPlayerNamesRowMapper = new GameWithPlayerNamesRowMapper();
 
+    private static final String DATABASE = System.getenv("SJAKK_ARENA_DATABASE");
+
+
     /**
      * Get games by tournament
      *
@@ -27,7 +30,7 @@ public class GameWithPlayerNamesRepository {
     public Collection<GameWithPlayerNames> getGamesWithPlayerNames(int tournamentId) {
         return jdbcTemplate.query("SELECT `game`.*, `white`.`name` AS `white_player_name`, " +
                 "`black`.`name` AS `black_player_name`" +
-                " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black` "+
+                " FROM " + DATABASE + ".`game` AS `game`, " + DATABASE + ".`player` AS white, " + DATABASE + ".`player` AS `black` "+
                 " WHERE `game`.`white_player` = `white`.`player_id` AND " +
                 "`game`.`black_player` = `black`.`player_id` AND `white`.`tournament` = " + tournamentId +
                 " ORDER BY `game`.`start` DESC", gameWithPlayerNamesRowMapper);
@@ -36,7 +39,7 @@ public class GameWithPlayerNamesRepository {
     public List<GameWithPlayerNames> getActiveGames(int tournamentId) {
         return jdbcTemplate.query("SELECT `game`.*, `white`.`name` AS `white_player_name`, " +
                 "`black`.`name` AS `black_player_name`" +
-                " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black` "+
+                " FROM "+ DATABASE +".`game` AS `game`, " + DATABASE + ".`player` AS white, " + DATABASE + ".`player` AS `black` "+
                 " WHERE `game`.`white_player` = `white`.`player_id` AND " +
                 "`game`.`black_player` = `black`.`player_id` AND `white`.`tournament` = " + tournamentId +
                 " AND `game`.`active` = " + 1 +
@@ -48,9 +51,9 @@ public class GameWithPlayerNamesRepository {
         String sql = "\tSELECT `game`.*, " +
                 "\t`white`.`name` AS `white_player_name`,\n" +
                 "\t`black`.`name` AS `black_player_name`\n" +
-                "\tFROM `sjakkarena`.`game` \n" +
-                "\tAS `game`, `sjakkarena`.`player` \n" +
-                "\tAS white, `sjakkarena`.`player` \n" +
+                "\tFROM " + DATABASE + ".`game` \n" +
+                "\tAS `game`, " + DATABASE + ".`player` \n" +
+                "\tAS white, " + DATABASE + ".`player` \n" +
                 "\tAS `black`\n" +
                 "\tWHERE (valid_result = 0)\n" +
                 "\tAND `game`.`white_player` = `white`.`player_id` \n" +
@@ -63,7 +66,7 @@ public class GameWithPlayerNamesRepository {
     public GameWithPlayerNames getActiveGame(int playerId) {
         return jdbcTemplate.queryForObject("SELECT `game`.*, `white`.`name` AS `white_player_name`, " +
                 "`black`.`name` AS `black_player_name`" +
-                " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black`" +
+                " FROM " + DATABASE + ".`game` AS `game`, " + DATABASE + ".`player` AS white, " + DATABASE + ".`player` AS `black`" +
                 " WHERE `game`.`white_player` = `white`.`player_id` AND " +
                 " `game`.`black_player` = `black`.`player_id`" +
                 " AND (`white`.`player_id` = " + playerId + " OR `black`.`player_id` = " + playerId + ") AND `game`.`active` = " + 1 +
@@ -73,7 +76,7 @@ public class GameWithPlayerNamesRepository {
     public List<GameWithPlayerNames> getInActiveGames(int playerId) {
         return jdbcTemplate.query("SELECT `game`.*, `white`.`name` AS `white_player_name`, " +
                 "`black`.`name` AS `black_player_name`" +
-                " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black`" +
+                " FROM " + DATABASE + ".`game` AS `game`, " + DATABASE + ".`player` AS white, " + DATABASE + ".`player` AS `black`" +
                 " WHERE `game`.`white_player` = `white`.`player_id` AND " +
                 " `game`.`black_player` = `black`.`player_id`" +
                 " AND (`white`.`player_id` = " + playerId + " OR `black`.`player_id` = " + playerId +  ") AND `game`.`active` = 0" +
@@ -83,7 +86,7 @@ public class GameWithPlayerNamesRepository {
     public Game getGame(int gameId) {
         return jdbcTemplate.queryForObject("SELECT `game`.*, `white`.`name` AS `white_player_name`, " +
                 "`black`.`name` AS `black_player_name`" +
-                " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black`" +
+                " FROM " + DATABASE + ".`game` AS `game`, " + DATABASE + ".`player` AS white, " + DATABASE + ".`player` AS `black`" +
                 " WHERE `game`.`white_player` = `white`.`player_id` AND " +
                 " `game`.`black_player` = `black`.`player_id`" +
                 " AND `game`.`game_id` = " + gameId, gameWithPlayerNamesRowMapper);
