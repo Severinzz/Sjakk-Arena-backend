@@ -6,10 +6,17 @@ import no.ntnu.sjakkarena.data.Player;
 import java.time.LocalDateTime;
 import java.util.*;
 
+
+/**
+ * An extension of the AdaptedMonrad class.
+ *
+ * This class handles game creation when the tournament starts.
+ */
 public class AtTournamentStartAdaptedMonrad extends AdaptedMonrad{
 
     /**
-     * Set up games at the beginning of the tournament.
+     * Sets up new games. Includes finding opponents and seat the players at available tables.
+     *
      * @param playersNotPlaying The players that is not currently playing a game
      * @param availableTables The currently available tables
      * @return New games
