@@ -32,7 +32,7 @@ public class AfterTournamentStartAdaptedMonrad extends AdaptedMonrad {
                         new ArrayList(playersNotPlaying));
                 playersNotPlaying.remove(opponent);
                 ChessmenColorDistribution chessmenColorDistribution = ChessmenColorDistributor.distribute(challenger, opponent);
-                games.add(new Game(availableTables.poll(), LocalDateTime.now().withNano(0).toString(),
+                games.add(Game.notStarted(availableTables.poll(), LocalDateTime.now().withNano(0).toString(),
                         chessmenColorDistribution.getWhitePlayer().getId(), chessmenColorDistribution.getBlackPlayer().getId(),
                         true));
             } catch (NoSuchElementException e) {
