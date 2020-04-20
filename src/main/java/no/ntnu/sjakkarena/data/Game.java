@@ -14,7 +14,11 @@ public class Game {
     private boolean active;
     private boolean validResult;
 
-    public Game(int table, String start, int whitePlayerId, int blackPlayerId, boolean active) {
+    private Game(boolean active){
+        this.active = active;
+    }
+
+    private Game(int table, String start, int whitePlayerId, int blackPlayerId, boolean active) {
         this.table = table;
         this.start = start;
         this.whitePlayerId = whitePlayerId;
@@ -22,7 +26,7 @@ public class Game {
         this.active = active;
     }
 
-    public Game(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId,
+    protected Game(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId,
                 Integer whitePlayerPoints, boolean active, boolean validResult) {
         this.gameId = gameId;
         this.table = table;
@@ -34,6 +38,20 @@ public class Game {
         this.active = active;
         this.validResult = validResult;
     }
+
+    public static Game notStarted(int table, String start, int whitePlayerId, int blackPlayerId, boolean active){
+        return new Game(table, start, whitePlayerId, blackPlayerId, active);
+    }
+
+    public static Game asInDatabase(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId,
+                                    Integer whitePlayerPoints, boolean active, boolean validResult){
+        return new Game(gameId, table, start, end, whitePlayerId, blackPlayerId, whitePlayerPoints, active, validResult);
+    }
+
+    public static Game emptyInactiveGame(){
+        return new Game(false);
+    }
+
     @JsonProperty("game_id")
     public int getGameId() {
         return gameId;

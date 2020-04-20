@@ -6,6 +6,7 @@ import no.ntnu.sjakkarena.events.gameevents.GamesCreatedEvent;
 import no.ntnu.sjakkarena.events.gameevents.InvalidResultEvent;
 import no.ntnu.sjakkarena.events.gameevents.ResultSuggestedEvent;
 import no.ntnu.sjakkarena.events.gameevents.ValidResultAddedEvent;
+import no.ntnu.sjakkarena.events.playerevents.PlayerRemovedEvent;
 import no.ntnu.sjakkarena.exceptions.NotSubscribingException;
 import no.ntnu.sjakkarena.services.player.PlayersGameService;
 import no.ntnu.sjakkarena.MessageSender;
@@ -64,6 +65,13 @@ public class PlayersGameController {
         Game game = invalidResultEvent.getGame();
         sendInvalidResultInformationToPlayer(game.getWhitePlayerId(), game);
         sendInvalidResultInformationToPlayer(game.getBlackPlayerId(), game);
+    }
+
+    @EventListener
+    public void onPlayerRemoved(PlayerRemovedEvent playerRemovedEvent){
+        int opponent = playersGameService.getOpponent(playerRemovedEvent.getPlayerId());
+        playersGameService.endGameDueToPlayerRemoved(playerRemovedEvent.getPlayerId());
+        sendGame(Game.emptyInactiveGame(), opponent);
     }
 
     private void sendGameToWhiteAndBlackPlayer(Game game){
