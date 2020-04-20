@@ -59,6 +59,7 @@ public class JSONCreator {
             jsonObject.put("colour", "Sort");
         }
         jsonObject.put("table", game.getTable());
+        jsonObject.put("active", game.isActive());
         return jsonObject.toString();
     }
 

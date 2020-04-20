@@ -1,5 +1,7 @@
 package no.ntnu.sjakkarena.services.tournament;
 
+import no.ntnu.sjakkarena.GameCreator;
+import no.ntnu.sjakkarena.adaptedmonrad.AfterTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.eventcreators.PlayerEventCreator;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
@@ -21,6 +23,9 @@ public class TournamentsPlayerService {
     @Autowired
     private PlayerEventCreator playerEventCreator;
 
+    @Autowired
+    private GameCreator gameCreator;
+
 
     public void deletePlayer(int playerId, String msg) {
         try {
@@ -35,12 +40,17 @@ public class TournamentsPlayerService {
     public void inactivatePlayer(int playerId, String msg) {
         if(isPlayerInTournament(playerId)) {
             playerRepository.leaveTournament(playerId);
-            playerEventCreator.createAndPublishPlayerListChangeEvent(RESTSession.getUserId());
-            playerEventCreator.createAndSendPlayerRemovedEvent(playerId, msg);
+            onPlayerLeftTournament(playerId, msg);
         }
         else{
             throw new TroubleUpdatingDBException("Player is not in that tournament");
         }
+    }
+
+    private void onPlayerLeftTournament(int playerId, String msg){
+        gameCreator.createAndPublishNewGames(RESTSession.getUserId(), new AfterTournamentStartAdaptedMonrad());
+        playerEventCreator.createAndPublishPlayerListChangeEvent(RESTSession.getUserId());
+        playerEventCreator.createAndSendPlayerRemovedEvent(playerId, msg);
     }
 
     private boolean isPlayerInTournament(int playerId){

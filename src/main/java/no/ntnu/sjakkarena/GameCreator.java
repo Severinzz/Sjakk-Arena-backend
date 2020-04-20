@@ -33,8 +33,8 @@ public class GameCreator {
     }
 
     private void createNewGames(int tournamentId, AdaptedMonrad adaptedMonrad){
-        List<Player> inActivePlayers = playerRepository.getPlayersWhoIsCurrentlyNotPlaying(tournamentId);
+        List<Player> playersInTournamentNotPlaying = playerRepository.getPlayersInTournamentNotPlaying(tournamentId);
         List<Integer> availableTables = tournamentRepository.getAvailableTables(tournamentId);
-        gameRepository.addGames(adaptedMonrad.getNewGames(inActivePlayers, availableTables));
+        gameRepository.addGames(adaptedMonrad.getNewGames(playersInTournamentNotPlaying, availableTables));
     }
 }

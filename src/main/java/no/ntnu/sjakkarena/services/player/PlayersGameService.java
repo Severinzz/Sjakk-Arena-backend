@@ -3,6 +3,7 @@ package no.ntnu.sjakkarena.services.player;
 import no.ntnu.sjakkarena.GameCreator;
 import no.ntnu.sjakkarena.adaptedmonrad.AfterTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Game;
+import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.data.ResultUpdateRequest;
 import no.ntnu.sjakkarena.eventcreators.GameEventCreator;
 import no.ntnu.sjakkarena.eventcreators.PlayerEventCreator;
@@ -86,5 +87,20 @@ public class PlayersGameService {
         playerEventCreator.createAndPublishPlayerListChangeEvent(tournamentId);
         gameEventCreator.createAndPublishValidResultAddedEvent(gameId);
         gameCreator.createAndPublishNewGames(tournamentId, new AfterTournamentStartAdaptedMonrad());
+    }
+
+    public void endGameDueToPlayerRemoved(int playerId) {
+        Game game = gameRepository.getActiveGame(playerId);
+        int result = game.getBlackPlayerId() == playerId ? 1 : 0;
+        gameRepository.addResult(game.getGameId(), result);
+        gameRepository.deactivateGame(game.getGameId());
+        Player player = playerRepository.getPlayer(playerId);
+        playerEventCreator.createAndPublishPlayerListChangeEvent(player.getTournamentId());
+        gameEventCreator.createAndPublishValidResultAddedEvent(game.getGameId());
+    }
+
+    public int getOpponent(int playerId) {
+        Game game = gameRepository.getActiveGame(playerId);
+        return game.getWhitePlayerId() == playerId ? game.getBlackPlayerId() : game.getWhitePlayerId();
     }
 }

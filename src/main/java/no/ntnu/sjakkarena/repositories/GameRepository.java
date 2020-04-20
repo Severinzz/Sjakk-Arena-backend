@@ -45,6 +45,18 @@ public class GameRepository {
         }
     }
 
+    public Game getActiveGame(int playerId) {
+        try {
+            return jdbcTemplate.queryForObject("SELECT * " +
+                    "FROM `sjakkarena`.`game` " +
+                    "WHERE (`active` = 1) " +
+                    "AND (white_player = " + playerId +
+                    "\tOR black_player = " + playerId + ")", gameRowMapper);
+        } catch (IncorrectResultSizeDataAccessException e) {
+            throw new NotInDatabaseException("Player has no active games");
+        }
+    }
+
     /**
      * Add a game result to the database
      *
