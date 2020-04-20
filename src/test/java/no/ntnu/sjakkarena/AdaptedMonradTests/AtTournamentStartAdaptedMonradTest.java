@@ -4,6 +4,7 @@ import no.ntnu.sjakkarena.adaptedmonrad.AdaptedMonrad;
 import no.ntnu.sjakkarena.adaptedmonrad.AtTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
+import no.ntnu.sjakkarena.utils.PlayerSorter;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -51,10 +52,11 @@ public class AtTournamentStartAdaptedMonradTest extends AdaptedMonradTest{
         } else {
             assertEquals(numberOfTables, newGames.size());
         }
+        PlayerSorter.sortPlayersByAvgPointsAndBibNumber(players);
         for (int i = 0; i < newGames.size(); i++) {
             Game newGame = newGames.get(i);
             assertEquals(newGame.getTable(), i + 1);
-            assertTrue(newGame.getWhitePlayerId() == (2 * i + 2) && newGame.getBlackPlayerId() == (2 * i + 1));
+            assertTrue(newGame.getWhitePlayerId() == players.get(2 * i + 1).getId() && newGame.getBlackPlayerId() == players.get(2 * i).getId());
         }
     }
 
@@ -64,7 +66,8 @@ public class AtTournamentStartAdaptedMonradTest extends AdaptedMonradTest{
         List<Game> games = adaptedMonrad.getNewGames(players, availableTables);
         Game game = games.get(0);
         assertEquals(game.getTable(), 1);
-        assertTrue(game.getWhitePlayerId() == 2 && game.getBlackPlayerId() == 1);
+        PlayerSorter.sortPlayersByAvgPointsAndBibNumber(players);
+        assertTrue(game.getWhitePlayerId() == players.get(1).getId() && game.getBlackPlayerId() == players.get(0).getId());
     }
 
     private void earlyStartInit() {
