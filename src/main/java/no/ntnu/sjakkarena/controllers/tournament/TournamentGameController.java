@@ -5,6 +5,7 @@ import no.ntnu.sjakkarena.MessageSender;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.events.gameevents.GamesCreatedEvent;
 import no.ntnu.sjakkarena.events.gameevents.InvalidResultEvent;
+import no.ntnu.sjakkarena.events.gameevents.ValidResultAddedEvent;
 import no.ntnu.sjakkarena.exceptions.NotSubscribingException;
 import no.ntnu.sjakkarena.services.tournament.TournamentsGameService;
 import no.ntnu.sjakkarena.utils.WebSocketSession;
@@ -52,17 +53,19 @@ public class TournamentGameController {
         }
     }
 
+    @EventListener
+    public void onResultValidated(ValidResultAddedEvent validResultAddedEvent){
+        int tournamentId = validResultAddedEvent.getTournamentId();
+        Collection<? extends Game> games = tournamentsGameService.getActiveGames(tournamentId);
+        sendActiveGamesList(tournamentId, games);
+    }
+
     /**
      * @param gamesCreatedEvent
      */
     @EventListener
     public void onGamesCreation(GamesCreatedEvent gamesCreatedEvent) {
-        try {
-            messageSender.sendToSubscriber(gamesCreatedEvent.getTournamentId(), "/queue/tournament/active-games",
-                    jsonCreator.writeValueAsString(gamesCreatedEvent.getActiveGames()));
-        } catch (NotSubscribingException e) {
-            e.printStackTrace();
-        }
+        sendActiveGamesList(gamesCreatedEvent.getTournamentId(), gamesCreatedEvent.getActiveGames());
     }
 
     private void sendActiveGamesList(int tournamentId, Collection<? extends Game> games){
