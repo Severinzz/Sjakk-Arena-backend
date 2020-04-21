@@ -7,7 +7,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Player extends User{
+/**
+ * Represents a player in a tournament. A player can only participate in a single tournament. This class extends
+ * the User class.
+ */
+public class Player extends User {
 
     private String name;
     private boolean paused;
@@ -21,17 +25,29 @@ public class Player extends User{
     private Collection<Integer> previousOpponents = new ArrayList<>();
     private int numberOfWhiteGames;
     private String lastPlayedColor;
-    private int sameColorStreak;
+    private int lastPlayedColorStreak;
 
-    public Player() {
-    }
-
-
+    /**
+     * Constructs a Player with the specified data
+     *
+     * @param playerId              The id of the player
+     * @param name                  The name of the player
+     * @param paused                Whether the player is taking a break
+     * @param points                The points the player has received in a tournament
+     * @param rounds                The number of rounds the player has played in a tournament
+     * @param tournamentId          The id of the tournament the player is enrolled in
+     * @param icon                  A representation of an icon
+     * @param inTournament          Whether the player is participating in a tournament
+     * @param numberOfWhiteGames    The number of games the player has played with white chessmen
+     * @param lastPlayedColor       The color of the chessmen the player played with in his last game
+     * @param lastPlayedColorStreak The number of games in a row the player has played with the lastPlayedColor
+     * @param bibNumber             A bib number
+     */
     public Player(int playerId, String name, boolean paused, double points, int rounds, int tournamentId, String icon,
-                  boolean inTournament, int numberOfWhiteGames, String lastPlayedColor, int sameColorStreak,
-                  double bibNumber){
+                  boolean inTournament, int numberOfWhiteGames, String lastPlayedColor, int lastPlayedColorStreak,
+                  double bibNumber) {
         super(playerId);
-        if (lastPlayedColor == null){
+        if (lastPlayedColor == null) {
             lastPlayedColor = "Ingen spilte parti";
         }
         this.name = name;
@@ -43,7 +59,7 @@ public class Player extends User{
         this.inTournament = inTournament;
         this.numberOfWhiteGames = numberOfWhiteGames;
         this.lastPlayedColor = lastPlayedColor;
-        this.sameColorStreak = sameColorStreak;
+        this.lastPlayedColorStreak = lastPlayedColorStreak;
         this.bibNumber = bibNumber;
     }
 
@@ -143,16 +159,16 @@ public class Player extends User{
     }
 
     @JsonIgnore
-    public int getSameColorStreak() {
-        return sameColorStreak;
+    public int getLastPlayedColorStreak() {
+        return lastPlayedColorStreak;
     }
 
-    public void setSameColorStreak(int sameColorStreak) {
-        this.sameColorStreak = sameColorStreak;
+    public void setLastPlayedColorStreak(int lastPlayedColorStreak) {
+        this.lastPlayedColorStreak = lastPlayedColorStreak;
     }
 
     @JsonIgnore
-    public double getWhiteGameRatio(){
+    public double getWhiteGameRatio() {
         return (double) numberOfWhiteGames / rounds;
     }
 }
