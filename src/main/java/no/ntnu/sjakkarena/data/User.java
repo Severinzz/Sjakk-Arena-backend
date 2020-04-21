@@ -18,6 +18,12 @@ public class User {
         this.userId = userId;
     }
 
+    /**
+     * Constructs a user with no data
+     */
+    public User() {
+    }
+
     @JsonProperty("user_id")
     public int getId() {
         return userId;

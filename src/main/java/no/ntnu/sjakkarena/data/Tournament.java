@@ -37,6 +37,12 @@ public class Tournament extends User {
     private boolean earlyStart;
 
     /**
+     * Constructs a tournament with no data
+     */
+    public Tournament() {
+    }
+
+    /**
      * Constructs a tournament with the specified data
      *
      * @param tournamentId   The id of the tournament

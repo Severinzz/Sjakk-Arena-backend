@@ -63,6 +63,12 @@ public class Player extends User {
         this.bibNumber = bibNumber;
     }
 
+    /**
+     * Constructs a player with no data
+     */
+    public Player() {
+    }
+
     public String getName() {
         return name;
     }
