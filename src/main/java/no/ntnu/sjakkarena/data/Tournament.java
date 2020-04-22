@@ -32,12 +32,14 @@ public class Tournament extends User {
     @JsonAlias("early_start")
     private boolean earlyStart; //Start when two or more players are enrolled
 
+    private boolean finished;
+
     public Tournament() {
         super();
     }
 
     public Tournament(int tournamentId, String tournamentName, String adminEmail, String start, String end,
-                      int tables, int maxRounds, boolean active, String adminUUID, boolean earlyStart) {
+                      int tables, int maxRounds, boolean active, String adminUUID, boolean earlyStart, boolean finished) {
         super(tournamentId);
         this.tournamentName = tournamentName;
         this.adminEmail = adminEmail;
@@ -48,6 +50,7 @@ public class Tournament extends User {
         this.active = active;
         this.adminUUID = adminUUID;
         this.earlyStart = earlyStart;
+        this.finished = finished;
     }
 
     @JsonProperty("tournament_name")
@@ -125,5 +128,13 @@ public class Tournament extends User {
 
     public void setEarlyStart(boolean earlyStart) {
         this.earlyStart = earlyStart;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 }

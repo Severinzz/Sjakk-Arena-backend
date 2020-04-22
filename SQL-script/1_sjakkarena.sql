@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS sjakkarena.`tournament`
   `active`          TINYINT(1) DEFAULT 0,
   `admin_uuid`      VARCHAR(255)      NULL UNIQUE,
   `early_start`     TINYINT(1) DEFAULT 0,
+  `finished`        TINYINT(1) DEFAULT 0,
   PRIMARY KEY (`tournament_id`)
 )
   ENGINE = InnoDB;
@@ -54,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `sjakkarena`.`player`
   `paused`        TINYINT(1) UNSIGNED DEFAULT 0,
   `tournament`    INT          NOT NULL,
   `icon`          VARCHAR(255) NOT NULL,
-  `bib_number`    FLOAT          NULL,
+  `bib_number`    FLOAT        NULL,
   PRIMARY KEY (`player_id`),
   UNIQUE INDEX `Id_UNIQUE` (`player_id` ASC) VISIBLE,
   UNIQUE KEY `name_tournament` (`name`, `tournament`),
@@ -82,7 +83,7 @@ CREATE TABLE IF NOT EXISTS sjakkarena.`game`
   `black_player`        INT                    NOT NULL,
   `white_player_points` DECIMAL(2, 1) UNSIGNED NULL,
   `active`              TINYINT(1) DEFAULT 0,
-  `valid_result`         TINYINT(1) DEFAULT 1,
+  `valid_result`        TINYINT(1) DEFAULT 1,
   PRIMARY KEY (`game_id`),
   INDEX `fk_game_white_idx` (`white_player` ASC) VISIBLE,
   INDEX `fk_game_black_idx` (`black_player` ASC) VISIBLE,
@@ -115,7 +116,7 @@ DROP FUNCTION IF EXISTS sjakkarena.get_last_played_color;
 DELIMITER //
 CREATE FUNCTION sjakkarena.get_last_played_color(player_id INT(11))
   RETURNS VARCHAR(255)
-  DETERMINISTIC
+  READS SQL DATA
 BEGIN
   DECLARE last_played_color VARCHAR(255) DEFAULT '';
   SET last_played_color = (SELECT CAST(
@@ -139,7 +140,7 @@ DROP FUNCTION IF EXISTS sjakkarena.get_rounds;
 DELIMITER //
 CREATE FUNCTION sjakkarena.get_rounds(player_id INT(11))
   RETURNS INT
-  DETERMINISTIC
+  READS SQL DATA
 BEGIN
   DECLARE rounds INT DEFAULT 0;
   SET rounds = (SELECT COUNT(*)
@@ -156,15 +157,15 @@ DELIMITER ;
 DROP FUNCTION IF EXISTS sjakkarena.get_points;
 DELIMITER //
 CREATE FUNCTION sjakkarena.get_points(player_id INT(11))
-  RETURNS DECIMAL(2, 1)
-  DETERMINISTIC
+  RETURNS DECIMAL(5, 1)
+  READS SQL DATA
 BEGIN
-  DECLARE points DECIMAL(2, 1) DEFAULT 0;
+  DECLARE points DECIMAL(5, 1) DEFAULT 0;
   SET points = (SELECT SUM(CASE
                              WHEN white_player = player_id
                                THEN white_player_points
                              ELSE (1 - white_player_points)
-    END)
+                END)
                 FROM `sjakkarena`.`game`
                 WHERE (`white_player` = player_id OR `black_player` = player_id)
   );
@@ -179,7 +180,7 @@ DROP FUNCTION IF EXISTS sjakkarena.get_number_of_white_games;
 DELIMITER //
 CREATE FUNCTION sjakkarena.get_number_of_white_games(player_id INT(11))
   RETURNS INT
-  DETERMINISTIC
+  READS SQL DATA
 BEGIN
   DECLARE number_of_white_games INT DEFAULT 0;
   SET number_of_white_games = (SELECT COUNT(*)
@@ -233,9 +234,10 @@ BEGIN
   DECLARE bib_number FLOAT;
   DECLARE i INT DEFAULT 0;
   SET bib_number = RAND();
-  WHILE (i < POWER(2,32)) AND EXISTS (SELECT player.bib_number
+  WHILE (i < POWER(2, 32)) AND EXISTS(SELECT player.bib_number
                                       FROM sjakkarena.player
-                                      WHERE player.tournament = tournament_id AND player.bib_number = bib_number)
+                                      WHERE player.tournament = tournament_id
+                                        AND player.bib_number = bib_number)
   DO
   SET i = i + 1;
   SET bib_number = RAND();
@@ -280,7 +282,8 @@ BEGIN
          get_last_played_color(player_id)     AS last_played_color,
          get_number_of_white_games(player_id) AS `number_of_white_games`
   FROM `sjakkarena`.`player`
-  WHERE `tournament` = `tournament_id` AND `in_tournament` = 1;
+  WHERE `tournament` = `tournament_id`
+    AND `in_tournament` = 1;
 END//
 DELIMITER ;
 
