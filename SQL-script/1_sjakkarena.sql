@@ -190,22 +190,22 @@ END//
 DELIMITER ;
 
 -- -----------------------------------------------------
---  get_same_color_streak
+--  get_last_played_color_streak
 -- -----------------------------------------------------
-DROP FUNCTION IF EXISTS sjakkarena.get_same_color_streak;
+DROP FUNCTION IF EXISTS sjakkarena.get_last_played_color_streak;
 DELIMITER //
-CREATE FUNCTION sjakkarena.get_same_color_streak(player_id INT(11))
+CREATE FUNCTION sjakkarena.get_last_played_color_streak(player_id INT(11))
   RETURNS INT(11)
   READS SQL DATA
 BEGIN
   DECLARE color VARCHAR(255) DEFAULT '';
-  DECLARE same_color_streak INT DEFAULT 0;
+  DECLARE last_played_color_streak INT DEFAULT 0;
   DECLARE last_played_color VARCHAR(255) DEFAULT '';
   SET last_played_color = get_last_played_color(player_id);
   SET color = last_played_color;
   WHILE color = last_played_color
   DO
-  SET same_color_streak = same_color_streak + 1;
+  SET last_played_color_streak = last_played_color_streak + 1;
   SET color = (SELECT CASE
                         WHEN white_player = player_id
                           THEN 'white'
@@ -215,9 +215,9 @@ BEGIN
                WHERE (white_player = player_id OR black_player = player_id)
                ORDER BY start DESC
                LIMIT 1
-                 OFFSET same_color_streak) ;
+                 OFFSET last_played_color_streak) ;
   END WHILE;
-  RETURN same_color_streak;
+  RETURN last_played_color_streak;
 END//
 DELIMITER ;
 
@@ -258,7 +258,7 @@ BEGIN
   SELECT `player`.*,
          get_points(player_id)                AS `points`,
          get_rounds(player_id)                AS `rounds`,
-         get_same_color_streak(player_id)     AS `same_color_streak`,
+         get_last_played_color_streak(player_id)     AS `last_played_color_streak`,
          get_last_played_color(player_id)     AS `last_played_color`,
          get_number_of_white_games(player_id) AS `number_of_white_games`
   FROM `sjakkarena`.`player`
@@ -276,7 +276,7 @@ BEGIN
   SELECT `player`.*,
          get_points(player_id)                AS `points`,
          get_rounds(player_id)                AS `rounds`,
-         get_same_color_streak(player_id)     AS `same_color_streak`,
+         get_last_played_color_streak(player_id)     AS `last_played_color_streak`,
          get_last_played_color(player_id)     AS last_played_color,
          get_number_of_white_games(player_id) AS `number_of_white_games`
   FROM `sjakkarena`.`player`
@@ -294,7 +294,7 @@ BEGIN
   SELECT DISTINCT `player`.*,
                   get_points(player_id)                AS `points`,
                   get_rounds(player_id)                AS `rounds`,
-                  get_same_color_streak(player_id)     AS `same_color_streak`,
+                  get_last_played_color_streak(player_id)     AS `last_played_color_streak`,
                   get_last_played_color(player_id)     AS `last_played_color`,
                   get_number_of_white_games(player_id) AS `number_of_white_games`
   FROM `sjakkarena`.`player`
@@ -322,7 +322,7 @@ BEGIN
   SELECT `player`.*,
          get_points(player_id)                AS `points`,
          get_rounds(player_id)                AS `rounds`,
-         get_same_color_streak(player_id)     AS `same_color_streak`,
+         get_last_played_color_streak(player_id)     AS `last_played_color_streak`,
          get_last_played_color(player_id)     AS last_played_color,
          get_number_of_white_games(player_id) AS number_of_white_games
   FROM `sjakkarena`.`player`
