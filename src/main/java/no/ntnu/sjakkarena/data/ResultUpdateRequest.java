@@ -2,15 +2,17 @@ package no.ntnu.sjakkarena.data;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * Represents a request to update a result
+ */
 public class ResultUpdateRequest {
 
 
     @NotNull
-    int opponent;
-
+    int opponent; // The opponent of the requesting player
 
     @NotNull
-    double result;
+    double result; // The new result
 
     public int getOpponent() {
         return opponent;
