@@ -5,13 +5,14 @@ import no.ntnu.sjakkarena.adaptedmonrad.AtTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.eventcreators.TournamentEventCreator;
 import no.ntnu.sjakkarena.events.tournamentevents.TimeToStartTournamentEvent;
-import no.ntnu.sjakkarena.events.tournamentevents.TournamentStartedEvent;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 public class TournamentService {
@@ -27,10 +28,11 @@ public class TournamentService {
 
     public void startTournament(int tournamentId) {
         try {
-            tournamentRepository.setActive(tournamentId);
+            tournamentRepository.activate(tournamentId);
+            tournamentRepository.setStartTime(LocalDateTime.now().toString(), tournamentId);
             onTournamentStart(tournamentId);
         } catch (TroubleUpdatingDBException e) {
-            throw e;
+            throw new TroubleUpdatingDBException(e);
         }
     }
 
@@ -62,7 +64,7 @@ public class TournamentService {
 
     public void setTournamentPaused(int tournamentId) {
         try {
-            tournamentRepository.setInactive(tournamentId);
+            tournamentRepository.inactivate(tournamentId);
         } catch (TroubleUpdatingDBException e) {
             throw e;
         }
@@ -70,7 +72,7 @@ public class TournamentService {
 
     public void setTournamentUnpause(int tournamentId) {
         try {
-            tournamentRepository.setActive(tournamentId);
+            tournamentRepository.activate(tournamentId);
         } catch (TroubleUpdatingDBException e) {
             throw e;
         }
@@ -78,7 +80,9 @@ public class TournamentService {
 
     public void endTournament(int tournamentId) {
         try {
-            tournamentRepository.endTournament(tournamentId);
+            tournamentRepository.inactivate(tournamentId);
+            tournamentRepository.finishTournament(tournamentId);
+            tournamentRepository.setEndTime(LocalDateTime.now().toString(), tournamentId);
             onTournamentEnd(tournamentId);
         } catch (TroubleUpdatingDBException e){
             throw new TroubleUpdatingDBException(e);
