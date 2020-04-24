@@ -1,18 +1,17 @@
 package no.ntnu.sjakkarena.restcontrollers;
 
-import java.io.IOException;
 
 import nl.martijndwars.webpush.Notification;
 import nl.martijndwars.webpush.PushService;
-import no.ntnu.sjakkarena.data.User;
-import no.ntnu.sjakkarena.utils.JWSHelper;
+import nl.martijndwars.webpush.Subscription;
+
+import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.utils.KeyHelper;
-
-import no.ntnu.sjakkarena.data.PushRegistration;
-
 import no.ntnu.sjakkarena.utils.RESTSession;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jose4j.lang.JoseException;
-import org.springframework.http.HttpRequest;
+import org.json.JSONObject;
+import org.json.JSONString;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,11 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.*;
-import java.security.spec.InvalidKeySpecException;
-import java.util.Base64;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.Security;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -35,76 +33,52 @@ import java.util.concurrent.ExecutionException;
 
 public class PushNotificationRESTController {
 
-    private static HashMap<Integer, PushRegistration> pushRegistrations = new HashMap<>();
+    private static HashMap<Integer, Subscription> pushRegistrations = new HashMap<>();
+    private static PushService pushService = new PushService();
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<String> getPublicKey(){
-        String publicKey =  KeyHelper.publicKey();
-        return new ResponseEntity<>(publicKey, HttpStatus.OK);
+    public ResponseEntity<String> getPublicKey() {
+        String applicationServerKey = KeyHelper.getPublicKey();
+        return new ResponseEntity<>(applicationServerKey, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<PushRegistration> setPushSubscription(@RequestBody PushRegistration registration){
-//        System.out.println("------------------------------------------------------------------");
-//        System.out.println("------------------------------------------------------------------");
-//        System.out.println("------------------------------------------------------------------");
-//        System.out.println("------------------------------------------------------------------");
-//        System.out.println("------------------------------------------------------------------");
-//        System.out.println(registration.getKeys().getAuth());
-//        System.out.println(registration.getEndpoint());
-//        System.out.println(registration.getExpirationTime());
-//        System.out.println("------------------------------------------------------------------");
-//        System.out.println("------------------------------------------------------------------");
-//        System.out.println("------------------------------------------------------------------");
-//        System.out.println("------------------------------------------------------------------");
-//        System.out.println("------------------------------------------------------------------");
-        pushRegistrations.put(59, registration);
-        sendPostRequest(registration);
-        return new ResponseEntity<>(registration, HttpStatus.OK);
+    public ResponseEntity<Subscription> setPushSubscription(@RequestBody Subscription sub){
+        int playerId = RESTSession.getUserId();
+        if(!pushRegistrations.containsKey(playerId)){
+            pushRegistrations.put(playerId, sub);
+        }
+        return new ResponseEntity<>(sub, HttpStatus.OK);
     }
 
-    // https://github.com/web-push-libs/webpush-java/wiki/Usage-Example
+    @RequestMapping(value = "/unsubscribe", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deletePushSubscription(){
+        int playerId = RESTSession.getUserId();
+        String response;
+        if(pushRegistrations.containsKey(playerId)){
+            pushRegistrations.remove(playerId);
+            response = "Successfully unsubscribed";
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+                response = "Subscription not registered";
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            }
+    }
 
-    public void sendPostRequest(PushRegistration registration){
-        try {
-//            Notification notification;
-            PushService pushService = new PushService();
-//            byte[] test = new byte[64];
-            pushService.setPrivateKey(KeyHelper.getPrivateKey());
-            pushService.setPublicKey(KeyHelper.getPublicKey());
-//            String jwt = JWSHelper.createJWSWithPrivateKey(KeyHelper.getPublicKey(), KeyHelper.getPrivateKey(), registration);
-//            notification = new Notification(
-//                    registration.getEndpoint(),
-//                    String.valueOf(KeyHelper.getPublicKey()),
-//                    Base64.getDecoder().decode(registration.getKeys().getAuth()));
-            Notification noti = new Notification(
-                    registration,
-                    "BPgGiVRn44VOLWeDzv6mQwSYb4f3cULYZSDpG0T2BnFvmkIJnVyU2Y_RM9pAG2jJ1J2TocKQoj8okLNHkHC9td4"
-            );
-            pushService.send(noti);
-//            pushService.send
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (SignatureException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        } catch (JoseException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public void sendPushNotification(int userId, String gameJsonString) {
+        Security.addProvider(new BouncyCastleProvider());
+        if(pushRegistrations.containsKey(userId)) {
+            try {
+                pushService.setPublicKey(KeyHelper.getPublicKey());
+                pushService.setPrivateKey(KeyHelper.getPrivateKey());
+
+                Subscription sub = pushRegistrations.get(userId);
+                Notification notification = new Notification(sub, gameJsonString);
+                pushService.send(notification);
+            } catch (IOException | ExecutionException | GeneralSecurityException | JoseException | InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
 }
