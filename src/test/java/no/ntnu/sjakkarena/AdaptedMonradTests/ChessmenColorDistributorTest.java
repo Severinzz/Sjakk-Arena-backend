@@ -1,16 +1,16 @@
 package no.ntnu.sjakkarena.AdaptedMonradTests;
 
-import no.ntnu.sjakkarena.adaptedmonrad.ColorDistribution;
-import no.ntnu.sjakkarena.adaptedmonrad.ColorDistributor;
+import no.ntnu.sjakkarena.adaptedmonrad.ChessmenColorDistribution;
+import no.ntnu.sjakkarena.adaptedmonrad.ChessmenColorDistributor;
 import no.ntnu.sjakkarena.data.Player;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 /**
- * Test class for testing the ColorDistribution class
+ * Test class for testing the ChessmenColorDistribution class
  */
-public class ColorDistributorTest extends AdaptedMonradTest{
+public class ChessmenColorDistributorTest extends AdaptedMonradTest{
 
     /**
      * Test that when both players can play with both colors in the next round (according to the color rules) and
@@ -25,10 +25,10 @@ public class ColorDistributorTest extends AdaptedMonradTest{
 
         Player blackPlayer = players.get(1);
         blackPlayer.setLastPlayedColor("black");
-        ColorDistribution colorDistribution = ColorDistributor.distribute(whitePlayer, blackPlayer);
+        ChessmenColorDistribution chessmenColorDistribution = ChessmenColorDistributor.distribute(whitePlayer, blackPlayer);
 
-        assertEquals(blackPlayer, colorDistribution.getWhitePlayer());
-        assertEquals(whitePlayer, colorDistribution.getBlackPlayer());
+        assertEquals(blackPlayer, chessmenColorDistribution.getWhitePlayer());
+        assertEquals(whitePlayer, chessmenColorDistribution.getBlackPlayer());
     }
 
     /**
@@ -46,10 +46,10 @@ public class ColorDistributorTest extends AdaptedMonradTest{
         Player highestWhiteGameRatioPlayer = players.get(1);
         setStatsWithVariableNumberOfWhiteGames(highestWhiteGameRatioPlayer, 3);
 
-        ColorDistribution colorDistribution = ColorDistributor.distribute(highestWhiteGameRatioPlayer,
+        ChessmenColorDistribution chessmenColorDistribution = ChessmenColorDistributor.distribute(highestWhiteGameRatioPlayer,
                 lowestWhiteGameRatioPlayer);
-        assertEquals(lowestWhiteGameRatioPlayer, colorDistribution.getWhitePlayer());
-        assertEquals(highestWhiteGameRatioPlayer, colorDistribution.getBlackPlayer());
+        assertEquals(lowestWhiteGameRatioPlayer, chessmenColorDistribution.getWhitePlayer());
+        assertEquals(highestWhiteGameRatioPlayer, chessmenColorDistribution.getBlackPlayer());
     }
 
     private void setStatsWithVariableNumberOfWhiteGames(Player player, int numberOfWhiteGames){

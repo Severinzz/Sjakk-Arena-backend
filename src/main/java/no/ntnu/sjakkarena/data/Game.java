@@ -2,6 +2,9 @@ package no.ntnu.sjakkarena.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * This class represents a game of chess in a tournament
+ */
 public class Game {
 
     private int gameId;
@@ -14,7 +17,11 @@ public class Game {
     private boolean active;
     private boolean validResult;
 
-    public Game(int table, String start, int whitePlayerId, int blackPlayerId, boolean active) {
+    private Game(boolean active) {
+        this.active = active;
+    }
+
+    private Game(int table, String start, int whitePlayerId, int blackPlayerId, boolean active) {
         this.table = table;
         this.start = start;
         this.whitePlayerId = whitePlayerId;
@@ -22,8 +29,8 @@ public class Game {
         this.active = active;
     }
 
-    public Game(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId,
-                Integer whitePlayerPoints, boolean active, boolean validResult) {
+    protected Game(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId,
+                   Integer whitePlayerPoints, boolean active, boolean validResult) {
         this.gameId = gameId;
         this.table = table;
         this.start = start;
@@ -34,6 +41,48 @@ public class Game {
         this.active = active;
         this.validResult = validResult;
     }
+
+    /**
+     * Returns a Game object with the information needed to represent a non-finished game.
+     *
+     * @param table         The table where the game is played
+     * @param start         The point of time the game started
+     * @param whitePlayerId The id of the player playing with white chessmen
+     * @param blackPlayerId The id of the player playing with black chessmen
+     * @return a Game object with the information needed to represent a non-finished game.
+     */
+    public static Game notEnded(int table, String start, int whitePlayerId, int blackPlayerId, boolean active) {
+        return new Game(table, start, whitePlayerId, blackPlayerId, active);
+    }
+
+    /**
+     * Returns a Game with the same fields/attributes as in the database.
+     *
+     * @param gameId            The id of the game
+     * @param table             The table where the game is played
+     * @param start             The point of time the game started
+     * @param end               The point of time the game ended
+     * @param whitePlayerId     The id of the player playing with white chessmen
+     * @param blackPlayerId     The id of the player playing with black chessmen
+     * @param whitePlayerPoints The number of points the player playing with white chessmen got from the game
+     * @param active            Whether the players are currently playing the game
+     * @param validResult       Whether the result is regarded as valid
+     * @return a Game with the same fields/attributes as in the database.
+     */
+    public static Game asInDatabase(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId,
+                                    Integer whitePlayerPoints, boolean active, boolean validResult) {
+        return new Game(gameId, table, start, end, whitePlayerId, blackPlayerId, whitePlayerPoints, active, validResult);
+    }
+
+    /**
+     * Returns a Game object containing only the information that the game is inactive.
+     *
+     * @return a Game object containing only the information that the game is inactive.
+     */
+    public static Game emptyInactiveGame() {
+        return new Game(false);
+    }
+
     @JsonProperty("game_id")
     public int getGameId() {
         return gameId;

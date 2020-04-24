@@ -107,18 +107,20 @@ public class TournamentRepository {
         return jdbcTemplate.queryForList("CALL get_available_tables(" + tournamentId + ")", Integer.class);
     }
 
-    public void setActive(int tournamentId) {
+    public void activate(int tournamentId) {
         try {
-            jdbcTemplate.update("UPDATE " + DATABASE + ".tournament SET `active` = 1 WHERE tournament_id = " + tournamentId);
-        } catch (DataAccessException e){
+            jdbcTemplate.update("UPDATE sjakkarena.tournament SET `active` = 1, `finished` = 0" +
+                    " WHERE tournament_id = " + tournamentId);
+        } catch (DataAccessException e) {
             throw new TroubleUpdatingDBException("Could not activate tournament");
         }
     }
 
+
     public void setInactive(int tournamentId){
-        try{
-            jdbcTemplate.update("UPDATE " + DATABASE + ".tournament SET `active` = 0 WHERE tournament_id = " + tournamentId);
-        }catch(DataAccessException e){
+        try {
+            jdbcTemplate.update("UPDATE sjakkarena.tournament SET `active` = 0 WHERE tournament_id = " + tournamentId);
+        } catch (DataAccessException e) {
             throw new TroubleUpdatingDBException("Could not pause tournament");
         }
     }
@@ -127,7 +129,7 @@ public class TournamentRepository {
         try {
             getTournament(tournamentId);
             return true;
-        } catch (NotInDatabaseException e){
+        } catch (NotInDatabaseException e) {
             return false;
         }
     }
@@ -136,7 +138,7 @@ public class TournamentRepository {
         try {
             getTournament(adminUUID);
             return true;
-        } catch (NotInDatabaseException e){
+        } catch (NotInDatabaseException e) {
             return false;
         }
     }
@@ -150,12 +152,30 @@ public class TournamentRepository {
         }
     }
 
-    public void endTournament(int tournamentId) {
-        LocalDateTime localDateTime = LocalDateTime.now();
-        int affectedRows = jdbcTemplate.update("UPDATE " + DATABASE + ".tournament SET `active` = 0, `end` = \"" +
-                    localDateTime.toString() + "\" WHERE tournament_id = " + tournamentId);
-        if (affectedRows != 1){
-            throw new TroubleUpdatingDBException("Could not end tournament");
+    public void setStartTime(String time, int tournamentId) {
+        try {
+            jdbcTemplate.update("UPDATE sjakkarena.tournament SET `start` = ? WHERE tournament_id = ?",
+                    new Object[]{time, tournamentId});
+        } catch (DataAccessException e) {
+            throw new TroubleUpdatingDBException("Could not set start time");
+        }
+    }
+
+    public void setEndTime(String time, int tournamentId) {
+        try {
+            jdbcTemplate.update("UPDATE sjakkarena.tournament SET `end` = ? WHERE tournament_id = ?",
+                    new Object[]{time, tournamentId});
+        } catch (DataAccessException e) {
+            throw new TroubleUpdatingDBException("Could not set end time");
+        }
+    }
+
+    public void finishTournament(int tournamentId){
+        try {
+            jdbcTemplate.update("UPDATE sjakkarena.tournament SET `finished` = 1 WHERE tournament_id = ?",
+                    new Object[]{tournamentId});
+        } catch (DataAccessException e) {
+            throw new TroubleUpdatingDBException("Could not finish tournament");
         }
     }
 }

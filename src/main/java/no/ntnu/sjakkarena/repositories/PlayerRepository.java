@@ -121,7 +121,7 @@ public class PlayerRepository {
         }
     }
 
-    public List<Player> getPlayersWhoIsCurrentlyNotPlaying(int tournamentId) {
+    public List<Player> getPlayersInTournamentNotPlaying(int tournamentId) {
         List<Player> players = jdbcTemplate.query("CALL get_players_in_tournament_not_playing("+ tournamentId + ")",
                 playerRowMapper);
         addPreviousOpponents(players);
