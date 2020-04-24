@@ -51,7 +51,7 @@ public class GameRepository {
     public Game getActiveGame(int playerId) {
         try {
             return jdbcTemplate.queryForObject("SELECT * " +
-                    "FROM `sjakkarena`.`game` " +
+                    "FROM " + DATABASE + ".`game` " +
                     "WHERE (`active` = 1) " +
                     "AND (white_player = " + playerId +
                     "\tOR black_player = " + playerId + ")", gameRowMapper);

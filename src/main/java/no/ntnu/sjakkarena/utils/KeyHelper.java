@@ -66,4 +66,12 @@ public class KeyHelper {
         }
         return readKey;
     }
+
+    public static String getPublicKey(){
+        return  System.getenv("SJAKK_ARENA_PUBLIC_KEY");
+    }
+
+    public static String getPrivateKey() {
+        return System.getenv("SJAKK_ARENA_PRIVATE_KEY");
+    }
 }

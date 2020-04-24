@@ -109,7 +109,7 @@ public class TournamentRepository {
 
     public void activate(int tournamentId) {
         try {
-            jdbcTemplate.update("UPDATE sjakkarena.tournament SET `active` = 1, `finished` = 0" +
+            jdbcTemplate.update("UPDATE " + DATABASE + ".tournament SET `active` = 1, `finished` = 0" +
                     " WHERE tournament_id = " + tournamentId);
         } catch (DataAccessException e) {
             throw new TroubleUpdatingDBException("Could not activate tournament");
@@ -119,7 +119,7 @@ public class TournamentRepository {
 
     public void setInactive(int tournamentId){
         try {
-            jdbcTemplate.update("UPDATE sjakkarena.tournament SET `active` = 0 WHERE tournament_id = " + tournamentId);
+            jdbcTemplate.update("UPDATE " + DATABASE + ".tournament SET `active` = 0 WHERE tournament_id = " + tournamentId);
         } catch (DataAccessException e) {
             throw new TroubleUpdatingDBException("Could not pause tournament");
         }
@@ -154,7 +154,7 @@ public class TournamentRepository {
 
     public void setStartTime(String time, int tournamentId) {
         try {
-            jdbcTemplate.update("UPDATE sjakkarena.tournament SET `start` = ? WHERE tournament_id = ?",
+            jdbcTemplate.update("UPDATE " + DATABASE + ".tournament SET `start` = ? WHERE tournament_id = ?",
                     new Object[]{time, tournamentId});
         } catch (DataAccessException e) {
             throw new TroubleUpdatingDBException("Could not set start time");
@@ -163,7 +163,7 @@ public class TournamentRepository {
 
     public void setEndTime(String time, int tournamentId) {
         try {
-            jdbcTemplate.update("UPDATE sjakkarena.tournament SET `end` = ? WHERE tournament_id = ?",
+            jdbcTemplate.update("UPDATE " + DATABASE + ".tournament SET `end` = ? WHERE tournament_id = ?",
                     new Object[]{time, tournamentId});
         } catch (DataAccessException e) {
             throw new TroubleUpdatingDBException("Could not set end time");
@@ -172,7 +172,7 @@ public class TournamentRepository {
 
     public void finishTournament(int tournamentId){
         try {
-            jdbcTemplate.update("UPDATE sjakkarena.tournament SET `finished` = 1 WHERE tournament_id = ?",
+            jdbcTemplate.update("UPDATE " + DATABASE + ".tournament SET `finished` = 1 WHERE tournament_id = ?",
                     new Object[]{tournamentId});
         } catch (DataAccessException e) {
             throw new TroubleUpdatingDBException("Could not finish tournament");
