@@ -6,8 +6,20 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Maps results from a database into a Tournament object
+ */
 public class TournamentRowMapper implements RowMapper<Tournament> {
 
+    /**
+     * Maps results from a database into a Tournament object
+     *
+     * @param rs
+     * @param i
+     * @return A tournament
+     * @throws SQLException
+     *
+     */
     @Override
     public Tournament mapRow(ResultSet rs, int i) throws SQLException {
         Tournament tournament = new Tournament(rs.getInt("tournament_id"),
