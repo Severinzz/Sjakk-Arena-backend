@@ -6,8 +6,20 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Maps results from a database into a Player object
+ */
 public class PlayerRowMapper implements RowMapper<Player> {
 
+    /**
+     * Maps results from a database into a Player object
+     *
+     * @param rs
+     * @param i
+     * @return A player
+     * @throws SQLException
+     *
+     */
     @Override
     public Player mapRow(ResultSet rs, int i) throws SQLException {
         Player player = new Player(rs.getInt("player_id"), rs.getString("name"),
