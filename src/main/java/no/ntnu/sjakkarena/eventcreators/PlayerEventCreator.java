@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Creates Player Events.
+ */
 @Component
 public class PlayerEventCreator {
 
@@ -24,6 +27,11 @@ public class PlayerEventCreator {
     @Autowired
     protected ApplicationEventPublisher applicationEventPublisher;
 
+    /**
+     * Creates and publishes an event where a list of players has changed
+     *
+     * @param tournamentId The id of the tournament the players are enrolled in
+     */
     public void createAndPublishPlayerListChangeEvent(int tournamentId) {
         boolean tournamentHasStarted = tournamentRepository.getTournament(tournamentId).isActive();
         List<Player> players = playerRepository.getPlayersInTournament(tournamentId);
@@ -32,12 +40,23 @@ public class PlayerEventCreator {
                 tournamentHasStarted, tournamentId));
     }
 
-    public void createAndSendPlayerRemovedEvent(int playerId, String msg) {
-        PlayerRemovedEvent playerRemovedEvent = new PlayerRemovedEvent(this, playerId, msg);
+    /**
+     * Creates and publishes an event where a player have been removed from a tournament
+     *
+     * @param playerId The id of the removed player
+     * @param message  The message sent to the removed player
+     */
+    public void createAndSendPlayerRemovedEvent(int playerId, String message) {
+        PlayerRemovedEvent playerRemovedEvent = new PlayerRemovedEvent(this, playerId, message);
         applicationEventPublisher.publishEvent(playerRemovedEvent);
     }
 
-    public void createAndPublishNewPlayerAddedEvent(int tournamentId){
+    /**
+     * Creates and publishes an event where a player has been added to a tournament
+     *
+     * @param tournamentId The id of the tournament the player has been added to.
+     */
+    public void createAndPublishNewPlayerAddedEvent(int tournamentId) {
         boolean tournamentHasStarted = tournamentRepository.getTournament(tournamentId).isActive();
         List<Player> players = playerRepository.getPlayersInTournament(tournamentId);
         List<Player> leaderBoard = playerRepository.getLeaderBoard(tournamentId);
