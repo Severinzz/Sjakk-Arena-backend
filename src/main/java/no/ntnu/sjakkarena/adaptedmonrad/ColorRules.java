@@ -26,7 +26,7 @@ public class ColorRules {
      * @return True if player can play with white pieces in his/hers next game. Otherwise false.
      */
     public static boolean canPlayWhite(Player player) {
-        int whiteStreak = player.getLastPlayedColor().equals("white") ? player.getSameColorStreak() : 0;
+        int whiteStreak = player.getLastPlayedColor().equals("white") ? player.getLastPlayedColorStreak() : 0;
         return compliesWithColorRules(whiteStreak, player.getRounds(), player.getNumberOfWhiteGames());
     }
 
@@ -38,7 +38,7 @@ public class ColorRules {
      */
     public static boolean canPlayBlack(Player player) {
         int blackGames = player.getRounds() - player.getNumberOfWhiteGames();
-        int blackStreak = player.getLastPlayedColor().equals("black") ? player.getSameColorStreak() : 0;
+        int blackStreak = player.getLastPlayedColor().equals("black") ? player.getLastPlayedColorStreak() : 0;
         return compliesWithColorRules(blackStreak, player.getRounds(), blackGames);
     }
 }

@@ -7,37 +7,59 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
+/**
+ * Represents a chess tournament. This class extends the user class.
+ */
 public class Tournament extends User {
 
     @JsonAlias("tournament_name")
     private String tournamentName;
 
-    @Pattern(regexp = "^[A-Z\\WÆØÅ0-9._%+-]+@[A-Z\\WÆØÅ0-9.-]+\\.[A-Z\\WÆØÅ]{2,6}$", flags=Pattern.Flag.CASE_INSENSITIVE) // regex from https://stackoverflow.com/questions/8204680/java-regex-email
+    @Pattern(regexp = "^[A-Z\\WÆØÅ0-9._%+-]+@[A-Z\\WÆØÅ0-9.-]+\\.[A-Z\\WÆØÅ]{2,6}$", flags = Pattern.Flag.CASE_INSENSITIVE)
+    // regex from https://stackoverflow.com/questions/8204680/java-regex-email
     @JsonAlias("admin_email")
-    private String adminEmail; // the email of the tournament administrator
-    private String start; // point in time when tournament starts
-    private String end; // point in time when tournament ends
+    private String adminEmail;
+    private String start;
+    private String end;
 
     @Min(0)
-    private int tables; //number of tables in the tournament
+    private int tables;
 
     @JsonAlias("max_rounds")
     @Min(0)
-    private int maxRounds; // maximum number of rounds in the tournament
-    private boolean active; // true if tournament isn't paused
+    private int maxRounds;
+    private boolean active;
 
     @JsonAlias("admin_uuid")
-    private String adminUUID; // an unique id given to the admin of tournament
+    private String adminUUID;
 
     @JsonAlias("early_start")
-    private boolean earlyStart; //Start when two or more players are enrolled
+    private boolean earlyStart;
 
+    private boolean finished;
+    /**
+     * Constructs a tournament with no data
+     */
     public Tournament() {
-        super();
     }
 
+    /**
+     * Constructs a tournament with the specified data
+     *
+     * @param tournamentId   The id of the tournament
+     * @param tournamentName The name of the tournament
+     * @param adminEmail     The email of the tournament administrator
+     * @param start          The point in time when the tournament starts
+     * @param end            The point in time when the tournament ends
+     * @param tables         The number of tables in the tournament
+     * @param maxRounds      The maximum number of rounds in the tournament.
+     * @param active         Whether the tournament is active
+     * @param adminUUID      An unique id the admin can use to sign in
+     * @param earlyStart     Whether to start the tournament when two players are enrolled
+     * @param finished       Wheter the tournament is finished
+     */
     public Tournament(int tournamentId, String tournamentName, String adminEmail, String start, String end,
-                      int tables, int maxRounds, boolean active, String adminUUID, boolean earlyStart) {
+                      int tables, int maxRounds, boolean active, String adminUUID, boolean earlyStart, boolean finished) {
         super(tournamentId);
         this.tournamentName = tournamentName;
         this.adminEmail = adminEmail;
@@ -48,6 +70,7 @@ public class Tournament extends User {
         this.active = active;
         this.adminUUID = adminUUID;
         this.earlyStart = earlyStart;
+        this.finished = finished;
     }
 
     @JsonProperty("tournament_name")
@@ -125,5 +148,13 @@ public class Tournament extends User {
 
     public void setEarlyStart(boolean earlyStart) {
         this.earlyStart = earlyStart;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 }
