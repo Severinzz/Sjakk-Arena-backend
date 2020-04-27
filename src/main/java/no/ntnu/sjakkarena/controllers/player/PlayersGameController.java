@@ -33,6 +33,7 @@ public class PlayersGameController {
     private JSONCreator jsonCreator;
 
 
+
     /**
      * Sends the active game of the player sending a message to the "/player/active-game" destination.
      *
