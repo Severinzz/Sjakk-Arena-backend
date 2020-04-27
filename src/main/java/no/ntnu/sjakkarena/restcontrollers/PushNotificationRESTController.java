@@ -1,17 +1,12 @@
 package no.ntnu.sjakkarena.restcontrollers;
 
 
-import nl.martijndwars.webpush.Notification;
-import nl.martijndwars.webpush.PushService;
 import nl.martijndwars.webpush.Subscription;
 
-import no.ntnu.sjakkarena.data.Game;
+import no.ntnu.sjakkarena.controllers.PushNotificationController;
 import no.ntnu.sjakkarena.utils.KeyHelper;
 import no.ntnu.sjakkarena.utils.RESTSession;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.jose4j.lang.JoseException;
-import org.json.JSONObject;
-import org.json.JSONString;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,65 +14,54 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.Security;
-import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
 
 /**
- * Handles requests from players
+ * Handles push notification requests from players
  */
 @RestController
 @RequestMapping("/pushnotification")
 
 public class PushNotificationRESTController {
 
-    private static HashMap<Integer, Subscription> pushRegistrations = new HashMap<>();
-    private static PushService pushService = new PushService();
+    PushNotificationController pushNotificationController;
 
+    /**
+     * Returns the public key from the public-private key pair.
+     * @return Public key from the public-private key pair.
+     */
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<String> getPublicKey() {
         String applicationServerKey = KeyHelper.getPublicKey();
         return new ResponseEntity<>(applicationServerKey, HttpStatus.OK);
     }
 
+    /**
+     * Saves the subscription object received from the user.
+     * @param sub Subscription object from the user's browser.
+     * @return The given subscription object.
+     */
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Subscription> setPushSubscription(@RequestBody Subscription sub){
         int playerId = RESTSession.getUserId();
-        if(!pushRegistrations.containsKey(playerId)){
-            pushRegistrations.put(playerId, sub);
-        }
+        pushNotificationController.addPushNotification(playerId, sub);
         return new ResponseEntity<>(sub, HttpStatus.OK);
     }
 
+    /**
+     * Unsubscribe the user form the push notifications.
+     * @return Returns a string describing if the unsubscription was successful or not.
+     */
     @RequestMapping(value = "/unsubscribe", method = RequestMethod.DELETE)
     public ResponseEntity<String> deletePushSubscription(){
         int playerId = RESTSession.getUserId();
         String response;
-        if(pushRegistrations.containsKey(playerId)){
-            pushRegistrations.remove(playerId);
+        if(pushNotificationController.removePushNotification(playerId)){
             response = "Successfully unsubscribed";
             return new ResponseEntity<>(response, HttpStatus.OK);
-        } else {
-                response = "Subscription not registered";
+        }
+        else {
+            response = "Subscription not registered";
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-            }
-    }
-
-    public void sendPushNotification(int userId, String gameJsonString) {
-        Security.addProvider(new BouncyCastleProvider());
-        if(pushRegistrations.containsKey(userId)) {
-            try {
-                pushService.setPublicKey(KeyHelper.getPublicKey());
-                pushService.setPrivateKey(KeyHelper.getPrivateKey());
-
-                Subscription sub = pushRegistrations.get(userId);
-                Notification notification = new Notification(sub, gameJsonString);
-                pushService.send(notification);
-            } catch (IOException | ExecutionException | GeneralSecurityException | JoseException | InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 
