@@ -66,8 +66,8 @@ public class PlayersGameController {
      */
     @EventListener
     public void onValidResultAdded(ValidResultAddedEvent validResultAddedEvent) {
-        sendValidResultInformationToPlayer(validResultAddedEvent.getPlayer1().getId());
-        sendValidResultInformationToPlayer(validResultAddedEvent.getPlayer2().getId());
+        sendValidResultInformationToPlayer(validResultAddedEvent.getWhitePlayer().getId());
+        sendValidResultInformationToPlayer(validResultAddedEvent.getBlackPlayer().getId());
     }
 
     /**

@@ -75,8 +75,8 @@ public class PlayerController{
      */
     @EventListener
     public void onValidResultAdded(ValidResultAddedEvent validResultAddedEvent){
-        sendPointsToPlayer(validResultAddedEvent.getPlayer1());
-        sendPointsToPlayer(validResultAddedEvent.getPlayer2());
+        sendPointsToPlayer(validResultAddedEvent.getWhitePlayer());
+        sendPointsToPlayer(validResultAddedEvent.getBlackPlayer());
     }
 
     /**

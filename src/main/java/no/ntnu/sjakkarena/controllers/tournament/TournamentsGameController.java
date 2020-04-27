@@ -80,7 +80,7 @@ public class TournamentsGameController {
      */
     @EventListener
     public void onValidResultAdded(ValidResultAddedEvent validResultAddedEvent) {
-        int tournamentId = validResultAddedEvent.getTournamentId();
+        int tournamentId = validResultAddedEvent.getWhitePlayer().getTournamentId();
         Collection<? extends Game> games = tournamentsGameService.getActiveGames(tournamentId);
         sendActiveGames(tournamentId, games);
     }
