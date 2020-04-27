@@ -27,7 +27,7 @@ public class AtTournamentStartAdaptedMonrad extends AdaptedMonrad{
         List<Game> games = new ArrayList<>();
         int i = 0;
         while ((i + 1 < playersNotPlaying.size()) && !availableTables.isEmpty()) {
-            games.add(Game.notStarted(availableTables.poll(), LocalDateTime.now().withNano(0).toString(),
+            games.add(Game.notEnded(availableTables.poll(), LocalDateTime.now().withNano(0).toString(),
                     players.get(i+1).getId(), players.get(i).getId(), true));
             i += 2;
         }

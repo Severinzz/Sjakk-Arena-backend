@@ -3,29 +3,33 @@ package no.ntnu.sjakkarena.events.gameevents;
 import no.ntnu.sjakkarena.data.Player;
 import org.springframework.context.ApplicationEvent;
 
+/**
+ * An event where a valid result is added to a game. This event is classified as a game event
+ */
 public class ValidResultAddedEvent extends ApplicationEvent {
 
-    private Player player1;
-    private Player player2;
+    private Player whitePlayer;
+    private Player blackPlayer;
 
-    private int tournamentId;
-
-    public ValidResultAddedEvent(Object source, Player player1, Player player2, int tournamentId) {
+    /**
+     * Constructs a ValidResultAddedEvent
+     *
+     * @param source      The object on which the Event initially occurred.
+     *                    (description from https://docs.oracle.com/javase/8/docs/api/java/util/EventObject.html)
+     * @param whitePlayer The player playing with white chessmen in the game the result is associated with
+     * @param blackPlayer The player playing with black chessmen in the game the result is associated with
+     */
+    public ValidResultAddedEvent(Object source, Player whitePlayer, Player blackPlayer) {
         super(source);
-        this.player1 = player1;
-        this.player2 = player2;
-        this.tournamentId = tournamentId;
+        this.whitePlayer = whitePlayer;
+        this.blackPlayer = blackPlayer;
     }
 
-    public Player getPlayer1() {
-        return player1;
+    public Player getWhitePlayer() {
+        return whitePlayer;
     }
 
-    public Player getPlayer2() {
-        return player2;
-    }
-
-    public int getTournamentId() {
-        return tournamentId;
+    public Player getBlackPlayer() {
+        return blackPlayer;
     }
 }

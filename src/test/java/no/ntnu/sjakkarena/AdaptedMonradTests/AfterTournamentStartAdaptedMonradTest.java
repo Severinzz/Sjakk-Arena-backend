@@ -28,19 +28,19 @@ public class AfterTournamentStartAdaptedMonradTest extends AdaptedMonradTest {
      * Test the color streak rule
      */
     @Test
-    public void provideNewGamesTwoPlayersWhoCannotMeetDueToSameColorStreak() {
+    public void provideNewGamesTwoPlayersWhoCannotMeetDueToLastPlayedColorStreak() {
         colorRuleTestsInit(5, 3, 3);
         List<Game> games = adaptedMonrad.getNewGames(players, availableTables);
         assertTrue(games.isEmpty());
     }
 
 
-    private void colorRuleTestsInit(int rounds, int sameColorStreak, int whiteGames) {
+    private void colorRuleTestsInit(int rounds, int lastPlayedColorStreak, int whiteGames) {
         int numberOfPlayers = 2;
         playerInit(numberOfPlayers);
         tablesInit(2);
         for (int i = 0; i < numberOfPlayers; i++){
-            setStats(players.get(i), 5, rounds, new ArrayList<>(), "white", sameColorStreak,
+            setStats(players.get(i), 5, rounds, new ArrayList<>(), "white", lastPlayedColorStreak,
                     whiteGames);
         }
     }
@@ -134,12 +134,12 @@ public class AfterTournamentStartAdaptedMonradTest extends AdaptedMonradTest {
     }
 
     private void setStats(Player player, double points, int rounds, Collection<Integer> previousOpponents,
-                          String lastPlayedColor, int sameColorStreak, int whiteGames){
+                          String lastPlayedColor, int lastPlayedColorStreak, int whiteGames){
         player.setPoints(points);
         player.setRounds(rounds);
         player.setPreviousOpponents(previousOpponents);
         player.setLastPlayedColor(lastPlayedColor);
-        player.setSameColorStreak(sameColorStreak);
+        player.setLastPlayedColorStreak(lastPlayedColorStreak);
         player.setNumberOfWhiteGames(whiteGames);
     }
 }
