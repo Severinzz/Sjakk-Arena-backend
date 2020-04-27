@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Handles requests from players regarding the players' tournament
+ */
 @RestController
 @RequestMapping("/player/tournament")
 public class PlayersTournamentRESTController {
@@ -22,9 +25,10 @@ public class PlayersTournamentRESTController {
     private PlayersTournamentService playersTournamentService;
 
     /**
-     * Return information about the requesting player's tournament
+     * Returns information about the requesting player's tournament
      *
-     * @return information about the requesting player's tournament
+     * @return information about the requesting player's tournament + 200 OK. 400 BAD REQUEST if the tournament
+     * isn't in the database.
      */
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<String> getTournament() {
@@ -38,6 +42,12 @@ public class PlayersTournamentRESTController {
         }
     }
 
+    /**
+     * Returns true if requesting player's tournament is active
+     *
+     * @return true if requesting player's tournament is active + 200 OK. 400 BAD REQUEST if the tournament isn't in
+     * the database.
+     */
     @RequestMapping(value="/active", method = RequestMethod.GET)
     public ResponseEntity<String> isTournamentActive() {
         try {
