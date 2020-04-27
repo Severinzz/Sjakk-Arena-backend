@@ -61,13 +61,7 @@ public class PushNotificationController {
      * @param sub           Subscription object of the subscribed player. Value in the HashMap
      */
     public void addPushNotification(int playerId, Subscription sub){
-        if(!pushRegistrations.containsKey(playerId)){
             pushRegistrations.put(playerId, sub);
-        }
-        else{
-            pushRegistrations.remove(playerId);
-            pushRegistrations.put(playerId, sub);
-        }
     }
 
     /**
