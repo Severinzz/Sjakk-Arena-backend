@@ -1,6 +1,7 @@
 package no.ntnu.sjakkarena;
 
 import no.ntnu.sjakkarena.adaptedmonrad.AdaptedMonrad;
+import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.eventcreators.GameEventCreator;
 import no.ntnu.sjakkarena.repositories.GameRepository;
@@ -28,13 +29,15 @@ public class GameCreator {
 
 
     public void createAndPublishNewGames(int tournamentId, AdaptedMonrad adaptedMonrad){
-        createNewGames(tournamentId, adaptedMonrad);
-        gameEventCreator.createAndPublishGamesCreatedEvent(tournamentId);
+        List<Integer> gameIds = createNewGames(tournamentId, adaptedMonrad);
+        gameEventCreator.createAndPublishGamesCreatedEvent(tournamentId, gameIds);
     }
 
-    private void createNewGames(int tournamentId, AdaptedMonrad adaptedMonrad){
+    private List<Integer> createNewGames(int tournamentId, AdaptedMonrad adaptedMonrad){
         List<Player> playersInTournamentNotPlaying = playerRepository.getPlayersInTournamentNotPlaying(tournamentId);
         List<Integer> availableTables = tournamentRepository.getAvailableTables(tournamentId);
-        gameRepository.addGames(adaptedMonrad.getNewGames(playersInTournamentNotPlaying, availableTables));
+        List<Game> createdGames = adaptedMonrad.getNewGames(playersInTournamentNotPlaying, availableTables);
+        List<Integer> gameIds = gameRepository.addGames(createdGames);
+        return gameIds;
     }
 }
