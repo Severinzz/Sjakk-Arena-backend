@@ -36,8 +36,7 @@ public class GameEventCreator {
         Game game = gameWithPlayerNamesRepository.getGame(gameId);
         Player whitePlayer = playerRepository.getPlayer(game.getWhitePlayerId());
         Player blackPlayer = playerRepository.getPlayer(game.getBlackPlayerId());
-        applicationEventPublisher.publishEvent(new ValidResultAddedEvent(this, whitePlayer, blackPlayer,
-                whitePlayer.getTournamentId()));
+        applicationEventPublisher.publishEvent(new ValidResultAddedEvent(this, whitePlayer, blackPlayer));
     }
 
     public void createAndPublishResultSuggestedEvent(int opponentId, double result, int gameId) {
