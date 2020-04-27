@@ -6,8 +6,20 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Maps results from a database into a GameWithPlayerNames object
+ */
 public class GameWithPlayerNamesRowMapper implements RowMapper<GameWithPlayerNames> {
 
+    /**
+     * Maps results from a database into a GameWithPlayerNames object
+     *
+     * @param rs
+     * @param i
+     * @return A game with player names
+     * @throws SQLException
+     *
+     */
     @Override
     public GameWithPlayerNames mapRow(ResultSet rs, int i) throws SQLException {
         return new GameWithPlayerNames(rs.getInt("game_id"), rs.getInt("table"),
