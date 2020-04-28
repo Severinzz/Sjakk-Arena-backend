@@ -46,8 +46,8 @@ public class PlayersGameController {
         try {
             Game activeGame = playersGameService.getActiveGame(playerId);
             sendGame(activeGame, playerId);
-        } catch (EmptyResultDataAccessException e) {
-            throw e;
+        } catch (EmptyResultDataAccessException ignored) {
+            // explicitly ignore this error message, frontend understands format.
         }
     }
 
