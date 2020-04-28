@@ -20,9 +20,9 @@ public class KeyHelper {
     private static String secretKeyFileName = "secretKey.txt";
 
     /**
-     * Return secret key
+     * Returns a secret key
      *
-     * @return secret key
+     * @return a secret key
      */
     public static Key getKey() {
         return readKeyFromFile(secretKeyFileName);
@@ -71,18 +71,20 @@ public class KeyHelper {
     /**
      * Returns public key
      * See this for easy keys in right format https://web-push-codelab.glitch.me/
+     *
      * @return Public key
      */
-    public static String getPublicKey(){
+    public static String getPublicKey() {
         return "";
     }
 
     /**
      * Returns private key
      * See this for easy keys in right format https://web-push-codelab.glitch.me/
+     *
      * @return Private key
      */
-    public static String getPrivateKey(){
+    public static String getPrivateKey() {
         return "";
     }
 

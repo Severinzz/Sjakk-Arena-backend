@@ -40,10 +40,19 @@ public class JWSFilter extends GenericFilterBean {
         }
     }
 
+    /**
+     * Resets the authentication after the request is handled
+     */
     private void resetAuthenticationAfterRequest() {
         SecurityContextHolder.getContext().setAuthentication(null);
     }
 
+    /**
+     * Returns the jwt from the Authorization header of the HTTP-request
+     *
+     * @param request The http-request
+     * @return The jwt from the Authorization header of the HTTP-request
+     */
     private String resolveToken(HttpServletRequest request) {
 
         String bearerToken = request.getHeader("Authorization");

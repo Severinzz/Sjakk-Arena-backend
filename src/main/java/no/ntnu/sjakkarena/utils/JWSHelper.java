@@ -14,23 +14,27 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+/**
+ * Collection of methods used in operations regarding signed JSON web tokens
+ */
 public class JWSHelper {
 
     /**
-     * Creates a JWS with the given subject and id
+     * Creates a JWS with the given role and id
      *
-     * @param subject
-     * @param id
-     * @return JWS as a String
+     * @param role The role of the user to receive the JWS
+     * @param id   The id of the user to receive the JWS
+     * @return The JWS as a String
      */
-    public static String createJWS(String subject, String id) {
+    public static String createJWS(String role, String id) {
         Key secretKey = KeyHelper.getKey();
-        String jws = Jwts.builder().setSubject(subject).setId(id).signWith(secretKey).compact();
+        String jws = Jwts.builder().setSubject(role).setId(id).signWith(secretKey).compact();
         return jws;
     }
 
     /**
-     * Validates a JWS. Code from https://stackoverflow.com/questions/41975045/how-to-design-a-good-jwt-authentication-filter
+     * Validates a JWS.
+     * Code from https://stackoverflow.com/questions/41975045/how-to-design-a-good-jwt-authentication-filter
      *
      * @param jws The jws to be validated
      * @return True if the jws is valid, otherwise false
@@ -46,6 +50,7 @@ public class JWSHelper {
 
     /**
      * Get an authentication with the authorities as described by the JWS
+     * Code adapted from https://stackoverflow.com/questions/41975045/how-to-design-a-good-jwt-authentication-filter
      *
      * @param jws The JWS where the information needed for authentication is stored
      * @return An authentication.

@@ -82,7 +82,7 @@ public class TournamentRESTController {
     @RequestMapping(value = "/pause", method = RequestMethod.PATCH)
     public ResponseEntity<String> pauseTournament() {
         try {
-            tournamentService.setTournamentPaused(RESTSession.getUserId());
+            tournamentService.pauseTournament(RESTSession.getUserId());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (TroubleUpdatingDBException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -97,7 +97,7 @@ public class TournamentRESTController {
     @RequestMapping(value = "/unpause", method = RequestMethod.PATCH)
     public ResponseEntity<String> unpauseTournament() {
         try {
-            tournamentService.setTournamentUnpause(RESTSession.getUserId());
+            tournamentService.unpauseTournament(RESTSession.getUserId());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (TroubleUpdatingDBException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

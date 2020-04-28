@@ -55,7 +55,7 @@ public class TournamentsPlayerRESTController {
                                                     @RequestBody String msg) {
         String message = msg.equals("blank") ? "" : msg;
         try {
-            tournamentsPlayerService.inactivatePlayer(playerId, message);
+            tournamentsPlayerService.removePlayerFromTournament(playerId, message);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (TroubleUpdatingDBException e) {
             return new ResponseEntity<>(e.toString(), HttpStatus.BAD_REQUEST);
