@@ -31,7 +31,8 @@ public class UnauthenticatedTournamentService {
     @Autowired
     private TournamentRepository tournamentRepository;
 
-    private JSONCreator jsonCreator = new JSONCreator();
+    @Autowired
+    private JSONCreator jsonCreator;
 
     public String signIn(String adminUUID){
         try {

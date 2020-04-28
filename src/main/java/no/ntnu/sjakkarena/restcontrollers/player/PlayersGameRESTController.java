@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.List;
 
+/**
+ * Handles requests from players regarding the players' games
+ */
 @RestController
 @RequestMapping("/player/games")
 public class PlayersGameRESTController {
@@ -26,15 +29,22 @@ public class PlayersGameRESTController {
 
     private JSONCreator jsonCreator = new JSONCreator();
 
-    @RequestMapping(value="/inactive", method= RequestMethod.GET)
-    public ResponseEntity<String> getInactiveGames(){
-        List<? extends Game> previousGames =  playersGameService.getInactiveGames(RESTSession.getUserId());
+    /**
+     * Returns the requesting player's inactive games
+     *
+     * @return The requesting player's inactive games
+     */
+    @RequestMapping(value = "/inactive", method = RequestMethod.GET)
+    public ResponseEntity<String> getInactiveGames() {
+        List<? extends Game> previousGames = playersGameService.getInactiveGames(RESTSession.getUserId());
         return new ResponseEntity<>(jsonCreator.writeValueAsString(previousGames), HttpStatus.OK);
     }
 
     /**
      * Add a result
      *
+     * @param resultUpdateRequest A request to update a result. The request contains the opponent of the requesting
+     *                            player and the new result.
      * @return 200 OK if successfully added. 400 bad if input is not active or if player doesn't have any active games.
      */
 
@@ -50,9 +60,14 @@ public class PlayersGameRESTController {
         }
     }
 
-
+    /**
+     * Validates the result associated with the specified game
+     *
+     * @param gameId The id of the game the result is associated with
+     * @return 200 OK if successfully validated. 400 BAD REQUEST if player isn't associated with the game
+     */
     @RequestMapping(value = "/{game-id}/validate", method = RequestMethod.PATCH)
-    public ResponseEntity<String> validateResult(@PathVariable("game-id") int gameId){
+    public ResponseEntity<String> validateResult(@PathVariable("game-id") int gameId) {
         try {
             playersGameService.setGameResultValid(gameId);
             return new ResponseEntity<>(HttpStatus.OK);
@@ -61,8 +76,14 @@ public class PlayersGameRESTController {
         }
     }
 
-    @RequestMapping(value="/{game-id}/invalidate", method = RequestMethod.PATCH)
-    public ResponseEntity<String> invalidateResult(@PathVariable("game-id") int gameId){
+    /**
+     * Invalidates the result associated with the specified game
+     *
+     * @param gameId THe id of the game the result is associated with
+     * @return 200 OK if successfully invalidated.
+     */
+    @RequestMapping(value = "/{game-id}/invalidate", method = RequestMethod.PATCH)
+    public ResponseEntity<String> invalidateResult(@PathVariable("game-id") int gameId) {
         playersGameService.invalidateResult(gameId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

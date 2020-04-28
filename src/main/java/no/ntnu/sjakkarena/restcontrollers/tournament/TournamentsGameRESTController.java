@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
 
+/**
+ * Handles requests from tournaments regarding tournament's games
+ */
 @RestController
 @RequestMapping("/tournament/games")
 public class TournamentsGameRESTController {
@@ -25,13 +28,21 @@ public class TournamentsGameRESTController {
 
     private JSONCreator jsonCreator = new JSONCreator();
 
+    /**
+     * Changes the result of the specified game
+     *
+     * @param gameId            The id of the game
+     * @param whitePlayerPoints The number of points the white player received
+     * @return 200 OK if successfully added. 400 BAD REQUEST if some problems occurred while trying to update the database
+     * or if the points are invalid
+     */
     @RequestMapping(value = "/result/{gameID}/{whitePlayerPoints}/", method = RequestMethod.PATCH)
     public ResponseEntity<String> changeGameResult(@PathVariable("gameID") int gameId,
                                                    @PathVariable("whitePlayerPoints") double whitePlayerPoints) {
         try {
             tournamentsGameService.changeGameResult(RESTSession.getUserId(), gameId, whitePlayerPoints);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch(IllegalArgumentException | TroubleUpdatingDBException e){
+        } catch (IllegalArgumentException | TroubleUpdatingDBException e) {
             e.printStackTrace();
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -40,7 +51,7 @@ public class TournamentsGameRESTController {
     /**
      * Returns the games of the requesting tournament
      *
-     * @return the games of the requesting tournament
+     * @return the games of the requesting tournament + 200 OK
      */
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<String> getGames() {
