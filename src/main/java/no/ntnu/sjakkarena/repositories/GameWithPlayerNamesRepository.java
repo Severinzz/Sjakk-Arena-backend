@@ -1,6 +1,5 @@
 package no.ntnu.sjakkarena.repositories;
 
-import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.GameWithPlayerNames;
 import no.ntnu.sjakkarena.mappers.GameWithPlayerNamesRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
