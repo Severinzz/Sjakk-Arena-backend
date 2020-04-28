@@ -103,7 +103,7 @@ public class UnauthenticatedTournamentService {
     }
 
     /**
-     * Schedules a task to start the specified ournament
+     * Schedules a task to start the specified tournament
      *
      * @param tournament The tournament to be started
      */
