@@ -54,7 +54,7 @@ public class PlayersGameController {
      */
     @EventListener
     public void onGamesCreated(GamesCreatedEvent gamesCreatedEvent) {
-        for (Game game : gamesCreatedEvent.getActiveGames()) {
+        for (Game game : gamesCreatedEvent.getCreatedGames()) {
             sendGameToBothPlayers(game);
         }
     }

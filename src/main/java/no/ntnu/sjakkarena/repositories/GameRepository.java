@@ -5,15 +5,20 @@ import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.mappers.GameRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -72,24 +77,37 @@ public class GameRepository {
         }
     }
 
+    private int addGame(Game game) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        try {
+            //Adapted code from https://stackoverflow.com/questions/12882874/how-can-i-get-the-autoincremented-id-when-i-insert-a-record-in-a-table-via-jdbct
+            jdbcTemplate.update(
+                    new PreparedStatementCreator() {
+                        public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                            PreparedStatement ps =
+                                    connection.prepareStatement("INSERT INTO `sjakkarena`.`game` (`table`, " +
+                                            "`start`, `white_player`, `black_player`, `active`) " +
+                                            "VALUES ( " +  game.getTable() + ", \"" + game.getStart() + "\", " +
+                                            game.getWhitePlayerId() + ", " + game.getBlackPlayerId() + ", " +
+                                            game.isActive() + ") ", new String[]{"id"});
+                            return ps;
+                        }
+                    },
+                    keyHolder);
+            return keyHolder.getKey().intValue();
+        } catch (DataAccessException e) {
+            throw new TroubleUpdatingDBException("Could not add game to database");
+        }
+    }
+
     //Adapted code from https://www.baeldung.com/spring-jdbc-jdbctemplate
-    public void addGames(List<Game> newGames) {
-         jdbcTemplate.batchUpdate("INSERT INTO `sjakkarena`.`game` (`table`, `start`, `white_player`, " +
-                        "`black_player`, `active`) VALUES (?, ?, ?, ?, ?)",
-                new BatchPreparedStatementSetter() {
-                    @Override
-                    public void setValues(PreparedStatement ps, int i) throws SQLException {
-                        ps.setInt(1, newGames.get(i).getTable());
-                        ps.setString(2, newGames.get(i).getStart());
-                        ps.setInt(3, newGames.get(i).getWhitePlayerId());
-                        ps.setInt(4, newGames.get(i).getBlackPlayerId());
-                        ps.setBoolean(5, newGames.get(i).isActive());
-                    }
-                    @Override
-                    public int getBatchSize() {
-                        return newGames.size();
-                    }
-                });
+    public List<Integer> addGames(List<Game> newGames) {
+        List<Integer> gameIds = new ArrayList<>();
+        for (Game game : newGames){
+            int index = addGame(game);
+            gameIds.add(index);
+        }
+        return gameIds;
     }
 
 
