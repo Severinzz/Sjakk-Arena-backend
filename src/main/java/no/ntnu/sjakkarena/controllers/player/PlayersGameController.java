@@ -42,12 +42,12 @@ public class PlayersGameController {
      */
     @MessageMapping("/player/active-game")
     public void getActiveGame(Authentication authentication) {
+        int playerId = WebSocketSession.getUserId(authentication);
         try {
-            int playerId = WebSocketSession.getUserId(authentication);
             Game activeGame = playersGameService.getActiveGame(playerId);
             sendGame(activeGame, playerId);
         } catch (EmptyResultDataAccessException e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 
