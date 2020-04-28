@@ -14,6 +14,7 @@ import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.utils.RESTSession;
 import no.ntnu.sjakkarena.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -60,7 +61,11 @@ public class PlayersGameService {
      * @return The specified player's active games
      */
     public Game getActiveGame(int playerId) {
-        return gameWithPlayerNamesRepository.getActiveGame(playerId);
+        try {
+            return gameWithPlayerNamesRepository.getActiveGame(playerId);
+        } catch (EmptyResultDataAccessException e) {
+            throw e;
+        }
     }
 
     /**

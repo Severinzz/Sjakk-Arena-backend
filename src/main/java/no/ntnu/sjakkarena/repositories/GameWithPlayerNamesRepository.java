@@ -4,6 +4,7 @@ import no.ntnu.sjakkarena.data.GameWithPlayerNames;
 import no.ntnu.sjakkarena.mappers.GameWithPlayerNamesRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -93,7 +94,9 @@ public class GameWithPlayerNamesRepository {
                     " AND (`white`.`player_id` = " + playerId + " OR `black`.`player_id` = " + playerId + ") AND `game`.`active` = " + 1 +
                     " ORDER BY `game`.`start` DESC", gameWithPlayerNamesRowMapper);
         } catch (EmptyResultDataAccessException e) {
-            return null; // If query returns empty, do nothing.
+            throw e;
+        } catch (IncorrectResultSizeDataAccessException e) {
+            throw e;
         }
     }
 
