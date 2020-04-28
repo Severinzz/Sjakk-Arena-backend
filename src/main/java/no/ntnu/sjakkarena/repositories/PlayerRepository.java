@@ -198,19 +198,4 @@ public class PlayerRepository {
         List<Player> players = jdbcTemplate.query("CALL get_leader_board(" + tournamentId + ")", playerRowMapper);
         return players;
     }
-
-    /**
-     * Returns true if the specified player belongs in the specified tournament
-     *
-     * @param playerId     The id of the player
-     * @param tournamentId The id of the tournament
-     * @return True if the specified player belongs in the specified tournament
-     */
-    public boolean playerBelongInTournament(int playerId, int tournamentId) {
-        boolean belongInTournament = false;
-        if (getPlayer(playerId).getTournamentId() == tournamentId) {
-            belongInTournament = true;
-        }
-        return belongInTournament;
-    }
 }

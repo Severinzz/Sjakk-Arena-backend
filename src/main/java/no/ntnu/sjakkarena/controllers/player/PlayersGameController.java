@@ -105,7 +105,7 @@ public class PlayersGameController {
     @EventListener
     public void onPlayerRemoved(PlayerRemovedEvent playerRemovedEvent) {
         int opponent = playersGameService.getOpponent(playerRemovedEvent.getPlayerId());
-        playersGameService.endGameDueToPlayerRemoved(playerRemovedEvent.getPlayerId());
+        playersGameService.endGameDueToPlayerRemoval(playerRemovedEvent.getPlayerId());
         sendGame(Game.emptyInactiveGame(), opponent);
     }
 

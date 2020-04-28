@@ -58,7 +58,7 @@ public class TournamentController {
      * <p>
      * Whether the tournament ends or not is decided by the tournament host.
      *
-     * @param timeToEndTournamentEvent
+     * @param timeToEndTournamentEvent An event where it is time to end a tournament
      */
     @EventListener
     public void onTimeToEndTournament(TimeToEndTournamentEvent timeToEndTournamentEvent) {
@@ -69,7 +69,7 @@ public class TournamentController {
      * Sends information about a tournaments active state to the tournament host.
      *
      * @param tournamentId The id of the tournament that will receive the active state
-     * @param active Whether the tournament is active
+     * @param active       Whether the tournament is active
      */
     private void sendActiveStateToTournament(int tournamentId, boolean active) {
         try {
