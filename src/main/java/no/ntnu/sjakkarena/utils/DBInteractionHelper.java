@@ -1,7 +1,7 @@
 package no.ntnu.sjakkarena.utils;
 
 /**
- * Collection of miscellaneous useful methods
+ * Collection of methods for a easier interaction with databases
  */
 public class DBInteractionHelper {
 

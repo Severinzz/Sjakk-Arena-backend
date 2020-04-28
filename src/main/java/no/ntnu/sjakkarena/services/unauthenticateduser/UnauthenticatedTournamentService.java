@@ -7,7 +7,7 @@ import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
 import no.ntnu.sjakkarena.tasks.EndTournamentTask;
 import no.ntnu.sjakkarena.tasks.StartTournamentTask;
-import no.ntnu.sjakkarena.utils.IDGenerator;
+import no.ntnu.sjakkarena.IDGenerator;
 import no.ntnu.sjakkarena.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
