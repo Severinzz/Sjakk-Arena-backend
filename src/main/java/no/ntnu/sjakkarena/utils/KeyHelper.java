@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Key;
 
+
 /**
  * Handles public and private keys
  */
@@ -66,4 +67,23 @@ public class KeyHelper {
         }
         return readKey;
     }
+
+    /**
+     * Returns public key
+     * See this for easy keys in right format https://web-push-codelab.glitch.me/
+     * @return Public key
+     */
+    public static String getPublicKey(){
+        return "";
+    }
+
+    /**
+     * Returns private key
+     * See this for easy keys in right format https://web-push-codelab.glitch.me/
+     * @return Private key
+     */
+    public static String getPrivateKey(){
+        return "";
+    }
+
 }
