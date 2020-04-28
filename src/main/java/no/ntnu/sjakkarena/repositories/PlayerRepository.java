@@ -20,6 +20,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Repository containing methods for handling player data
+ */
 @Repository
 public class PlayerRepository {
 
@@ -43,9 +46,10 @@ public class PlayerRepository {
                         public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                             PreparedStatement ps =
                                     connection.prepareStatement("INSERT INTO sjakkarena.player (`player`.`name`, " +
-                                                    "`player`.`tournament`, `player`.`icon`, `player`.`bib_number`) " +
-                            "VALUES (\"" + player.getName()+ "\", " + player.getTournamentId() + ", \"" +
-                            player.getIcon() + "\", get_random_bib_number(" + player.getTournamentId() + "))", new String[]{"id"});
+                                            "`player`.`tournament`, `player`.`icon`, `player`.`bib_number`) " +
+                                            "VALUES (\"" + player.getName() + "\", " + player.getTournamentId() + ", \"" +
+                                            player.getIcon() + "\", get_random_bib_number(" + player.getTournamentId() +
+                                            "))", new String[]{"id"});
                             return ps;
                         }
                     },
@@ -60,12 +64,12 @@ public class PlayerRepository {
     }
 
     /**
-     * Returns a player
+     * Returns a player with the specified playerId
      *
-     * @param playerId the id of the player to be returned
-     * @return The player with the specified playerId
+     * @param playerId the id of the player to return
+     * @return A player
      */
-    public Player getPlayer(int playerId){
+    public Player getPlayer(int playerId) {
         try {
             return jdbcTemplate.queryForObject("CALL sjakkarena.get_player(" + playerId + ")", playerRowMapper);
         } catch (IncorrectResultSizeDataAccessException e) {
@@ -76,40 +80,43 @@ public class PlayerRepository {
     /**
      * Deletes a player from the database
      *
-     * @param playerId
+     * @param playerId The id of the player to delete
      */
     public void deletePlayer(int playerId) {
         int affectedRows = jdbcTemplate.update("DELETE FROM sjakkarena.player WHERE `player_id` = " + playerId);
-        if (affectedRows != 1){
+        if (affectedRows != 1) {
             throw new TroubleUpdatingDBException("Some problem occurred when trying to delete player");
         }
     }
 
     /**
-     * Pause player
-     * @param playerId id the of the player to pause.
+     * Pauses player
+     *
+     * @param playerId The id of the player to pause.
      */
     public void pausePlayer(int playerId) {
         int affectedRows = jdbcTemplate.update("UPDATE `sjakkarena`.`player` SET paused = 1 WHERE player_id = " + playerId);
-        if (affectedRows != 1){
+        if (affectedRows != 1) {
             throw new TroubleUpdatingDBException("Some problem occurred when trying to pause player");
         }
     }
 
     /**
-     * Unpause a player
-     * @param playerId  The id of the player to unpause.
+     * Unpauses a player
+     *
+     * @param playerId The id of the player to unpause.
      */
     public void unpausePlayer(int playerId) {
         int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.player SET paused = 0 WHERE player_id = " + playerId);
-        if (affectedRows != 1){
+        if (affectedRows != 1) {
             throw new TroubleUpdatingDBException("Some problem occurred when trying to unpause player");
         }
     }
 
     /**
      * Removes a user from the tournament he/she is enrolled in.
-     * @param playerId The id of the player to be removed from the tournament
+     *
+     * @param playerId The id of the player to remove from the tournament
      */
     public void leaveTournament(int playerId) {
         int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.player SET in_tournament = 0 WHERE player_id = " + playerId);
@@ -118,30 +125,46 @@ public class PlayerRepository {
         }
     }
 
+    /**
+     * Returns players enrolled in a tournament that doesn't play a game of chess.
+     *
+     * @param tournamentId The id of the tournament
+     * @return players enrolled in a tournament that doesn't play a game of chess
+     */
     public List<Player> getPlayersInTournamentNotPlaying(int tournamentId) {
-        List<Player> players = jdbcTemplate.query("CALL get_players_in_tournament_not_playing("+ tournamentId + ")",
+        List<Player> players = jdbcTemplate.query("CALL get_players_in_tournament_not_playing(" + tournamentId + ")",
                 playerRowMapper);
         addPreviousOpponents(players);
         return players;
     }
 
-    private void addPreviousOpponents(List<Player> players){
-        for (Player player : players){
+    /**
+     * Adds a collection of previous opponents to each player
+     *
+     * @param players The players to be given a collection of their previous opponents
+     */
+    private void addPreviousOpponents(List<Player> players) {
+        for (Player player : players) {
             addPreviousOpponents(player);
         }
     }
 
-    private void addPreviousOpponents(Player player){
+    /**
+     * Adds a collection of a player's previous opponents
+     *
+     * @param player The player to receive his/hers previous opponents
+     */
+    private void addPreviousOpponents(Player player) {
         List<Integer> previousOpponents =
-                jdbcTemplate.queryForList("CALL get_previous_opponents("+ player.getId() + ")", Integer.class);
+                jdbcTemplate.queryForList("CALL get_previous_opponents(" + player.getId() + ")", Integer.class);
         player.setPreviousOpponents(previousOpponents);
     }
 
     /**
      * Returns the players enrolled in a tournament
      *
-     * @param tournamentId the id of the tournament where the players are enrolled
-     * @return A collection of players enrolled in a tournament
+     * @param tournamentId The id of the tournament where the players are enrolled
+     * @return Players enrolled in a tournament
      */
     public List<Player> getPlayersInTournament(int tournamentId) {
         List<Player> players = jdbcTemplate.query("CALL get_players_in_tournament(" + tournamentId + ")", playerRowMapper);
@@ -149,15 +172,16 @@ public class PlayerRepository {
     }
 
     /**
-     * Validate if player with name already exist in tournament
-     * Returns true if there is one, false if not.
+     * Returns true if a player in the specified player's tournament has the same name as the specified player
+     *
      * @param player object with a name and tournament id
+     * @return True if a player in the specified player's tournament has the same name as the specified player
      */
     public boolean doesPlayerExist(Player player) {
         // Adapted from: https://stackoverflow.com/questions/48546574/query-to-check-if-the-record-exists-in-spring-jdbc-template
         boolean exist = false;
         String sql = "SELECT * FROM sjakkarena.player WHERE player.name = ? AND player.tournament = ? LIMIT 1";
-        List<Map<String, Object>> players = jdbcTemplate.queryForList(sql, new Object[] {player.getName(), player.getTournamentId()});
+        List<Map<String, Object>> players = jdbcTemplate.queryForList(sql, new Object[]{player.getName(), player.getTournamentId()});
         if (players.size() != 0) {
             exist = true;
         }
@@ -165,9 +189,10 @@ public class PlayerRepository {
     }
 
     /**
-     * Returns the leaderboard of the given tournament
+     * Returns the leader board of a tournament
+     *
      * @param tournamentId The id of the tournament
-     * @return A leaderboard of the given tournament
+     * @return The leader board of a tournament
      */
     public List<Player> getLeaderBoard(int tournamentId) {
         List<Player> players = jdbcTemplate.query("CALL get_leader_board(" + tournamentId + ")", playerRowMapper);
@@ -175,15 +200,15 @@ public class PlayerRepository {
     }
 
     /**
-     * Returns true if a there is a player with given ID and belongs to specified tournament ID.
-     * Return false if not.
-     * @param playerId ID of player
-     * @param tournamentId ID of tournament
-     * @return true if belongs, false if not.
+     * Returns true if the specified player belongs in the specified tournament
+     *
+     * @param playerId     The id of the player
+     * @param tournamentId The id of the tournament
+     * @return True if the specified player belongs in the specified tournament
      */
     public boolean playerBelongInTournament(int playerId, int tournamentId) {
         boolean belongInTournament = false;
-        if(getPlayer(playerId).getTournamentId() == tournamentId) {
+        if (getPlayer(playerId).getTournamentId() == tournamentId) {
             belongInTournament = true;
         }
         return belongInTournament;
