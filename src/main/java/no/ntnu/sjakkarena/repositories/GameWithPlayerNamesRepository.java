@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -114,12 +115,26 @@ public class GameWithPlayerNamesRepository {
      * @param gameId The id of the game
      * @return A game with the specified game id
      */
-    public Game getGame(int gameId) {
+    public GameWithPlayerNames getGame(int gameId) {
         return jdbcTemplate.queryForObject("SELECT `game`.*, `white`.`name` AS `white_player_name`, " +
                 "`black`.`name` AS `black_player_name`" +
                 " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black`" +
                 " WHERE `game`.`white_player` = `white`.`player_id` AND " +
                 " `game`.`black_player` = `black`.`player_id`" +
                 " AND `game`.`game_id` = " + gameId, gameWithPlayerNamesRowMapper);
+    }
+
+    /**
+    * Returns games with the specified ids
+    *
+    * @param ids The ids of the games to be returned
+    * @return Games with the specified ids
+    */
+    public List<GameWithPlayerNames> getGames(List<Integer> ids){
+        List<GameWithPlayerNames> gameWithPlayerNames = new ArrayList<>();
+        for (Integer id : ids) {
+            gameWithPlayerNames.add(getGame(id));
+        }
+        return gameWithPlayerNames;
     }
 }

@@ -33,10 +33,12 @@ public class GameEventCreator {
      * Creates and publishes an event where games have been created
      *
      * @param tournamentId The id of the tournament which the newly created games belong to
+     * @param gameIds The id of the created games
      */
-    public void createAndPublishGamesCreatedEvent(int tournamentId) {
+    public void createAndPublishGamesCreatedEvent(int tournamentId, List<Integer> gameIds) {
         List<? extends Game> activeGames = gameWithPlayerNamesRepository.getActiveGames(tournamentId);
-        GamesCreatedEvent gamesCreatedEvent = new GamesCreatedEvent(this, activeGames, tournamentId);
+        List<? extends Game> createdGames = gameWithPlayerNamesRepository.getGames(gameIds);
+        GamesCreatedEvent gamesCreatedEvent = new GamesCreatedEvent(this, activeGames, createdGames, tournamentId);
         applicationEventPublisher.publishEvent(gamesCreatedEvent);
     }
 

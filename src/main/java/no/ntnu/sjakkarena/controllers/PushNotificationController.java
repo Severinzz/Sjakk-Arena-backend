@@ -40,7 +40,7 @@ public class PushNotificationController {
      */
     @EventListener
     public void onGamesCreated(GamesCreatedEvent gamesCreatedEvent) {
-        for (Game game : gamesCreatedEvent.getActiveGames()){
+        for (Game game : gamesCreatedEvent.getCreatedGames()){
             sendNotificationToWhiteAndBlackPlayer(game);
         }
     }
