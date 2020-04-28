@@ -29,6 +29,7 @@ public class PushNotificationRESTController {
 
     /**
      * Returns the public key from the public-private key pair.
+     *
      * @return Public key from the public-private key pair.
      */
     @RequestMapping(method = RequestMethod.GET)
@@ -39,11 +40,12 @@ public class PushNotificationRESTController {
 
     /**
      * Saves the subscription object received from the user.
+     *
      * @param sub Subscription object from the user's browser.
      * @return The given subscription object.
      */
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Subscription> setPushSubscription(@RequestBody Subscription sub){
+    public ResponseEntity<Subscription> setPushSubscription(@RequestBody Subscription sub) {
         int playerId = RESTSession.getUserId();
         pushNotificationController.addPushNotification(playerId, sub);
         return new ResponseEntity<>(sub, HttpStatus.OK);
@@ -51,17 +53,17 @@ public class PushNotificationRESTController {
 
     /**
      * Unsubscribe the user form the push notifications.
+     *
      * @return Returns a string describing if the unsubscription was successful or not.
      */
     @RequestMapping(value = "/unsubscribe", method = RequestMethod.DELETE)
-    public ResponseEntity<String> deletePushSubscription(){
+    public ResponseEntity<String> deletePushSubscription() {
         int playerId = RESTSession.getUserId();
         String response;
-        if(pushNotificationController.removePushNotification(playerId)){
+        if (pushNotificationController.removePushNotification(playerId)) {
             response = "Successfully unsubscribed";
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-        else {
+        } else {
             response = "Subscription not registered";
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
