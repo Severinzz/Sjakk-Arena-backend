@@ -348,10 +348,9 @@ BEGIN
     SELECT tables
     FROM `sjakkarena`.`tournament`
     WHERE `tournament`.`tournament_id` = `tournament_id`);
-  DROP TABLE IF EXISTS `tables`;
   START TRANSACTION
     ;
-    CREATE TABLE `tables`
+    CREATE TEMPORARY TABLE `tables`
     (
       table_nr INT(11) DEFAULT NULL
     )
@@ -371,7 +370,6 @@ BEGIN
                            WHERE active = 1
                              AND player_id = white_player
                              AND player.tournament = tournament_id);
-    DROP TABLE IF EXISTS `tables`;
   COMMIT;
 END//
 DELIMITER ;
