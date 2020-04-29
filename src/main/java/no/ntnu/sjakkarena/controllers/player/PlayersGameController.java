@@ -7,6 +7,7 @@ import no.ntnu.sjakkarena.events.gameevents.InvalidResultEvent;
 import no.ntnu.sjakkarena.events.gameevents.ResultSuggestedEvent;
 import no.ntnu.sjakkarena.events.gameevents.ValidResultAddedEvent;
 import no.ntnu.sjakkarena.events.playerevents.PlayerRemovedEvent;
+import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.exceptions.NotSubscribingException;
 import no.ntnu.sjakkarena.services.player.PlayersGameService;
 import no.ntnu.sjakkarena.MessageSender;
@@ -109,11 +110,26 @@ public class PlayersGameController {
      */
     @EventListener
     public void onPlayerRemoved(PlayerRemovedEvent playerRemovedEvent) {
-        int opponent = playersGameService.getOpponent(playerRemovedEvent.getPlayerId());
-        playersGameService.endGameDueToPlayerRemoval(playerRemovedEvent.getPlayerId());
-        sendGame(Game.emptyInactiveGame(), opponent);
+        int playerId = playerRemovedEvent.getPlayerId();
+        if (playersGameService.hasActiveGame(playerId)){
+            playersGameService.endGameDueToPlayerRemoval(playerId);
+            sendEmptyInactiveGameToOpponent(playerId);
+        }
     }
 
+    /**
+     * Sends an empty, inactive game to the specified player's opponent
+     *
+     * @param playerId The id of the player
+     */
+    private void sendEmptyInactiveGameToOpponent(int playerId){
+        try {
+            int opponent = playersGameService.getOpponentId(playerId);
+            sendGame(Game.emptyInactiveGame(), opponent);
+        } catch(NotInDatabaseException e){
+            e.printStackTrace();
+        }
+    }
     /**
      * Sends a game to it's players
      *

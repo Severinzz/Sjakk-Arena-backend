@@ -180,13 +180,32 @@ public class PlayersGameService {
     }
 
     /**
-     * Returns the specified player's opponent
+     * Returns the specified player's opponent's id
      *
      * @param playerId The id of the player
      * @return The opponent of the specified player
      */
-    public int getOpponent(int playerId) {
-        Game game = gameRepository.getActiveGame(playerId);
-        return game.getWhitePlayerId() == playerId ? game.getBlackPlayerId() : game.getWhitePlayerId();
+    public int getOpponentId(int playerId) {
+        try {
+            Game game = gameRepository.getActiveGame(playerId);
+            return game.getWhitePlayerId() == playerId ? game.getBlackPlayerId() : game.getWhitePlayerId();
+        } catch (NotInDatabaseException e) {
+            throw new NotInDatabaseException(e);
+        }
+    }
+
+    /**
+     * Returns true if the specified player has an active game
+     *
+     * @param playerId The id of the player
+     * @return True if the specified player has an active game
+     */
+    public boolean hasActiveGame(int playerId) {
+        try {
+            Game game = gameRepository.getActiveGame(playerId);
+            return true;
+        } catch (NotInDatabaseException e) {
+            return false;
+        }
     }
 }
