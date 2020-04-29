@@ -13,6 +13,7 @@ import no.ntnu.sjakkarena.MessageSender;
 import no.ntnu.sjakkarena.utils.WebSocketSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -42,8 +43,12 @@ public class PlayersGameController {
     @MessageMapping("/player/active-game")
     public void getActiveGame(Authentication authentication) {
         int playerId = WebSocketSession.getUserId(authentication);
-        Game activeGame = playersGameService.getActiveGame(playerId);
-        sendGame(activeGame, playerId);
+        try {
+            Game activeGame = playersGameService.getActiveGame(playerId);
+            sendGame(activeGame, playerId);
+        } catch (EmptyResultDataAccessException ignored) {
+            // explicitly ignore this error message, frontend understands format.
+        }
     }
 
     /**

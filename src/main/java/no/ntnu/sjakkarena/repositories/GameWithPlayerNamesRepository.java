@@ -3,6 +3,8 @@ package no.ntnu.sjakkarena.repositories;
 import no.ntnu.sjakkarena.data.GameWithPlayerNames;
 import no.ntnu.sjakkarena.mappers.GameWithPlayerNamesRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -83,13 +85,19 @@ public class GameWithPlayerNamesRepository {
      * @return The specified player's active game
      */
     public GameWithPlayerNames getActiveGame(int playerId) {
-        return jdbcTemplate.queryForObject("SELECT `game`.*, `white`.`name` AS `white_player_name`, " +
-                "`black`.`name` AS `black_player_name`" +
-                " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black`" +
-                " WHERE `game`.`white_player` = `white`.`player_id` AND " +
-                " `game`.`black_player` = `black`.`player_id`" +
-                " AND (`white`.`player_id` = " + playerId + " OR `black`.`player_id` = " + playerId + ") AND `game`.`active` = " + 1 +
-                " ORDER BY `game`.`start` DESC", gameWithPlayerNamesRowMapper);
+        try {
+            return jdbcTemplate.queryForObject("SELECT `game`.*, `white`.`name` AS `white_player_name`, " +
+                    "`black`.`name` AS `black_player_name`" +
+                    " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black`" +
+                    " WHERE `game`.`white_player` = `white`.`player_id` AND " +
+                    " `game`.`black_player` = `black`.`player_id`" +
+                    " AND (`white`.`player_id` = " + playerId + " OR `black`.`player_id` = " + playerId + ") AND `game`.`active` = " + 1 +
+                    " ORDER BY `game`.`start` DESC", gameWithPlayerNamesRowMapper);
+        } catch (EmptyResultDataAccessException e) {
+            throw e;
+        } catch (IncorrectResultSizeDataAccessException e) {
+            throw e;
+        }
     }
 
     /**
