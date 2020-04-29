@@ -15,7 +15,7 @@ public class IDGenerator {
     @Autowired
     private TournamentRepository tournamentRepository;
 
-    private static int maxNumberOfTournaments = 2147483647; // maximum allowed tournaments
+    private static int maxNumberOfTournaments = 1000000; // maximum allowed tournaments
 
 
     /**
