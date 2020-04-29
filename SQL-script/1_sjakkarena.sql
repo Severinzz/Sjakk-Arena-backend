@@ -350,11 +350,12 @@ BEGIN
     WHERE `tournament`.`tournament_id` = `tournament_id`);
   START TRANSACTION
     ;
+    DROP TABLE IF EXISTS `tables`;
     CREATE TEMPORARY TABLE `tables`
     (
       table_nr INT(11) DEFAULT NULL
     )
-      ENGINE = InnoDB
+      ENGINE = MEMORY
       DEFAULT CHARSET = utf8;
     WHILE i <= number_of_tables
     DO
