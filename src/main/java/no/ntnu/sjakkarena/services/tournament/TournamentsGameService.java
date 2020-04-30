@@ -66,9 +66,9 @@ public class TournamentsGameService {
      * @param gameId       The id of the game the result is associated with
      */
     private void onValidResultAdd(int tournamentId, int gameId) {
-        gameCreator.createAndPublishNewGames(tournamentId, new AfterTournamentStartAdaptedMonrad());
         gameEventCreator.createAndPublishValidResultAddedEvent(gameId);
         playerEventCreator.createAndPublishPlayerListChangeEvent(tournamentId);
+        gameCreator.createAndPublishNewGames(tournamentId, new AfterTournamentStartAdaptedMonrad());
     }
 
     /**
