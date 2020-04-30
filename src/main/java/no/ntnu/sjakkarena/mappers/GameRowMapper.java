@@ -24,7 +24,7 @@ public class GameRowMapper implements RowMapper<Game> {
         return Game.asInDatabase(rs.getInt("game_id"), rs.getInt("table"),
                 rs.getString("start"), rs.getString("end"),
                 rs.getInt("white_player"), rs.getInt("black_player"),
-                rs.getInt("white_player_points"), rs.getBoolean("active"),
+                rs.getDouble("white_player_points"), rs.getBoolean("active"),
                 rs.getBoolean("valid_result"));
     }
 }

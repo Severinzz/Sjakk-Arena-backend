@@ -1,6 +1,7 @@
 package no.ntnu.sjakkarena.repositories;
 
 import no.ntnu.sjakkarena.data.GameWithPlayerNames;
+import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.mappers.GameWithPlayerNamesRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -107,13 +108,17 @@ public class GameWithPlayerNamesRepository {
      * @return The specified player's inactive games
      */
     public List<GameWithPlayerNames> getInActiveGames(int playerId) {
-        return jdbcTemplate.query("SELECT `game`.*, `white`.`name` AS `white_player_name`, " +
-                "`black`.`name` AS `black_player_name`" +
-                " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black`" +
-                " WHERE `game`.`white_player` = `white`.`player_id` AND " +
-                " `game`.`black_player` = `black`.`player_id`" +
-                " AND (`white`.`player_id` = " + playerId + " OR `black`.`player_id` = " + playerId + ") AND `game`.`active` = 0" +
-                " ORDER BY `game`.`start` DESC", gameWithPlayerNamesRowMapper);
+        try {
+            return jdbcTemplate.query("SELECT `game`.*, `white`.`name` AS `white_player_name`, " +
+                    "`black`.`name` AS `black_player_name`" +
+                    " FROM `sjakkarena`.`game` AS `game`, `sjakkarena`.`player` AS white, `sjakkarena`.`player` AS `black`" +
+                    " WHERE `game`.`white_player` = `white`.`player_id` AND " +
+                    " `game`.`black_player` = `black`.`player_id`" +
+                    " AND (`white`.`player_id` = " + playerId + " OR `black`.`player_id` = " + playerId + ") AND `game`.`active` = 0" +
+                    " ORDER BY `game`.`start` DESC", gameWithPlayerNamesRowMapper);
+        } catch (EmptyResultDataAccessException e) {
+            throw new NotInDatabaseException("Couldn't find player's inactive games");
+        }
     }
 
     /**

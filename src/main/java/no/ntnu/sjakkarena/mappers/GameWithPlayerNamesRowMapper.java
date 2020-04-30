@@ -25,7 +25,7 @@ public class GameWithPlayerNamesRowMapper implements RowMapper<GameWithPlayerNam
         return new GameWithPlayerNames(rs.getInt("game_id"), rs.getInt("table"),
                 rs.getString("start"), rs.getString("end"),
                 rs.getInt("white_player"), rs.getInt("black_player"),
-                rs.getObject("white_player_points", Integer.class), rs.getBoolean("active"),
+                rs.getDouble("white_player_points"), rs.getBoolean("active"),
                 rs.getString("white_player_name"), rs.getString("black_player_name"),
                 rs.getBoolean("valid_result"));
     }
