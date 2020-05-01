@@ -101,6 +101,34 @@ CREATE TABLE IF NOT EXISTS sjakkarena.`game`
   ENGINE = InnoDB;
 
 
+-- -----------------------------------------------------
+-- Table `sjakkarena`.`image`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS sjakkarena.`image`;
+
+CREATE TABLE IF NOT EXISTS sjakkarena.`image`
+(
+    `image_id`            INT                    NOT NULL AUTO_INCREMENT,
+    `playerId`            INT                    NOT NULL,
+    `gameId`              INT                    NOT NULL,
+    `time_uploaded`       DATETIME               NULL,
+    `image_size`          INT UNSIGNED           NULL,
+    PRIMARY KEY (`image_id`),
+    INDEX `fk_player_idx` (`playerId` ASC) VISIBLE,
+    INDEX `fk_game_idx` (`gameId` ASC) VISIBLE,
+    CONSTRAINT `fk_player`
+        FOREIGN KEY (`playerId`)
+            REFERENCES sjakkarena.`player` (`player_id`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION,
+    CONSTRAINT `fk_game`
+        FOREIGN KEY (`gameId`)
+            REFERENCES sjakkarena.`game` (`game_Id`)
+            ON DELETE NO ACTION
+            ON UPDATE NO ACTION
+)
+    ENGINE = InnoDB;
+
 SET SQL_MODE = @OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS = @OLD_UNIQUE_CHECKS;
