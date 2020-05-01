@@ -13,13 +13,28 @@ public class Image {
     @JsonAlias ("player")
     private int playerId;
     private String timeUploaded;
+    private String filename;
+    private String fileType;
+    private byte[] data;
 
-    private Image(int imageId, int gameId, int playerId, String timeUploaded) {
+    private Image(int imageId, int gameId, int playerId, String timeUploaded, String filename, String fileType) {
         this.imageId = imageId;
         this.gameId = gameId;
         this.playerId = playerId;
         this.timeUploaded = timeUploaded;
+        this.filename = filename;
+        this.fileType = fileType;
     }
+
+    private Image(String filename, String fileType, byte[] data) {
+        this.filename = filename;
+        this.fileType = fileType;
+        this.data = data;
+    }
+
+    public String getFileType() { return fileType; }
+
+    public String getFilename() { return filename; }
 
     @JsonAlias("time_uploaded")
     public String getTimeUploaded() {
