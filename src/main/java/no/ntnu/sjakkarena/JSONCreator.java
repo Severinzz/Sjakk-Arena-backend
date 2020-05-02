@@ -10,6 +10,8 @@ import no.ntnu.sjakkarena.utils.JWSHelper;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+
 /**
  * Creates JSONs
  */
@@ -61,6 +63,24 @@ public class JSONCreator {
     }
 
     /**
+     * Filters information about a collection of games and return the relevant information as a JSON string
+     *
+     * @param games    The games to filter information from
+     * @param playerId The id of the player receiving the information
+     * @return The relevant information as a JSON string
+     */
+    public String filterGameInformationAndReturnAsJson(Collection<? extends Game> games, int playerId) {
+        if (games.isEmpty()) {
+            return "[]";
+        }
+        String gamesAsJSON = "[";
+        for (Game game : games) {
+            gamesAsJSON += filterGameInformationAndReturnAsJson(game, playerId) + ", ";
+        }
+        return gamesAsJSON.substring(0, gamesAsJSON.length() - 2) + " ]";
+    }
+
+    /**
      * Filters information about a game and return the relevant information as a JSON string
      *
      * @param game     The game to filter information from
@@ -88,14 +108,36 @@ public class JSONCreator {
             jsonObject.put("opponent", game.getBlackPlayerName());
             jsonObject.put("opponent_id", game.getBlackPlayerId());
             jsonObject.put("colour", "Hvit");
+            jsonObject.put("result", getResultDescription("white", game.getWhitePlayerPoints()));
         } else {
             jsonObject.put("opponent", game.getWhitePlayerName());
             jsonObject.put("opponent_id", game.getWhitePlayerId());
             jsonObject.put("colour", "Sort");
+            jsonObject.put("result", getResultDescription("black", game.getWhitePlayerPoints()));
         }
         jsonObject.put("table", game.getTable());
+        jsonObject.put("start", game.getStart());
         jsonObject.put("active", game.isActive());
         return jsonObject.toString();
+    }
+
+    /**
+     * Returns a description of the result from the player playing with the specified chessmen color's perspective
+     *
+     * @param chessmenColor The chessmen color of the player
+     * @param whitePlayerPoints The number of points the player playing with white chessmen received in a game
+     * @return a description of the result from the player playing with the specified chessmen color's perspective
+     */
+    private String getResultDescription(String chessmenColor, double whitePlayerPoints) {
+        String result;
+        if (whitePlayerPoints == 1.0) {
+            result = chessmenColor.equals("white") ? "Seier" : "Tap";
+        } else if (whitePlayerPoints == 0.0) {
+            result = chessmenColor.equals("white") ? "Tap" : "Seier";
+        } else {
+            result = "Remis";
+        }
+        return result;
     }
 
     /**

@@ -5,6 +5,7 @@ import no.ntnu.sjakkarena.adaptedmonrad.AfterTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.eventcreators.GameEventCreator;
 import no.ntnu.sjakkarena.eventcreators.PlayerEventCreator;
+import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.repositories.GameRepository;
 import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;
@@ -99,5 +100,19 @@ public class TournamentsGameService {
      */
     public List<? extends Game> getGamesWithInvalidResult(int tournamentId) {
         return gameWithPlayerNamesRepository.getGamesWithInvalidResult(tournamentId);
+    }
+
+    /**
+     * Returns the inactive games associated with the specified player
+     *
+     * @param playerId The id of the tournament
+     * @return The inactive games associated with the specified player
+     */
+    public List<? extends Game>  getPlayersInactiveGames(int playerId) {
+        try {
+            return gameWithPlayerNamesRepository.getInActiveGames(playerId);
+        } catch (NotInDatabaseException e){
+            throw new NotInDatabaseException(e);
+        }
     }
 }
