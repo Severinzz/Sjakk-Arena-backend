@@ -69,6 +69,20 @@ public class PlayersGameService {
     }
 
     /**
+     * Get the id of player's current active game.
+     * @param playerId
+     * @return
+     */
+    public int getActiveGameId(int playerId) {
+        try {
+            Game game = gameRepository.getActiveGame(playerId);
+            return game.getGameId();
+        } catch (EmptyResultDataAccessException e) {
+            throw e;
+        }
+    }
+
+    /**
      * Adds a result
      *
      * @param resultUpdateRequest A request to update a result
