@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.Objects;
 
 // adapted from: https://www.callicoder.com/spring-boot-file-upload-download-jpa-hibernate-mysql-database-example/
 
@@ -15,7 +16,7 @@ import java.nio.file.*;
 public class FileStorageService {
 
     public void uploadFile(MultipartFile file, int playerId) throws IOException, IllegalStateException {
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         try {
             // Check if name is invalid
             if (fileName.contains("..")) {
@@ -34,9 +35,9 @@ public class FileStorageService {
             PlayersGameService playersGameService = new PlayersGameService();
             int gameId = playersGameService.getActiveGameId(playerId);
 
-            String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-            int imageSize = file.getBytes()/1048576;
-            ImageFileRepository.addNewImage(fileName, playerId, gameId);
+            String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+            long imageSizeMB = file.getSize()/1048576;
+            ImageFileRepository.addNewImage(fileName, playerId, gameId, imageSizeMB);
         } catch (IOException e) {
         }
 
