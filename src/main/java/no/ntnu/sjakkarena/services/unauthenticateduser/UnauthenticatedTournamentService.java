@@ -1,13 +1,15 @@
 package no.ntnu.sjakkarena.services.unauthenticateduser;
 
 import no.ntnu.sjakkarena.EmailSender;
+import no.ntnu.sjakkarena.IDGenerator;
 import no.ntnu.sjakkarena.JSONCreator;
+import no.ntnu.sjakkarena.data.HashedElement;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
 import no.ntnu.sjakkarena.tasks.EndTournamentTask;
 import no.ntnu.sjakkarena.tasks.StartTournamentTask;
-import no.ntnu.sjakkarena.IDGenerator;
+import no.ntnu.sjakkarena.utils.HashGenerator;
 import no.ntnu.sjakkarena.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -15,9 +17,13 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.stereotype.Service;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.Executors;
+
+import java.util.List;
 
 /**
  * This class handles the business logic regarding unauthenticated tournaments
@@ -45,12 +51,57 @@ public class UnauthenticatedTournamentService {
      */
     public String signIn(String adminUUID) {
         try {
-            Tournament tournament = tournamentRepository.getTournament(adminUUID);
+            Tournament tournament = findTournamentByAdminUUID(adminUUID);
             return jsonCreator.createResponseToNewTournament(tournament);
         } catch (NotInDatabaseException e) {
             throw e;
         }
     }
+
+    /**
+     * Returns the tournament with the specified adminUUID if such tournament exists
+     *
+     * @param adminUUID The admin id of the tournament to return
+     * @return The tournament with the specified adminUUID if such tournament exists
+     */
+    private Tournament findTournamentByAdminUUID(String adminUUID) {
+        List<Tournament> tournaments = tournamentRepository.getAll();
+        boolean found = false;
+        int i = 0;
+        Tournament foundTournament = null;
+        while (!found && i < tournaments.size()){
+            Tournament tournament = tournaments.get(i);
+            if (tournamentHasAdminUUID(tournament, adminUUID)){
+                found = true;
+                foundTournament = tournament;
+            }
+            i++;
+        }
+        if (foundTournament == null){
+            throw new NotInDatabaseException("Couldn't find a tournament with the given adminUUID ");
+        }
+        return foundTournament;
+    }
+
+    /**
+     * Returns true if the specified tournament has the specified adminUUID
+     *
+     * @param tournament The tournament
+     * @param adminUUID The adminUUID
+     * @return true if the specified tournament has the specified adminUUID
+     */
+    private boolean tournamentHasAdminUUID(Tournament tournament, String adminUUID){
+        try {
+            HashedElement hashedElement = HashGenerator.hash(adminUUID, tournament.getSalt());
+            String hashedAdminUUID = hashedElement.getHashAsString();
+            return hashedAdminUUID.equals(tournament.getHashedAdminUUID());
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
 
 
     /**
@@ -62,10 +113,26 @@ public class UnauthenticatedTournamentService {
     public String handleAddTournamentRequest(Tournament tournament) {
         Validator.validateThatStartIsBeforeEnd(tournament);
         addTournamentIDs(tournament);
+        hashAdminUUID(tournament);
         tournamentRepository.addNewTournament(tournament);
         scheduleTournamentTasks(tournament);
         //sendEmailToTournamentAdmin(tournament); //Remove comment to send email
         return jsonCreator.createResponseToNewTournament(tournament);
+    }
+
+    /**
+     * Hash the adminUUID of a tournament
+     *
+     * @param tournament The tournament that will get its adminUUID hashed.
+     */
+    private void hashAdminUUID(Tournament tournament) {
+        try {
+            HashedElement hashedAdminUUID = HashGenerator.hash(tournament.getAdminUUID());
+            tournament.setHashedAdminUUID(hashedAdminUUID.getHashAsString());
+            tournament.setSalt(hashedAdminUUID.getSaltAsString());
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -76,6 +143,7 @@ public class UnauthenticatedTournamentService {
     private void addTournamentIDs(Tournament tournament) {
         tournament.setId(idGenerator.generateTournamentID());
         tournament.setAdminUUID(idGenerator.generateAdminUUID());
+        System.out.println(tournament.getAdminUUID());
     }
 
     /**

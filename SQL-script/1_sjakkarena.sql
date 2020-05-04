@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS sjakkarena.`tournament`
   `admin_uuid`      VARCHAR(255)      NULL UNIQUE,
   `early_start`     TINYINT(1) DEFAULT 0,
   `finished`        TINYINT(1) DEFAULT 0,
+  `salt`            VARCHAR(255),
   PRIMARY KEY (`tournament_id`)
 )
   ENGINE = InnoDB;
