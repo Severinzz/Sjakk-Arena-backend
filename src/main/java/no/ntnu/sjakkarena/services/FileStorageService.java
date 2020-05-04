@@ -2,6 +2,8 @@ package no.ntnu.sjakkarena.services;
 
 import no.ntnu.sjakkarena.repositories.ImageFileRepository;
 import no.ntnu.sjakkarena.services.player.PlayersGameService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +16,10 @@ import java.util.Objects;
 
 @Service
 public class FileStorageService {
+
+    @Autowired
+    private static JdbcTemplate jdbcTemplate;
+
 
     public void uploadFile(MultipartFile file, int playerId) throws IOException, IllegalStateException {
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
@@ -31,15 +37,12 @@ public class FileStorageService {
     }
 
     private void fileToDB (MultipartFile file, int playerId) {
-        try {
-            PlayersGameService playersGameService = new PlayersGameService();
-            int gameId = playersGameService.getActiveGameId(playerId);
-
-            String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-            long imageSizeMB = file.getSize()/1048576;
-            ImageFileRepository.addNewImage(fileName, playerId, gameId, imageSizeMB);
-        } catch (IOException e) {
-        }
-
+        PlayersGameService playersGameService = new PlayersGameService();
+        //int gameId = playersGameService.getActiveGameId(playerId);
+        int gameId = 8;
+        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        long imageSizeMB = file.getSize()/1048576;
+        ImageFileRepository.addNewImage(fileName, playerId, gameId, imageSizeMB);
     }
+
 }
