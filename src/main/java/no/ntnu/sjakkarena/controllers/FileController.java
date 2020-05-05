@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
@@ -19,14 +20,16 @@ public class FileController {
     @Autowired
     FileStorageService storageService;
 
-    @RequestMapping(value = "/playerFile/Upload",method = RequestMethod.POST)
-    public ResponseEntity uploadFile(@RequestParam("file")MultipartFile file) throws IOException {
+    @RequestMapping(value = "/playerFile/Upload", method = RequestMethod.POST)
+    public ResponseEntity uploadFile(@RequestParam("image")MultipartFile file) throws IOException {
         try {
             int playerId = RESTSession.getUserId();
             storageService.uploadFile(file, playerId);
             return new ResponseEntity(HttpStatus.OK);
         } catch (FileNotFoundException e) {
-            throw new FileNotFoundException("File: " + file + " was not found." + e);
+            throw new FileNotFoundException("image: " + file + " was not found." + e);
+        } catch (MultipartException e) {
+            throw new MultipartException(e + " Ikke en multipartfil.");
         }
 
     }
