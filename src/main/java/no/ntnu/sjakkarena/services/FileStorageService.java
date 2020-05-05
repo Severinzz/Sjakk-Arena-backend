@@ -20,7 +20,6 @@ public class FileStorageService {
 
     @Autowired
     private static JdbcTemplate jdbcTemplate;
-    PlayersGameService playersGameService;
 
 
     public void uploadFile(MultipartFile file, int playerId) throws IOException, IllegalStateException, NullPointerException {
@@ -40,6 +39,7 @@ public class FileStorageService {
     }
 
     private void fileToDB (String filename, int playerId) throws IOException {
+        PlayersGameService playersGameService = new PlayersGameService();
         int gameId = playersGameService.getActiveGameId(playerId);
         // int gameId = 8;
 

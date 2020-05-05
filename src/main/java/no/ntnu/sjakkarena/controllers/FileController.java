@@ -1,11 +1,10 @@
 package no.ntnu.sjakkarena.controllers;
 
 import no.ntnu.sjakkarena.services.FileStorageService;
-import no.ntnu.sjakkarena.utils.WebSocketSession;
+import no.ntnu.sjakkarena.utils.RESTSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,12 +20,11 @@ public class FileController {
 
     @Autowired
     FileStorageService storageService;
-    WebSocketSession webSocketSession;
 
     @PostMapping("/player/File/Upload")
-    public ResponseEntity uploadFile(@RequestParam("file")MultipartFile file, Authentication authentication) throws IOException {
+    public ResponseEntity uploadFile(@RequestParam("file")MultipartFile file) throws IOException {
         try {
-            int playerId = webSocketSession.getUserId(authentication);
+            int playerId = RESTSession.getUserId();
             storageService.uploadFile(file, playerId);
             return new ResponseEntity(HttpStatus.OK);
         } catch (FileNotFoundException e) {
