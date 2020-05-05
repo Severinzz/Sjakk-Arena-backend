@@ -50,7 +50,7 @@ public class GameCreator {
      * @return new games
      */
     private List<Integer> createNewGames(int tournamentId, AdaptedMonrad adaptedMonrad){
-        List<Player> playersInTournamentNotPlaying = playerRepository.getPlayersInTournamentNotPlaying(tournamentId);
+        List<Player> playersInTournamentNotPlaying = playerRepository.getPlayersInTournamentReadyToPlay(tournamentId);
         List<Integer> availableTables = tournamentRepository.getAvailableTables(tournamentId);
         List<Game> createdGames = adaptedMonrad.getNewGames(playersInTournamentNotPlaying, availableTables);
         List<Integer> gameIds = gameRepository.addGames(createdGames);
