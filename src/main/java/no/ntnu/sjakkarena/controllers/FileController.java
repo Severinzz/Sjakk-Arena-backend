@@ -18,13 +18,15 @@ import java.io.IOException;
 
 @RestController
 public class FileController {
+
     @Autowired
     FileStorageService storageService;
+    WebSocketSession webSocketSession;
 
-    @PostMapping("/playerFile/upload")
+    @PostMapping("/player/File/Upload")
     public ResponseEntity uploadFile(@RequestParam("file")MultipartFile file, Authentication authentication) throws IOException {
         try {
-            int playerId = WebSocketSession.getUserId(authentication);
+            int playerId = webSocketSession.getUserId(authentication);
             storageService.uploadFile(file, playerId);
             return new ResponseEntity(HttpStatus.OK);
         } catch (FileNotFoundException e) {

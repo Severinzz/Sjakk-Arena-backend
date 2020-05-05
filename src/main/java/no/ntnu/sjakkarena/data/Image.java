@@ -3,6 +3,9 @@ package no.ntnu.sjakkarena.data;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+
 /**
  * Class represents images uploaded to application.
  */
@@ -26,11 +29,18 @@ public class Image {
         this.fileType = fileType;
     }
 
-    public Image(String filename, String fileType, byte[] data) {
-        this.filename = filename;
-        this.fileType = fileType;
-        this.data = data;
+    public Image(String fileName, int gameId, int playerId) throws IOException {
+        this.filename = fileName;
+        // this.data = file.getBytes();
+        this.gameId = gameId;
+        this.playerId = playerId;
+        this.timeUploaded = LocalDateTime.now().toString();
     }
+
+    public Image() {
+    }
+
+    public byte[] getSize() { return data; }
 
     public String getFileType() { return fileType; }
 
