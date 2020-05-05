@@ -288,11 +288,11 @@ END//
 DELIMITER ;
 
 -- -----------------------------------------------------
---  get_players_in_tournament_not_playing
+--  get_players_in_tournament_ready_to_play
 -- -----------------------------------------------------
-DROP PROCEDURE IF EXISTS sjakkarena.get_players_in_tournament_not_playing;
+DROP PROCEDURE IF EXISTS sjakkarena.get_players_in_tournament_ready_to_play;
 DELIMITER //
-CREATE PROCEDURE sjakkarena.get_players_in_tournament_not_playing(IN tournament_id INT(11))
+CREATE PROCEDURE sjakkarena.get_players_in_tournament_ready_to_play(IN tournament_id INT(11))
 BEGIN
   SELECT DISTINCT `player`.*,
                   get_points(player_id)                AS `points`,
@@ -300,10 +300,12 @@ BEGIN
                   get_last_played_color_streak(player_id)     AS `last_played_color_streak`,
                   get_last_played_color(player_id)     AS `last_played_color`,
                   get_number_of_white_games(player_id) AS `number_of_white_games`
-  FROM `sjakkarena`.`player`
+  FROM `sjakkarena`.`player`, `sjakkarena`.`tournament`
   WHERE `player`.`tournament` = tournament_id
+    AND `tournament`.`tournament_id` = `player`.`tournament`
     AND `player`.`in_tournament` = 1
     AND `player`.`paused` = 0
+    AND get_rounds(player_id) < `tournament`.`max_rounds`
     AND player_id NOT IN (SELECT DISTINCT white_player
                           FROM `sjakkarena`.`game`
                           WHERE active = 1
