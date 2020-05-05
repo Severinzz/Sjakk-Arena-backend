@@ -4,13 +4,13 @@ import no.ntnu.sjakkarena.data.Image;
 import no.ntnu.sjakkarena.repositories.ImageFileRepository;
 import no.ntnu.sjakkarena.services.player.PlayersGameService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 // adapted from: https://www.callicoder.com/spring-boot-file-upload-download-jpa-hibernate-mysql-database-example/
@@ -19,7 +19,10 @@ import java.util.Objects;
 public class FileStorageService {
 
     @Autowired
-    private static JdbcTemplate jdbcTemplate;
+    private ImageFileRepository imageFileRepository;
+
+    @Autowired
+    private PlayersGameService playersGameService;
 
 
     public void uploadFile(MultipartFile file, int playerId) throws IOException, IllegalStateException, NullPointerException {
@@ -34,17 +37,15 @@ public class FileStorageService {
 
             fileToDB(fileName, playerId);
         } catch (IOException | NullPointerException e) {
-            throw new NullPointerException(e + " This playerId might not have active games.");
+            throw new NullPointerException(e + " This playerId is not associated with any active games.");
         }
     }
 
     private void fileToDB (String filename, int playerId) throws IOException {
-        PlayersGameService playersGameService = new PlayersGameService();
         int gameId = playersGameService.getActiveGameId(playerId);
-        // int gameId = 8;
-
-        Image image = new Image(filename, gameId, playerId);
-        ImageFileRepository.addNewImage(image);
+        String timeUploaded = LocalDateTime.now().toString();
+        Image image = new Image(filename, gameId, playerId, timeUploaded);
+        imageFileRepository.addNewImage(image);
     }
 
 }

@@ -109,11 +109,10 @@ DROP TABLE IF EXISTS sjakkarena.`image`;
 CREATE TABLE IF NOT EXISTS sjakkarena.`image`
 (
     `image_id`            INT                    NOT NULL AUTO_INCREMENT,
-    `fileName`            VARCHAR(255)           NULL,
+    `fileName`            VARCHAR(255)           NOT NULL UNIQUE,
     `playerId`            INT                    NOT NULL,
     `gameId`              INT                    NOT NULL,
     `time_uploaded`       DATETIME               NULL,
-    `image_size`          INT UNSIGNED           NULL,
     PRIMARY KEY (`image_id`),
     INDEX `fk_player_idx` (`playerId` ASC) VISIBLE,
     INDEX `fk_game_idx` (`gameId` ASC) VISIBLE,

@@ -5,9 +5,7 @@ import no.ntnu.sjakkarena.utils.RESTSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
@@ -21,7 +19,7 @@ public class FileController {
     @Autowired
     FileStorageService storageService;
 
-    @PostMapping("/player/File/Upload")
+    @RequestMapping(value = "/player/fileUpload",method = RequestMethod.POST)
     public ResponseEntity uploadFile(@RequestParam("file")MultipartFile file) throws IOException {
         try {
             int playerId = RESTSession.getUserId();

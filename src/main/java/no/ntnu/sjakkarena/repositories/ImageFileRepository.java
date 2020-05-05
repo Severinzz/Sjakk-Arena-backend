@@ -19,13 +19,13 @@ import java.sql.SQLException;
 public class ImageFileRepository {
 
     @Autowired
-    private static JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     /**
      * Adds a image name to the database
      * @param image to be added
      */
-    public static void addNewImage(Image image) {
+    public void addNewImage(Image image) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         try {
             //Adapted code from https://stackoverflow.com/questions/12882874/how-can-i-get-the-autoincremented-id-when-i-insert-a-record-in-a-table-via-jdbct
@@ -35,16 +35,10 @@ public class ImageFileRepository {
                             PreparedStatement ps =
                                     connection.prepareStatement(
                                             "INSERT INTO `sjakkarena`.`image` " +
-                                                    "(`playerId`, " +
-                                                    "`gameId`, " +
-                                                    "`image_size`, " +
-                                                    "`fileName`, " +
-                                                    "`time_Uploaded`) " +
-                                            "VALUES (\"" + image.getPlayerId() + "\", "
-                                                    + image.getGameId() +      "\","
-                                                    + image.getSize() +   "\","
-                                                    + image.getFilename() +    "\","
-                                                    + image.getTimeUploaded() +")", new String[]{"id"});
+                                                    "(playerId, gameId, fileName, time_Uploaded)" +
+                                            "VALUES (" + "'" + image.getPlayerId() + "', '" + image.getGameId() +
+                                                      "', '" + image.getFilename() + "', '" + image.getTimeUploaded() +
+                                                      "')", new String[]{"id"});
                             return ps;
                         }
                     },
