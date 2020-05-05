@@ -143,7 +143,6 @@ public class UnauthenticatedTournamentService {
     private void addTournamentIDs(Tournament tournament) {
         tournament.setId(idGenerator.generateTournamentID());
         tournament.setAdminUUID(idGenerator.generateAdminUUID());
-        System.out.println(tournament.getAdminUUID());
     }
 
     /**
