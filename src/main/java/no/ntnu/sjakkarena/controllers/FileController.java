@@ -19,7 +19,7 @@ public class FileController {
     @Autowired
     FileStorageService storageService;
 
-    @RequestMapping(value = "/player/fileUpload",method = RequestMethod.POST)
+    @RequestMapping(value = "/playerFile/Upload",method = RequestMethod.POST)
     public ResponseEntity uploadFile(@RequestParam("file")MultipartFile file) throws IOException {
         try {
             int playerId = RESTSession.getUserId();
