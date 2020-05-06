@@ -12,7 +12,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -32,7 +31,7 @@ public class TournamentRepository {
     /**
      * Adds a new tournament to the database
      *
-     * @param tournament the tournament to be added
+     * @param tournament The tournament to be added
      */
     public void addNewTournament(Tournament tournament) {
         String values = "";
@@ -40,28 +39,28 @@ public class TournamentRepository {
         if (tournament.getEnd() == null) {
             values = DBInteractionHelper.toValuesString(tournament.getId(),
                     tournament.getTournamentName(), tournament.getAdminEmail(), tournament.getStart(),
-                    tournament.getTables(), tournament.getMaxRounds(), tournament.getAdminUUID(),
-                    tournament.isEarlyStart());
+                    tournament.getTables(), tournament.getMaxRounds(), tournament.getHashedAdminUUID(),
+                    tournament.isEarlyStart(), tournament.getSalt());
             attributes = "(`tournament_id`, `tournament_name`, `admin_email`, `start`, " +
-                    "`tables`, `max_rounds`, `admin_uuid`, `early_start`)";
+                    "`tables`, `max_rounds`, `admin_uuid`, `early_start`, `salt`)";
         } else {
             values = DBInteractionHelper.toValuesString(tournament.getId(),
                     tournament.getTournamentName(), tournament.getAdminEmail(), tournament.getStart(), tournament.getEnd(),
-                    tournament.getTables(), tournament.getMaxRounds(), tournament.getAdminUUID(),
-                    tournament.isEarlyStart());
+                    tournament.getTables(), tournament.getMaxRounds(), tournament.getHashedAdminUUID(),
+                    tournament.isEarlyStart(), tournament.getSalt());
             attributes = "(`tournament_id`, `tournament_name`, `admin_email`, `start`, `end`, " +
-                    "`tables`, `max_rounds`, `admin_uuid`, `early_start`)";
+                    "`tables`, `max_rounds`, `admin_uuid`, `early_start`, `salt`)";
         }
-        executeUpdateQuery(attributes, values);
+        insertTournament(attributes, values);
     }
 
     /**
-     * Execute the a update query with the given attributes and values
+     * Inserts a tournament with the specified values
      *
-     * @param attributes
-     * @param values
+     * @param attributes The attributes describing the tournament
+     * @param values     The value of the tournament's attributes
      */
-    private void executeUpdateQuery(String attributes, String values) {
+    private void insertTournament(String attributes, String values) {
         try {
             jdbcTemplate.update("INSERT INTO " + DATABASE + ".`tournament` " +
                     attributes + " VALUES " + values);
@@ -72,11 +71,10 @@ public class TournamentRepository {
     }
 
     /**
-     * Finds the tournament with the given id.
+     * Returns a tournament with the given id.
      *
-     * @param tournamentId the id of the tournament to be found
-     * @return The tournament with the given id. If no such tournament was found in the database, an "empty" tournament
-     * object is returned.
+     * @param tournamentId The id of the tournament to returned
+     * @return A tournament with the given id. If no such tournament was found in the database.
      */
     public Tournament getTournament(int tournamentId) {
         try {
@@ -88,11 +86,10 @@ public class TournamentRepository {
     }
 
     /**
-     * Finds the tournament with the given admin uuid.
+     * Returns a tournament with the given admin uuid.
      *
-     * @param adminUUID the adminUUID of the tournament to be found
-     * @return The tournament with the given UUID. If no such tournament was found in the database, an "empty" tournament
-     * object is returned.
+     * @param adminUUID The adminUUID of the tournament to be returned
+     * @return A tournament with the given UUID.
      */
     public Tournament getTournament(String adminUUID) {
         try {
@@ -103,10 +100,21 @@ public class TournamentRepository {
         }
     }
 
+    /**
+     * Returns the available tables in the specified tournament
+     *
+     * @param tournamentId The id of the tournament
+     * @return The available tables in the specified tournament
+     */
     public List<Integer> getAvailableTables(int tournamentId) {
         return jdbcTemplate.queryForList("CALL get_available_tables(" + tournamentId + ")", Integer.class);
     }
 
+    /**
+     * Activates the specified tournament
+     *
+     * @param tournamentId The id of the tournament to be activated
+     */
     public void activate(int tournamentId) {
         try {
             jdbcTemplate.update("UPDATE " + DATABASE + ".tournament SET `active` = 1, `finished` = 0" +
@@ -116,6 +124,11 @@ public class TournamentRepository {
         }
     }
 
+    /**
+     * Inactivates the specified tournament
+     *
+     * @param tournamentId The id of the tournament to be inactivated
+     */
     public void inactivate(int tournamentId) {
         try {
             jdbcTemplate.update("UPDATE " + DATABASE + ".tournament SET `active` = 0 WHERE tournament_id = " + tournamentId);
@@ -132,6 +145,12 @@ public class TournamentRepository {
         }
     }
 
+    /**
+     * Returns true if a tournament with the specified id exists
+     *
+     * @param tournamentId The id of the tournament
+     * @return True if a tournament with the specified id exists
+     */
     public boolean exists(int tournamentId) {
         try {
             getTournament(tournamentId);
@@ -141,6 +160,12 @@ public class TournamentRepository {
         }
     }
 
+    /**
+     * Returns true if a tournament with the specified adminUUID exists
+     *
+     * @param adminUUID The adminUUID of the tournament
+     * @return True if a tournament with the specified adminUUID exists
+     */
     public boolean exists(String adminUUID) {
         try {
             getTournament(adminUUID);
@@ -150,6 +175,12 @@ public class TournamentRepository {
         }
     }
 
+    /**
+     * Returns true if the specified tournament is active
+     *
+     * @param tournamentId The id of the tournament
+     * @return True if the specified tournament is active
+     */
     public boolean isActive(int tournamentId) {
         try {
             return jdbcTemplate.queryForObject("SELECT `active` FROM " + DATABASE + ".tournament WHERE tournament_id = " +
@@ -159,6 +190,12 @@ public class TournamentRepository {
         }
     }
 
+    /**
+     * Sets the start time of the specified tournament
+     *
+     * @param time         The time of start of the tournament
+     * @param tournamentId The id of the tournament
+     */
     public void setStartTime(String time, int tournamentId) {
         try {
             jdbcTemplate.update("UPDATE " + DATABASE + ".tournament SET `start` = ? WHERE tournament_id = ?",
@@ -168,6 +205,12 @@ public class TournamentRepository {
         }
     }
 
+    /**
+     * Sets the end time of the specified tournament
+     *
+     * @param time         The time of end of the tournament
+     * @param tournamentId The id of the tournament
+     */
     public void setEndTime(String time, int tournamentId) {
         try {
             jdbcTemplate.update("UPDATE " + DATABASE + ".tournament SET `end` = ? WHERE tournament_id = ?",
@@ -177,13 +220,27 @@ public class TournamentRepository {
         }
     }
 
-    public void finishTournament(int tournamentId){
+    /**
+     * Finishes the specified tournament
+     *
+     * @param tournamentId The id of the tournament
+     */
+    public void finishTournament(int tournamentId) {
         try {
             jdbcTemplate.update("UPDATE " + DATABASE + ".tournament SET `finished` = 1 WHERE tournament_id = ?",
                     new Object[]{tournamentId});
         } catch (DataAccessException e) {
             throw new TroubleUpdatingDBException("Could not finish tournament");
         }
+    }
+
+    /**
+     * Returns all tournaments stored in the database
+     *
+     * @return all tournaments stored in the database
+     */
+    public List<Tournament> getAll() {
+        return jdbcTemplate.query("SELECT * FROM sjakkarena.tournament", tournamentRowMapper);
     }
 }
 

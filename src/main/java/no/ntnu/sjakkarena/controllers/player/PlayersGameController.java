@@ -7,6 +7,7 @@ import no.ntnu.sjakkarena.events.gameevents.InvalidResultEvent;
 import no.ntnu.sjakkarena.events.gameevents.ResultSuggestedEvent;
 import no.ntnu.sjakkarena.events.gameevents.ValidResultAddedEvent;
 import no.ntnu.sjakkarena.events.playerevents.PlayerRemovedEvent;
+import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.exceptions.NotSubscribingException;
 import no.ntnu.sjakkarena.restcontrollers.PushNotificationRESTController;
 import no.ntnu.sjakkarena.services.player.PlayersGameService;
@@ -14,6 +15,7 @@ import no.ntnu.sjakkarena.MessageSender;
 import no.ntnu.sjakkarena.utils.WebSocketSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -37,6 +39,7 @@ public class PlayersGameController {
     private PushNotificationRESTController pushNotificationRESTController;
 
 
+
     /**
      * Sends the active game of the player sending a message to the "/player/active-game" destination.
      *
@@ -45,8 +48,12 @@ public class PlayersGameController {
     @MessageMapping("/player/active-game")
     public void getActiveGame(Authentication authentication) {
         int playerId = WebSocketSession.getUserId(authentication);
-        Game activeGame = playersGameService.getActiveGame(playerId);
-        sendGame(activeGame, playerId);
+        try {
+            Game activeGame = playersGameService.getActiveGame(playerId);
+            sendGame(activeGame, playerId);
+        } catch (EmptyResultDataAccessException ignored) {
+            // explicitly ignore this error message, frontend understands format.
+        }
     }
 
     /**
@@ -57,7 +64,7 @@ public class PlayersGameController {
      */
     @EventListener
     public void onGamesCreated(GamesCreatedEvent gamesCreatedEvent) {
-        for (Game game : gamesCreatedEvent.getActiveGames()) {
+        for (Game game : gamesCreatedEvent.getCreatedGames()) {
             sendGameToBothPlayers(game);
         }
     }
@@ -70,8 +77,8 @@ public class PlayersGameController {
      */
     @EventListener
     public void onValidResultAdded(ValidResultAddedEvent validResultAddedEvent) {
-        sendValidResultInformationToPlayer(validResultAddedEvent.getPlayer1().getId());
-        sendValidResultInformationToPlayer(validResultAddedEvent.getPlayer2().getId());
+        sendValidResultInformationToPlayer(validResultAddedEvent.getWhitePlayer().getId());
+        sendValidResultInformationToPlayer(validResultAddedEvent.getBlackPlayer().getId());
     }
 
     /**
@@ -107,11 +114,26 @@ public class PlayersGameController {
      */
     @EventListener
     public void onPlayerRemoved(PlayerRemovedEvent playerRemovedEvent) {
-        int opponent = playersGameService.getOpponent(playerRemovedEvent.getPlayerId());
-        playersGameService.endGameDueToPlayerRemoved(playerRemovedEvent.getPlayerId());
-        sendGame(Game.emptyInactiveGame(), opponent);
+        int playerId = playerRemovedEvent.getPlayerId();
+        if (playersGameService.hasActiveGame(playerId)){
+            playersGameService.endGameDueToPlayerRemoval(playerId);
+            sendEmptyInactiveGameToOpponent(playerId);
+        }
     }
 
+    /**
+     * Sends an empty, inactive game to the specified player's opponent
+     *
+     * @param playerId The id of the player
+     */
+    private void sendEmptyInactiveGameToOpponent(int playerId){
+        try {
+            int opponent = playersGameService.getOpponentId(playerId);
+            sendGame(Game.emptyInactiveGame(), opponent);
+        } catch(NotInDatabaseException e){
+            e.printStackTrace();
+        }
+    }
     /**
      * Sends a game to it's players
      *

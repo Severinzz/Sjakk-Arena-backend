@@ -1,4 +1,4 @@
-package no.ntnu.sjakkarena.utils;
+package no.ntnu.sjakkarena;
 
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,7 @@ public class IDGenerator {
 
     /**
      * Generates a random alphanumerical string
-     * Code from https://www.baeldung.com/java-random-string
+     * Code adapted from https://www.baeldung.com/java-random-string
      *
      * @param length the length of the generated string
      * @return a random alphanumerical string

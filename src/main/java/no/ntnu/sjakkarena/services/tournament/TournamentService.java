@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+/**
+ * This class handles the business logic regarding tournament information
+ */
 @Service
 public class TournamentService {
 
@@ -26,6 +29,22 @@ public class TournamentService {
     @Autowired
     private GameCreator gameCreator;
 
+    /**
+     * Responds to an event where it is time to start a tournament.
+     * Starts the tournament.
+     *
+     * @param timeToStartTournamentEvent An event where it is time to start a tournament
+     */
+    @EventListener
+    public void onTimeToStartTournament(TimeToStartTournamentEvent timeToStartTournamentEvent) {
+        startTournament(timeToStartTournamentEvent.getTournamentId());
+    }
+
+    /**
+     * Starts a tournament
+     *
+     * @param tournamentId The id of the tournament to be started
+     */
     public void startTournament(int tournamentId) {
         try {
             tournamentRepository.activate(tournamentId);
@@ -36,6 +55,50 @@ public class TournamentService {
         }
     }
 
+    /**
+     * Executes necessary tasks when a tournament has started:
+     * - Creates and publishes events
+     * - Creates and publishes games
+     *
+     * @param tournamentId The id of the started tournament
+     */
+    private void onTournamentStart(int tournamentId) {
+        tournamentEventCreator.createAndPublishTournamentStartedEvent(tournamentId);
+        gameCreator.createAndPublishNewGames(tournamentId, new AtTournamentStartAdaptedMonrad());
+    }
+
+    /**
+     * Ends a tournament
+     *
+     * @param tournamentId The id of the tournament to end
+     */
+    public void endTournament(int tournamentId) {
+        try {
+            tournamentRepository.inactivate(tournamentId);
+            tournamentRepository.finishTournament(tournamentId);
+            tournamentRepository.setEndTime(LocalDateTime.now().toString(), tournamentId);
+            onTournamentEnd(tournamentId);
+        } catch (TroubleUpdatingDBException e) {
+            throw new TroubleUpdatingDBException(e);
+        }
+    }
+
+    /**
+     * Executes necessary tasks when a tournament has ended:
+     * - Creates and publishes events
+     *
+     * @param tournamentId The id of the ended tournament
+     */
+    private void onTournamentEnd(int tournamentId) {
+        tournamentEventCreator.createAndPublishTournamentEndedEvent(tournamentId);
+    }
+
+    /**
+     * Returns a tournament with the specified id
+     *
+     * @param tournamentId The id of the tournament to return
+     * @return A tournament with the specified id
+     */
     public Tournament getTournament(int tournamentId) {
         try {
             return tournamentRepository.getTournament(tournamentId);
@@ -44,25 +107,22 @@ public class TournamentService {
         }
     }
 
-    private void onTournamentStart(int tournamentId) {
-        tournamentEventCreator.createAndPublishTournamentStartedEvent(tournamentId);
-        gameCreator.createAndPublishNewGames(tournamentId, new AtTournamentStartAdaptedMonrad());
-    }
-
-    private void onTournamentEnd(int tournamentId) {
-        tournamentEventCreator.createAndPublishTournamentEndedEvent(tournamentId);
-    }
-
-    @EventListener
-    public void onTimeToStartTournament(TimeToStartTournamentEvent timeToStartTournamentEvent){
-        startTournament(timeToStartTournamentEvent.getTournamentId());
-    }
-
+    /**
+     * Returns true if the specified tournament is active
+     *
+     * @param tournamentId The id of the tournament
+     * @return True if the specified tournament is active
+     */
     public boolean isTournamentActive(int tournamentId) {
         return tournamentRepository.isActive(tournamentId);
     }
 
-    public void setTournamentPaused(int tournamentId) {
+    /**
+     * Pauses the specified tournament
+     *
+     * @param tournamentId The id of the tournament to pause
+     */
+    public void pauseTournament(int tournamentId) {
         try {
             tournamentRepository.inactivate(tournamentId);
         } catch (TroubleUpdatingDBException e) {
@@ -70,22 +130,16 @@ public class TournamentService {
         }
     }
 
-    public void setTournamentUnpause(int tournamentId) {
+    /**
+     * Unpauses the specified tournament
+     *
+     * @param tournamentId The id of the tournament to unpause
+     */
+    public void unpauseTournament(int tournamentId) {
         try {
             tournamentRepository.activate(tournamentId);
         } catch (TroubleUpdatingDBException e) {
             throw e;
-        }
-    }
-
-    public void endTournament(int tournamentId) {
-        try {
-            tournamentRepository.inactivate(tournamentId);
-            tournamentRepository.finishTournament(tournamentId);
-            tournamentRepository.setEndTime(LocalDateTime.now().toString(), tournamentId);
-            onTournamentEnd(tournamentId);
-        } catch (TroubleUpdatingDBException e){
-            throw new TroubleUpdatingDBException(e);
         }
     }
 }

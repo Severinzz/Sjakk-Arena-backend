@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Key;
 
+
 /**
  * Handles public and private keys
  */
@@ -19,9 +20,9 @@ public class KeyHelper {
     private static String secretKeyFileName = "secretKey.txt";
 
     /**
-     * Return secret key
+     * Returns a secret key
      *
-     * @return secret key
+     * @return a secret key
      */
     public static Key getKey() {
         return readKeyFromFile(secretKeyFileName);
@@ -67,11 +68,26 @@ public class KeyHelper {
         return readKey;
     }
 
+
+    /**
+     * Returns public key
+     * See this for easy keys in right format https://web-push-codelab.glitch.me/
+     *
+     * @return Public key
+     */
     public static String getPublicKey(){
         return  System.getenv("SJAKK_ARENA_PUBLIC_KEY");
     }
 
+
+    /**
+     * Returns private key
+     * See this for easy keys in right format https://web-push-codelab.glitch.me/
+     *
+     * @return Private key
+     */
     public static String getPrivateKey() {
         return System.getenv("SJAKK_ARENA_PRIVATE_KEY");
     }
+
 }

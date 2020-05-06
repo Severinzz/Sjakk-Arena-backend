@@ -10,12 +10,23 @@ import no.ntnu.sjakkarena.utils.JWSHelper;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+
+/**
+ * Creates JSONs
+ */
 @Component
 public class JSONCreator {
 
     ObjectMapper objectMapper = new ObjectMapper();
 
-    public String writeValueAsString(Object object){
+    /**
+     * Returns a JSON representation of the input object
+     *
+     * @param object The object to represent with a JSON
+     * @return a JSON representation of the input object
+     */
+    public String writeValueAsString(Object object) {
         try {
             return objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
@@ -23,6 +34,12 @@ public class JSONCreator {
         }
     }
 
+    /**
+     * Filters information about a player's tournament and return the relevant tournament information as a JSON string
+     *
+     * @param tournament The tournament to filter information from
+     * @return the relevant tournament information as a JSON string
+     */
     public String filterPlayersTournamentInformationAndReturnAsJson(Tournament tournament) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("name", tournament.getTournamentName());
@@ -32,6 +49,12 @@ public class JSONCreator {
         return jsonObject.toString();
     }
 
+    /**
+     * Filters information about a player and return the relevant information as a JSON string
+     *
+     * @param player The player to filter information from
+     * @return the relevant player information as a JSON string
+     */
     public String filterPlayerInformationAndReturnAsJson(Player player) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("name", player.getName());
@@ -39,35 +62,89 @@ public class JSONCreator {
         return jsonObject.toString();
     }
 
-    public String filterGameInformationAndReturnAsJson(Game game, int playerId){
-        if (game instanceof GameWithPlayerNames){
-            return filterGameWithPlayerNamesInformationAndReturnAsJson(game, playerId);
+    /**
+     * Filters information about a collection of games and return the relevant information as a JSON string
+     *
+     * @param games    The games to filter information from
+     * @param playerId The id of the player receiving the information
+     * @return The relevant information as a JSON string
+     */
+    public String filterGameInformationAndReturnAsJson(Collection<? extends Game> games, int playerId) {
+        if (games.isEmpty()) {
+            return "[]";
+        }
+        String gamesAsJSON = "[";
+        for (Game game : games) {
+            gamesAsJSON += filterGameInformationAndReturnAsJson(game, playerId) + ", ";
+        }
+        return gamesAsJSON.substring(0, gamesAsJSON.length() - 2) + " ]";
+    }
+
+    /**
+     * Filters information about a game and return the relevant information as a JSON string
+     *
+     * @param game     The game to filter information from
+     * @param playerId The id of the player receiving the information
+     * @return The relevant information as a JSON string
+     */
+    public String filterGameInformationAndReturnAsJson(Game game, int playerId) {
+        if (game instanceof GameWithPlayerNames) {
+            return filterGameWithPlayerNamesInformationAndReturnAsJson((GameWithPlayerNames) game, playerId);
         } else {
             return writeValueAsString(game);
         }
     }
 
-    private String filterGameWithPlayerNamesInformationAndReturnAsJson(Game game, int playerId){
+    /**
+     * Filters information about a game with player names and return the relevant information as a JSON string
+     *
+     * @param game     The game with player names to filter information from
+     * @param playerId The id of the player receiving the information
+     * @return The relevant information as a JSON string
+     */
+    private String filterGameWithPlayerNamesInformationAndReturnAsJson(GameWithPlayerNames game, int playerId) {
         JSONObject jsonObject = new JSONObject();
-        if (game.getWhitePlayerId() == playerId){
-            jsonObject.put("opponent", ((GameWithPlayerNames) game).getBlackPlayerName());
+        if (game.getWhitePlayerId() == playerId) {
+            jsonObject.put("opponent", game.getBlackPlayerName());
             jsonObject.put("opponent_id", game.getBlackPlayerId());
             jsonObject.put("colour", "Hvit");
+            jsonObject.put("result", getResultDescription("white", game.getWhitePlayerPoints()));
         } else {
-            jsonObject.put("opponent", ((GameWithPlayerNames) game).getWhitePlayerName());
+            jsonObject.put("opponent", game.getWhitePlayerName());
             jsonObject.put("opponent_id", game.getWhitePlayerId());
             jsonObject.put("colour", "Sort");
+            jsonObject.put("result", getResultDescription("black", game.getWhitePlayerPoints()));
         }
         jsonObject.put("table", game.getTable());
+        jsonObject.put("start", game.getStart());
         jsonObject.put("active", game.isActive());
         return jsonObject.toString();
     }
 
     /**
-     * Get the message to be returned to the client
+     * Returns a description of the result from the player playing with the specified chessmen color's perspective
+     *
+     * @param chessmenColor The chessmen color of the player
+     * @param whitePlayerPoints The number of points the player playing with white chessmen received in a game
+     * @return a description of the result from the player playing with the specified chessmen color's perspective
+     */
+    private String getResultDescription(String chessmenColor, double whitePlayerPoints) {
+        String result;
+        if (whitePlayerPoints == 1.0) {
+            result = chessmenColor.equals("white") ? "Seier" : "Tap";
+        } else if (whitePlayerPoints == 0.0) {
+            result = chessmenColor.equals("white") ? "Tap" : "Seier";
+        } else {
+            result = "Remis";
+        }
+        return result;
+    }
+
+    /**
+     * Creates the JSON response be returned to the new tournament
      *
      * @param tournament The newly created tournament
-     * @return information to be returned to the client
+     * @return information to be returned to the tournament
      */
     public String createResponseToNewTournament(Tournament tournament) {
         String jws = JWSHelper.createJWS("TOURNAMENT", "" + tournament.getId());
@@ -77,20 +154,49 @@ public class JSONCreator {
         return jsonObject.toString();
     }
 
+    /**
+     * Creates the JSON response be returned to the new player
+     *
+     * @param playerId The id of the newly created player
+     * @return information to be returned to the player
+     */
     public String createResponseToNewPlayer(int playerId) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("jwt", JWSHelper.createJWS("PLAYER", "" + playerId));
         return jsonObject.toString();
     }
 
-    public String createResponseToTournamentStateSubscriber(boolean active){
+    /**
+     * Returns a response to a user subscribing to the tournament active state (STOMP) destination
+     *
+     * @param active Whether the tournament is active
+     * @return a response to a user subscribing to the tournament active state (STOMP) destination
+     */
+    public String createResponseToTournamentStateSubscriber(boolean active) {
         return "{ \"active\": " + active + " }";
     }
 
-    public String createResponseToPlayerPointsSubscriber(double points) { return "{ \"points\": " + points + " }"; }
+    /**
+     * Returns a response to a player subscribing to the player's points (STOMP) destination
+     *
+     * @param points The player's points
+     * @return a response to a player subscribing to the player's points (STOMP) destination
+     */
+    public String createResponseToPlayerPointsSubscriber(double points) {
+        return "{ \"points\": " + points + " }";
+    }
 
+    /**
+     * Returns a response to a user subscribing to the result (STOMP) destination
+     *
+     * @param result            A result
+     * @param gameId            The id of the game the result is associated with
+     * @param opponentsDisagree Whether the opponents playing the game disagrees on the result
+     * @param validResult       Whether the result is regarded as valid
+     * @return a response to a user subscribing to the result (STOMP) destination
+     */
     public String createResponseToResultSubscriber(Double result, Integer gameId, boolean opponentsDisagree,
-                                                   boolean validResult){
+                                                   boolean validResult) {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("suggested_result", result);
         jsonObject.put("game_id", gameId);

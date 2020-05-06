@@ -12,8 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 /**
- * Handles requests from players
+ * Handles requests from players regarding information about players
  */
 @RestController
 @RequestMapping("/player")
@@ -25,9 +26,9 @@ public class PlayerRESTController {
     private JSONCreator jsonCreator = new JSONCreator();
 
     /**
-     * Set a player with a given ID to paused
+     * Pauses the requesting player
      *
-     * @return 200 OK if successfully set active field to 0, otherwise 400
+     * @return 200 OK if successfully paused. 400 BAD REQUEST if some problems occurred while trying to update the database
      */
     @RequestMapping(value = "/pause", method = RequestMethod.PATCH)
     public ResponseEntity<String> pause() {
@@ -41,25 +42,26 @@ public class PlayerRESTController {
     }
 
     /**
-     * Return information about the requesting user
+     * Returns information about the requesting player
      *
-     * @return information relevant to the client application about the requesting user
+     * @return Information about the requesting user + 200 OK. 400 BAD REQUEST if player isn't in the database
      */
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<String> getPlayer() {
         try {
             Player player = playerService.getPlayer(RESTSession.getUserId());
             return new ResponseEntity<>(jsonCreator.filterPlayerInformationAndReturnAsJson(player), HttpStatus.OK);
-        } catch(NotInDatabaseException e){
+        } catch (NotInDatabaseException e) {
             e.printStackTrace();
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
     /**
-     * Unpause the "signed-in" player
+     * Unpauses the requesting player
      *
-     * @return 200 OK if successfully unpaused, otherwise 400
+     * @return 200 OK if successfully unpaused. 400 BAD REQUEST if some problems occurred while trying to update
+     * the database
      */
     @RequestMapping(value = "/unpause", method = RequestMethod.PATCH)
     public ResponseEntity<String> unpause() {
@@ -73,12 +75,14 @@ public class PlayerRESTController {
     }
 
     /**
-     * Set a player with a given ID to inactive
+     * Inactivates the requesting player. If a player is inactivated, he/her is no longer actively playing in
+     * the tournament
      *
-     * @return 200 OK if successfully set active field to 0, otherwise 400
+     * @return 200 OK if successfully set active field to 0. 400 BAD REQUEST if some problems occurred while trying to
+     * update the database
      */
     @RequestMapping(value = "/inactivate", method = RequestMethod.PATCH)
-    public ResponseEntity<String> setInactive() {
+    public ResponseEntity<String> leaveTournament() {
         try {
             playerService.leaveTournament(RESTSession.getUserId());
             return new ResponseEntity<>(HttpStatus.OK);
@@ -89,9 +93,10 @@ public class PlayerRESTController {
     }
 
     /**
-     * Deletes the player with the given JWT
+     * Deletes the requesting player.
      *
-     * @return 200 OK if the player is successfully deleted, otherwise 400
+     * @return 200 OK if the player is successfully deleted. 400 BAD REQUEST if some problems occurred while trying to
+     * update the database or if the player isn't in the database
      */
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public ResponseEntity<String> deletePlayer() {

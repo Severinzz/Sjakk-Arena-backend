@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+/**
+ * Handles requests from tournaments that don't have a token to identify them. All methods in this class will return a
+ * token to the user.
+ */
 @RestController
 public class UnauthenticatedTournamentRESTController {
 
@@ -23,7 +27,7 @@ public class UnauthenticatedTournamentRESTController {
      *
      * @param tournament tournament
      * @return HTTP status 200 ok if successfully added + jwt and tournamentID,
-     * HTTP status 422 UNPROCESSABLE_ENTITY otherwise
+     * HTTP status 400 BAD REQUEST if database couldn't be updated properly or the input isn't correctly
      */
     @RequestMapping(value = "/new-tournament", method = RequestMethod.POST)
     public ResponseEntity<String> registerTournament(@Valid @RequestBody Tournament tournament) {

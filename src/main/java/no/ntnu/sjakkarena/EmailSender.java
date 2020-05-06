@@ -7,14 +7,19 @@ import org.springframework.stereotype.Component;
 
 import java.util.Properties;
 
-
+/**
+ * Sends emails
+ */
 @Component
 public class EmailSender {
 
     private JavaMailSender emailSender;
 
+    /**
+     * Constructs an email sender
+     * Code from https://www.baeldung.com/spring-email
+     */
     public EmailSender() {
-        // Code from https://www.baeldung.com/spring-email
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
@@ -31,8 +36,15 @@ public class EmailSender {
         emailSender = mailSender;
     }
 
+    /**
+     * Sends email
+     * Code from https://www.baeldung.com/spring-email
+     *
+     * @param to      The recipient of the email
+     * @param subject The subject of the email
+     * @param text    The text content of the email
+     */
     public void sendEmail(String to, String subject, String text) {
-        // Code from https://www.baeldung.com/spring-email
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(subject);

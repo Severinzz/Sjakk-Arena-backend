@@ -13,7 +13,7 @@ public class Game {
     private String end;
     private int whitePlayerId;
     private int blackPlayerId;
-    private Integer whitePlayerPoints;
+    private double whitePlayerPoints;
     private boolean active;
     private boolean validResult;
 
@@ -30,7 +30,7 @@ public class Game {
     }
 
     protected Game(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId,
-                   Integer whitePlayerPoints, boolean active, boolean validResult) {
+                   double whitePlayerPoints, boolean active, boolean validResult) {
         this.gameId = gameId;
         this.table = table;
         this.start = start;
@@ -70,7 +70,7 @@ public class Game {
      * @return a Game with the same fields/attributes as in the database.
      */
     public static Game asInDatabase(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId,
-                                    Integer whitePlayerPoints, boolean active, boolean validResult) {
+                                    double whitePlayerPoints, boolean active, boolean validResult) {
         return new Game(gameId, table, start, end, whitePlayerId, blackPlayerId, whitePlayerPoints, active, validResult);
     }
 
@@ -135,11 +135,11 @@ public class Game {
     }
 
     @JsonProperty("white_player_points")
-    public Integer getWhitePlayerPoints() {
+    public double getWhitePlayerPoints() {
         return whitePlayerPoints;
     }
 
-    public void setWhitePlayerPoints(int whitePlayerPoints) {
+    public void setWhitePlayerPoints(double whitePlayerPoints) {
         this.whitePlayerPoints = whitePlayerPoints;
     }
 
