@@ -25,6 +25,8 @@ public class FileStorageService {
     @Autowired
     private PlayersGameService playersGameService;
 
+    public String basePath = "C:\\Sjakk-Arena\\endPositions\\";  // kan nok være problematisk for andre os
+
 
     public void uploadFile(MultipartFile file, int playerId) throws IOException, IllegalStateException, NullPointerException {
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
@@ -33,7 +35,7 @@ public class FileStorageService {
             if (fileName.contains("..")) {
                 throw new FileSystemException("Invalid name!");
             }
-            Path path = Paths.get("C:\\Sjakk-Arena\\endPositions\\" + fileName);
+            Path path = Paths.get(basePath + fileName);
             Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
             fileToDB(fileName, playerId);
@@ -47,6 +49,10 @@ public class FileStorageService {
         String timeUploaded = LocalDateTime.now().toString();
         Image image = new Image(filename, gameId, playerId, timeUploaded);
         imageFileRepository.addNewImage(image);
+    }
+
+    public Boolean gameHasImages(int gameId) {
+
     }
 
 }

@@ -31,6 +31,22 @@ public class FileController {
         } catch (MultipartException e) {
             throw new MultipartException(e + " Ikke en multipartfil.");
         }
+    }
 
+    @RequestMapping(value = "/playerFile/Download/{ gameId }", method = RequestMethod.GET)
+    public ResponseEntity downloadFiles(PathVariable int gameId) {
+
+
+        Path path = Paths.get(fileBasePath + fileName);
+        Resource resource = null;
+        try {
+            resource = new UrlResource(path.toUri());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
     }
 }

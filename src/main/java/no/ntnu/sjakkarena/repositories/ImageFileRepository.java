@@ -1,9 +1,12 @@
 package no.ntnu.sjakkarena.repositories;
 
 import no.ntnu.sjakkarena.data.Image;
+import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
+import no.ntnu.sjakkarena.mappers.ImageRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -20,6 +23,8 @@ public class ImageFileRepository {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    private ImageRowMapper imageRowMapper;
 
     /**
      * Adds a image name to the database
@@ -48,6 +53,19 @@ public class ImageFileRepository {
             throw new TroubleUpdatingDBException("Could not add image to database. Possible reasons: \n" +
                     "1. Image is already registered in database \n" +
                     "2. Name/value pairs in JSON are missing");
+        }
+    }
+
+    /**
+     * Find names of images belonging to specified game
+     * @param gameId id of game to find images for
+     */
+    public Image findImagesToGameId(int gameId) {
+        String sql = "SELECT fileName FROM sjakkarena.image WHERE gameId = " + gameId +"";
+        try {
+            jdbcTemplate.queryForObject(sql, imageRowMapper);
+        } catch (IncorrectResultSizeDataAccessException e) {
+            throw new NotInDatabaseException("This game does not have any images.");
         }
     }
 
