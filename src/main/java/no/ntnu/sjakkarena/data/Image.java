@@ -17,7 +17,7 @@ public class Image {
     private String timeUploaded;
     private String filename;
 
-    private Image(int imageId, int gameId, int playerId, String timeUploaded, String filename) {
+    public Image(int imageId, int gameId, int playerId, String timeUploaded, String filename) {
         this.imageId = imageId;
         this.gameId = gameId;
         this.playerId = playerId;

@@ -18,8 +18,8 @@ public class ImageRowMapper implements RowMapper<Image> {
      */
     @Override
     public Image mapRow(ResultSet rs, int i) throws SQLException {
-        Image image = new Image(rs.getInt("image_id"), rs.getString("fileName"),
-                rs.getInt("gameId"), rs.getInt("playerId"), rs.getString("timeUploaded");
+        Image image = new Image(rs.getInt("image_id"), rs.getInt("gameId"),
+                 rs.getInt("playerId"), rs.getString("timeUploaded"),  rs.getString("fileName"));
         return image;
     }
 }
