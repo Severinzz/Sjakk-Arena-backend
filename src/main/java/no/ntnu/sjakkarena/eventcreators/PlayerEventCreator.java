@@ -43,11 +43,12 @@ public class PlayerEventCreator {
     /**
      * Creates and publishes an event where a player have been removed from a tournament
      *
-     * @param playerId The id of the removed player
-     * @param message  The message sent to the removed player
+     * @param playerId  The id of the removed player
+     * @param message   The message sent to the removed player
+     * @param wasKicked A boolean value to tell if the player was kicked.
      */
-    public void createAndSendPlayerRemovedEvent(int playerId, String message) {
-        PlayerRemovedEvent playerRemovedEvent = new PlayerRemovedEvent(this, playerId, message);
+    public void createAndSendPlayerRemovedEvent(int playerId, String message, Boolean wasKicked) {
+        PlayerRemovedEvent playerRemovedEvent = new PlayerRemovedEvent(this, playerId, message, wasKicked);
         applicationEventPublisher.publishEvent(playerRemovedEvent);
     }
 
