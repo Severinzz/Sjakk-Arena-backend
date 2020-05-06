@@ -9,7 +9,6 @@ import no.ntnu.sjakkarena.events.gameevents.ValidResultAddedEvent;
 import no.ntnu.sjakkarena.events.playerevents.PlayerRemovedEvent;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.exceptions.NotSubscribingException;
-import no.ntnu.sjakkarena.restcontrollers.PushNotificationRESTController;
 import no.ntnu.sjakkarena.services.player.PlayersGameService;
 import no.ntnu.sjakkarena.MessageSender;
 import no.ntnu.sjakkarena.utils.WebSocketSession;
@@ -34,9 +33,6 @@ public class PlayersGameController {
 
     @Autowired
     private JSONCreator jsonCreator;
-
-    @Autowired
-    private PushNotificationRESTController pushNotificationRESTController;
 
 
 
@@ -153,8 +149,6 @@ public class PlayersGameController {
     private void sendGame(Game game, int playerId) {
         try {
             messageSender.sendToSubscriber(playerId, "/queue/player/active-game",
-                    jsonCreator.filterGameInformationAndReturnAsJson(game, playerId));
-            pushNotificationRESTController.sendPushNotification(playerId,
                     jsonCreator.filterGameInformationAndReturnAsJson(game, playerId));
         } catch (NotSubscribingException e) {
             e.printStackTrace();

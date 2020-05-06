@@ -24,8 +24,8 @@ public class EmailSender {
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
 
-        mailSender.setUsername("YOUR_MAIL_ADRESS");
-        mailSender.setPassword("YOUR_PASSWORD");
+        mailSender.setUsername(System.getenv("SJAKK_ARENA_EMAIL_ADRESS"));
+        mailSender.setPassword(System.getenv("SJAKK_ARENA_EMAIL_ADRESS_PASSWORD"));
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
