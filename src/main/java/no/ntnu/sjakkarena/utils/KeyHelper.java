@@ -1,13 +1,9 @@
 package no.ntnu.sjakkarena.utils;
 
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import no.ntnu.sjakkarena.data.SymmetricKey;
+import org.springframework.http.converter.HttpMessageConversionException;
+import org.springframework.vault.support.VaultResponseSupport;
 
-import javax.crypto.SecretKey;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.Key;
 
 
@@ -16,8 +12,7 @@ import java.security.Key;
  */
 public class KeyHelper {
 
-    private static SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private static String secretKeyFileName = "secretKey.txt";
+    private static SymmetricKey key = new SymmetricKey();
 
     /**
      * Returns a secret key
@@ -25,47 +20,19 @@ public class KeyHelper {
      * @return a secret key
      */
     public static Key getKey() {
-        return readKeyFromFile(secretKeyFileName);
+        VaultResponseSupport<SymmetricKey> response = Vault.read("symmetric", SymmetricKey.class);
+        return response.getData();
     }
 
     /**
-     * Writes a secret key to a file
+     * Creates and stores a secret key
      */
-    public static void writeKeyToFile() {
+    public static void createAndStoreKey() {
         try {
-            Path path = Paths.get(secretKeyFileName);
-            if (!Files.exists(path)) {
-                FileOutputStream fileOutputStream = new FileOutputStream(new File(secretKeyFileName));
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-                objectOutputStream.writeObject(key);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            getKey();
+        } catch (HttpMessageConversionException | NullPointerException e){
+            Vault.write("symmetric", key);
         }
-    }
-
-    /**
-     * Reads a key from a file
-     *
-     * @param filename the file to read the key from
-     * @return a key from a file
-     */
-    public static Key readKeyFromFile(String filename) {
-        Key readKey = null;
-        try {
-            FileInputStream fileInputStream = new FileInputStream(new File(filename));
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            readKey = (Key) objectInputStream.readObject();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return readKey;
     }
 
     /**

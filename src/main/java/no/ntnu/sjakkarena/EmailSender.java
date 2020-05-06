@@ -1,5 +1,7 @@
 package no.ntnu.sjakkarena;
 
+import no.ntnu.sjakkarena.data.EmailAccount;
+import no.ntnu.sjakkarena.utils.Vault;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -24,8 +26,9 @@ public class EmailSender {
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
 
-        mailSender.setUsername("YOUR_MAIL_ADRESS");
-        mailSender.setPassword("YOUR_PASSWORD");
+        EmailAccount emailAccount = Vault.read("email", EmailAccount.class).getData();
+        mailSender.setUsername(emailAccount.getEmail());
+        mailSender.setPassword(emailAccount.getPassword());
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
