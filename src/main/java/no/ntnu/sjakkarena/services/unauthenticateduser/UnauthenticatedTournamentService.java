@@ -116,7 +116,7 @@ public class UnauthenticatedTournamentService {
         hashAdminUUID(tournament);
         tournamentRepository.addNewTournament(tournament);
         scheduleTournamentTasks(tournament);
-        // sendEmailToTournamentAdmin(tournament); //Remove comment to send email
+        sendEmailToTournamentAdmin(tournament); //Remove comment to send email
         return jsonCreator.createResponseToNewTournament(tournament);
     }
 
