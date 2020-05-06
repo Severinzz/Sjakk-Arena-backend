@@ -21,7 +21,7 @@ public class FileController {
     FileStorageService storageService;
 
     @RequestMapping(value = "/playerFile/Upload", method = RequestMethod.POST)
-    public ResponseEntity uploadFile(@RequestParam("image")MultipartFile file) throws IOException {
+    public ResponseEntity uploadFile(@RequestParam("Image")MultipartFile file) throws IOException {
         try {
             int playerId = RESTSession.getUserId();
             storageService.uploadFile(file, playerId);
