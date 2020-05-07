@@ -88,7 +88,7 @@ public class PlayerService {
      * @param playerId The id of the player who left the tournament
      */
     private void onPlayerLeftTournament(int playerId) {
-        playerEventCreator.createAndSendPlayerRemovedEvent(playerId, "");
+        playerEventCreator.createAndSendPlayerRemovedEvent(playerId, "", false);
         Player player = playerRepository.getPlayer(playerId);
         gameCreator.createAndPublishNewGames(player.getTournamentId(), new AfterTournamentStartAdaptedMonrad());
     }
