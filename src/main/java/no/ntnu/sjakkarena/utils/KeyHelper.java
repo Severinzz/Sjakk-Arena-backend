@@ -1,6 +1,6 @@
 package no.ntnu.sjakkarena.utils;
 
-import no.ntnu.sjakkarena.data.SymmetricKey;
+import no.ntnu.sjakkarena.data.EncryptionKey;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.vault.support.VaultResponseSupport;
 
@@ -12,7 +12,7 @@ import java.security.Key;
  */
 public class KeyHelper {
 
-    private static SymmetricKey key = new SymmetricKey();
+    private static EncryptionKey key = new EncryptionKey();
 
     /**
      * Returns a secret key
@@ -20,7 +20,7 @@ public class KeyHelper {
      * @return a secret key
      */
     public static Key getKey() {
-        VaultResponseSupport<SymmetricKey> response = Vault.read("symmetric", SymmetricKey.class);
+        VaultResponseSupport<EncryptionKey> response = Vault.read("symmetric", EncryptionKey.class);
         return response.getData();
     }
 

@@ -8,7 +8,7 @@ import javax.crypto.SecretKey;
 /**
  * Represents a symmetric key.
  */
-public class SymmetricKey implements SecretKey {
+public class EncryptionKey implements SecretKey {
 
     private String algorithm;
     private String format;
@@ -18,7 +18,7 @@ public class SymmetricKey implements SecretKey {
     /**
      * Constructs a symmetric key
      */
-    public SymmetricKey(){
+    public EncryptionKey(){
         SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
         this.algorithm = secretKey.getAlgorithm();
         this.format = secretKey.getFormat();
