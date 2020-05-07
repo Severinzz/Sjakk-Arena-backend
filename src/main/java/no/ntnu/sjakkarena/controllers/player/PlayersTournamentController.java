@@ -3,6 +3,8 @@ package no.ntnu.sjakkarena.controllers.player;
 import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.events.tournamentevents.TournamentEndedEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TournamentPausedEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TournamentResumedEvent;
 import no.ntnu.sjakkarena.events.tournamentevents.TournamentStartedEvent;
 import no.ntnu.sjakkarena.exceptions.NotSubscribingException;
 import no.ntnu.sjakkarena.services.player.PlayersTournamentService;
@@ -65,6 +67,32 @@ public class PlayersTournamentController {
     public void onTournamentEnd(TournamentEndedEvent tournamentEndedEvent) {
         for (Player player : tournamentEndedEvent.getPlayers()) {
             informPlayerAboutTournamentState(player.getId(), false);
+        }
+    }
+
+    /**
+     * Responds to an event where a tournament has been paused.
+     * Notifies players about the pause of the tournament.
+     *
+     * @param tournamentPausedEvent An event where a tournament has been paused.
+     */
+    @EventListener
+    public void onTournamentPaused(TournamentPausedEvent tournamentPausedEvent){
+        for (Player player : tournamentPausedEvent.getPlayers()){
+            informPlayerAboutTournamentState(player.getId(), false);
+        }
+    }
+
+    /**
+     * Responds to an event where a tournament has resumed.
+     * Notifies players that the tournament is being resumed.
+     *
+     * @param tournamentResumedEvent An event where a tournament has resumed.
+     */
+    @EventListener
+    public void onTournamentResumed(TournamentResumedEvent tournamentResumedEvent){
+        for (Player player : tournamentResumedEvent.getPlayers()){
+            informPlayerAboutTournamentState(player.getId(), true);
         }
     }
 

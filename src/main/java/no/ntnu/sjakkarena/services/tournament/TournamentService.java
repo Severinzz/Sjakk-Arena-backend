@@ -1,6 +1,7 @@
 package no.ntnu.sjakkarena.services.tournament;
 
 import no.ntnu.sjakkarena.GameCreator;
+import no.ntnu.sjakkarena.adaptedmonrad.AfterTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.adaptedmonrad.AtTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.data.Tournament;
 import no.ntnu.sjakkarena.eventcreators.TournamentEventCreator;
@@ -125,9 +126,20 @@ public class TournamentService {
     public void pauseTournament(int tournamentId) {
         try {
             tournamentRepository.inactivate(tournamentId);
+            onPauseTournament(tournamentId);
         } catch (TroubleUpdatingDBException e) {
             throw e;
         }
+    }
+
+    /**
+     * Executes necessary tasks when a tournament has been paused:
+     * - Creates and publishes event
+     *
+     * @param tournamentId The id of the paused tournament
+     */
+    private void onPauseTournament(int tournamentId){
+        tournamentEventCreator.createAndPublishTournamentPausedEvent(tournamentId);
     }
 
     /**
@@ -138,8 +150,20 @@ public class TournamentService {
     public void unpauseTournament(int tournamentId) {
         try {
             tournamentRepository.activate(tournamentId);
+            onTournamentResume(tournamentId);
         } catch (TroubleUpdatingDBException e) {
             throw e;
         }
+    }
+
+    /**
+     * Executes necessary tasks when a tournament has been paused:
+     * - Creates and publishes event
+     * - Creates and publishes games
+     * @param tournamentId The id of the resumed tournament
+     */
+    private void onTournamentResume(int tournamentId){
+        tournamentEventCreator.createAndPublishTournamentResumedEvent(tournamentId);
+        gameCreator.createAndPublishNewGames(tournamentId, new AfterTournamentStartAdaptedMonrad());
     }
 }
