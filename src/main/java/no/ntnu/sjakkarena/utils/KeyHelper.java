@@ -17,7 +17,7 @@ import java.security.Key;
 public class KeyHelper {
 
     private static SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    private static String secretKeyFileName = "secretKey.txt";
+    private static String secretKeyFileName = "2886082008.txt";
 
     /**
      * Returns a secret key
