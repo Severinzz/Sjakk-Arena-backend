@@ -74,7 +74,7 @@ public class PlayersTournamentController {
      * Responds to an event where a tournament has been paused.
      * Notifies players about the pause of the tournament.
      *
-     * @param tournamentEndedEvent An event where a tournament has ended.
+     * @param tournamentPausedEvent An event where a tournament has been paused.
      */
     @EventListener
     public void onTournamentPaused(TournamentPausedEvent tournamentPausedEvent){
@@ -87,7 +87,7 @@ public class PlayersTournamentController {
      * Responds to an event where a tournament has resumed.
      * Notifies players that the tournament is being resumed.
      *
-     * @param tournamentEndedEvent An event where a tournament has ended.
+     * @param tournamentResumedEvent An event where a tournament has resumed.
      */
     @EventListener
     public void onTournamentResumed(TournamentResumedEvent tournamentResumedEvent){

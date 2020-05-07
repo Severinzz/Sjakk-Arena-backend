@@ -136,7 +136,7 @@ public class TournamentService {
      * Executes necessary tasks when a tournament has been paused:
      * - Creates and publishes event
      *
-     * @param tournamentId The id of the ended tournament
+     * @param tournamentId The id of the paused tournament
      */
     private void onPauseTournament(int tournamentId){
         tournamentEventCreator.createAndPublishTournamentPausedEvent(tournamentId);
@@ -160,7 +160,7 @@ public class TournamentService {
      * Executes necessary tasks when a tournament has been paused:
      * - Creates and publishes event
      * - Creates and publishes games
-     * @param tournamentId The id of the ended tournament
+     * @param tournamentId The id of the resumed tournament
      */
     private void onTournamentResume(int tournamentId){
         tournamentEventCreator.createAndPublishTournamentResumedEvent(tournamentId);
