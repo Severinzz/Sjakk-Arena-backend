@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 
 @Repository
@@ -60,10 +61,11 @@ public class ImageFileRepository {
      * Find names of images belonging to specified game
      * @param gameId id of game to find images for
      */
-    public Image findImagesToGameId(int gameId) {
-        String sql = "SELECT fileName FROM sjakkarena.image WHERE gameId = " + gameId +"";
+    public List<Image> findImagesToGameId(int gameId) {
         try {
-            jdbcTemplate.queryForObject(sql, imageRowMapper);
+            List<Image> images = jdbcTemplate.query("CALL get_images_from_game(" + gameId + ")", imageRowMapper);
+            System.out.println("Fant bilde: " + images);
+            return images;
         } catch (IncorrectResultSizeDataAccessException e) {
             throw new NotInDatabaseException("This game does not have any images.");
         }

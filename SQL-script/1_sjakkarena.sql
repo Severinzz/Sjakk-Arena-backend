@@ -344,6 +344,19 @@ END//
 DELIMITER ;
 
 -- -----------------------------------------------------
+--  get_game_images
+-- -----------------------------------------------------
+DROP PROCEDURE IF EXISTS sjakkarena.get_images_from_game;
+DELIMITER //
+CREATE PROCEDURE sjakkarena.get_images_from_game(IN gameId INT(11))
+BEGIN
+    SELECT DISTINCT `Image`.`fileName`
+    FROM `sjakkarena`.`image`
+    WHERE `image`.`gameId` = gameId;
+end //
+
+
+-- -----------------------------------------------------
 --  get_leader_board
 -- -----------------------------------------------------
 DROP PROCEDURE IF EXISTS sjakkarena.get_leader_board;

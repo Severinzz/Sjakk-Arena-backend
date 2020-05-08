@@ -6,12 +6,12 @@ import no.ntnu.sjakkarena.services.player.PlayersGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 // adapted from: https://www.callicoder.com/spring-boot-file-upload-download-jpa-hibernate-mysql-database-example/
@@ -39,8 +39,8 @@ public class FileStorageService {
             Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
             fileToDB(fileName, playerId);
-        } catch (IOException | NullPointerException | MultipartException e) {
-            throw new MultipartException(e + " Bitch");
+        } catch (IOException | NullPointerException e) {
+            throw new IOException(e);
         }
     }
 
@@ -51,8 +51,12 @@ public class FileStorageService {
         imageFileRepository.addNewImage(image);
     }
 
-    public Boolean gameHasImages(int gameId) {
-
+    public List<Image> fetchGameImages(int gameId) {
+        List<Image> images = imageFileRepository.findImagesToGameId(gameId);
+        for (int i = 0; i < images.size(); i++) {
+            System.out.println("Fant bilde: " + images);
+        }
+        return images;
     }
 
 }
