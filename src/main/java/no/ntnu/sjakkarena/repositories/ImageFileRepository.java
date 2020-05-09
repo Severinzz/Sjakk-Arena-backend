@@ -9,6 +9,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -25,7 +26,7 @@ public class ImageFileRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private ImageRowMapper imageRowMapper;
+    private RowMapper<Image> imageRowMapper = new ImageRowMapper();
 
     /**
      * Adds a image name to the database
@@ -62,9 +63,10 @@ public class ImageFileRepository {
      * @param gameId id of game to find images for
      */
     public List<Image> findImagesToGameId(int gameId) {
+        String sql = "select fileName from `sjakkarena`.`image`" +
+                " where gameId = " + gameId;
         try {
-            List<Image> images = jdbcTemplate.query("CALL get_images_from_game(" + gameId + ")", imageRowMapper);
-            System.out.println("Fant bilde: " + images);
+            List<Image> images = jdbcTemplate.query(sql, imageRowMapper);
             return images;
         } catch (IncorrectResultSizeDataAccessException e) {
             throw new NotInDatabaseException("This game does not have any images.");

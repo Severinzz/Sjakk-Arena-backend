@@ -3,18 +3,26 @@ package no.ntnu.sjakkarena.data;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import java.io.IOException;
 
 /**
  * Class represents images uploaded to application.
  */
+@Entity
 public class Image {
-    private int imageId;
+    @javax.persistence.Id
+    private Integer imageId;
     @JsonAlias ("game")
+    @Column
     private int gameId;
     @JsonAlias ("player")
+    @Column
     private int playerId;
+    @Column
     private String timeUploaded;
+    @Column
     private String filename;
 
     public Image(int imageId, int gameId, int playerId, String timeUploaded, String filename) {
@@ -37,6 +45,8 @@ public class Image {
     }
 
     public String getFilename() { return filename; }
+
+    public void setFileName(String fileName) { this.filename = fileName; }
 
     @JsonAlias("time_uploaded")
     public String getTimeUploaded() {
@@ -73,4 +83,5 @@ public class Image {
     public void setId(int imageId) {
         this.imageId = imageId;
     }
+
 }
