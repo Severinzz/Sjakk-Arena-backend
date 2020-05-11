@@ -1,5 +1,7 @@
 package no.ntnu.sjakkarena.exceptions;
 
+// code from: https://github.com/spring-guides/gs-uploading-files
+
 public class StorageException extends RuntimeException {
     /**
      * Constructs a StorageException with a message
