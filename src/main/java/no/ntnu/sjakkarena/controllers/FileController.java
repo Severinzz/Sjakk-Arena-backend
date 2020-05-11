@@ -1,6 +1,7 @@
 package no.ntnu.sjakkarena.controllers;
 
 import no.ntnu.sjakkarena.data.Image;
+import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.services.FileStorageService;
 import no.ntnu.sjakkarena.services.player.PlayersGameService;
 import no.ntnu.sjakkarena.utils.RESTSession;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -47,11 +49,13 @@ public class FileController {
 
     @RequestMapping(value = "/playerFile/Download/{gameId}", method = RequestMethod.GET, produces="application/zip")
     public void downloadFiles(@PathVariable ("gameId") int gameId, HttpServletResponse response) throws IOException {
-        List<Image> images = storageService.fetchGameImages(gameId);
+        try {
+            List<Image> images = storageService.fetchGameImages(gameId);
+
         ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream());
         for (Image image : images) {
             FileSystemResource resource = new FileSystemResource(storageService.getPath() + "\\" + image.getFilename());
-            ZipEntry zipEntry = new ZipEntry(resource.getFilename());
+            ZipEntry zipEntry = new ZipEntry(Objects.requireNonNull(resource.getFilename()));
             zipEntry.setSize(resource.contentLength());
             zipOut.putNextEntry(zipEntry);
             StreamUtils.copy(resource.getInputStream(), zipOut);
@@ -59,7 +63,11 @@ public class FileController {
         }
         zipOut.finish();
         zipOut.close();
+
         response.setStatus(HttpServletResponse.SC_OK);
-        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "Game " + gameId + " images" + "\"");
+        response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; Zip containing images.");
+        } catch (NotInDatabaseException e) {
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
     }
 }

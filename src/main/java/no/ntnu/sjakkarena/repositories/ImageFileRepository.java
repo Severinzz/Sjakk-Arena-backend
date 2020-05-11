@@ -67,6 +67,9 @@ public class ImageFileRepository {
                 " where gameId = " + gameId;
         try {
             List<Image> images = jdbcTemplate.query(sql, imageRowMapper);
+            if (images.size() == 0) { // Prevent application from sending empty zip-file
+                throw new NotInDatabaseException("This game does not have any images");
+            }
             return images;
         } catch (IncorrectResultSizeDataAccessException e) {
             throw new NotInDatabaseException("This game does not have any images.");
