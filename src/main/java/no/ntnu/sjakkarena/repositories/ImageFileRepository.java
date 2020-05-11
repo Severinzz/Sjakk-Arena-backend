@@ -63,7 +63,7 @@ public class ImageFileRepository {
      * @param gameId id of game to find images for
      */
     public List<Image> findImagesToGameId(int gameId) {
-        String sql = "select fileName from `sjakkarena`.`image`" +
+        String sql = "select * from `sjakkarena`.`image`" +
                 " where gameId = " + gameId;
         try {
             List<Image> images = jdbcTemplate.query(sql, imageRowMapper);

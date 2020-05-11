@@ -30,9 +30,7 @@ public class FileStorageService {
     @Autowired
     private PlayersGameService playersGameService;
 
-    public String basePath = "C:\\Sjakk-Arena\\endPositions\\";  // kan nok være problematisk for andre os
-
-    private Path rootLocation;
+    private Path rootLocation; // Specific path for upload folder, irrelevant of OS.
 
     @Autowired
     public void FileSystemStorageService(StorageProperties properties) {
@@ -54,8 +52,8 @@ public class FileStorageService {
                 // This is a security check
                 throw new StorageException("Cannot store file outside current directory.");
             }
-            Files.copy(file.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
 
+            Files.copy(file.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
             fileToDB(fileName, playerId);
         } catch (IOException | NullPointerException e) {
             throw new IOException(e);
@@ -75,6 +73,10 @@ public class FileStorageService {
             System.out.println("Fant bilde: " + images);
         }
         return images;
+    }
+
+    public String getPath() {
+        return rootLocation.toString();
     }
 
     public Path load(String filename) {

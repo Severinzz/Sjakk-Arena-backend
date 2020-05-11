@@ -17,8 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -34,25 +32,8 @@ public class FileController {
     @Autowired
     private PlayersGameService playersGameService;
 
-    public String basePath = "C:\\Sjakk-Arena\\endPositions\\";
-
     @RequestMapping(value = "/playerFile/Upload", method = RequestMethod.POST)
     public ResponseEntity uploadFile(@RequestParam("Image")MultipartFile file) throws IOException {
-//        Image image = new Image();
-//        int playerId = RESTSession.getUserId();
-//        String timeUploaded = LocalDateTime.now().toString();
-//        int gameId = playersGameService.getActiveGameId(playerId);
-//        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-//        image.setTimeUploaded(timeUploaded);
-//        image.setFileName(fileName);
-//        image.setPlayerId(playerId);
-//        image.setGameId(gameId);
-//        DocumentDAO.save(image);
-//        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-//                .path("/files/download/")
-//                .path(fileName).path("/db")
-//                .toUriString();
-//        return ResponseEntity.ok(fileDownloadUri);
         try {
             int playerId = RESTSession.getUserId();
             storageService.saveFile(file, playerId);
@@ -67,10 +48,9 @@ public class FileController {
     @RequestMapping(value = "/playerFile/Download/{gameId}", method = RequestMethod.GET, produces="application/zip")
     public void downloadFiles(@PathVariable ("gameId") int gameId, HttpServletResponse response) throws IOException {
         List<Image> images = storageService.fetchGameImages(gameId);
-        Path path = Paths.get(basePath + images);
         ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream());
         for (Image image : images) {
-            FileSystemResource resource = new FileSystemResource(basePath + image.getFilename());
+            FileSystemResource resource = new FileSystemResource(storageService.getPath() + "\\" + image.getFilename());
             ZipEntry zipEntry = new ZipEntry(resource.getFilename());
             zipEntry.setSize(resource.contentLength());
             zipOut.putNextEntry(zipEntry);

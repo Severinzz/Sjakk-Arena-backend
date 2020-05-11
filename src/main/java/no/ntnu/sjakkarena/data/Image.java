@@ -21,15 +21,15 @@ public class Image {
     @Column
     private int playerId;
     @Column
-    private String timeUploaded;
+    private String time_uploaded; // variable needs to be named as sql column to be found.
     @Column
     private String filename;
 
-    public Image(int imageId, int gameId, int playerId, String timeUploaded, String filename) {
+    public Image(int imageId, int gameId, int playerId, String time_uploaded, String filename) {
         this.imageId = imageId;
         this.gameId = gameId;
         this.playerId = playerId;
-        this.timeUploaded = timeUploaded;
+        this.time_uploaded = time_uploaded;
         this.filename = filename;
     }
 
@@ -38,7 +38,7 @@ public class Image {
         // this.data = file.getBytes();
         this.gameId = gameId;
         this.playerId = playerId;
-        this.timeUploaded = timeUploaded;
+        this.time_uploaded = timeUploaded;
     }
 
     public Image() {
@@ -50,11 +50,11 @@ public class Image {
 
     @JsonAlias("time_uploaded")
     public String getTimeUploaded() {
-        return timeUploaded;
+        return time_uploaded;
     }
 
     public void setTimeUploaded(String timeUploaded) {
-        this.timeUploaded = timeUploaded;
+        this.time_uploaded = timeUploaded;
     }
 
     @JsonProperty("player_id")
