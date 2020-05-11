@@ -55,7 +55,7 @@ public class FileController {
 //        return ResponseEntity.ok(fileDownloadUri);
         try {
             int playerId = RESTSession.getUserId();
-            storageService.uploadFile(file, playerId);
+            storageService.saveFile(file, playerId);
             return new ResponseEntity(HttpStatus.OK);
         } catch (FileNotFoundException e) {
             throw new FileNotFoundException("image: " + file + " was not found." + e);
@@ -81,16 +81,5 @@ public class FileController {
         zipOut.close();
         response.setStatus(HttpServletResponse.SC_OK);
         response.addHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "Game " + gameId + " images" + "\"");
-/*        for (int i = 0; i < images.size(); i++) {
-            try {
-                resource = new UrlResource(path.toUri());
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-        }*/
-        /*return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType("image/jpeg"))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);*/
     }
 }
