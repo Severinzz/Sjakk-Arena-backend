@@ -6,14 +6,11 @@ import no.ntnu.sjakkarena.exceptions.StorageException;
 import no.ntnu.sjakkarena.repositories.ImageFileRepository;
 import no.ntnu.sjakkarena.services.player.PlayersGameService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,6 +34,14 @@ public class FileStorageService {
         this.rootLocation = Paths.get(properties.getLocation());
     }
 
+    /**
+     * Saves a file to local and registers to database
+     * @param file file to save
+     * @param playerId id of player uploading.
+     * @throws IOException
+     * @throws IllegalStateException
+     * @throws NullPointerException
+     */
     public void saveFile(MultipartFile file, int playerId) throws IOException, IllegalStateException, NullPointerException {
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         try {
@@ -60,6 +65,12 @@ public class FileStorageService {
         }
     }
 
+    /**
+     * Input file details to database
+     * @param filename name of file
+     * @param playerId id of player uploading file
+     * @throws IOException
+     */
     private void fileToDB (String filename, int playerId) throws IOException {
         int gameId = playersGameService.getActiveGameId(playerId);
         String timeUploaded = LocalDateTime.now().toString();
@@ -67,38 +78,21 @@ public class FileStorageService {
         imageFileRepository.addNewImage(image);
     }
 
+    /**
+     * Gets images belonging to game
+     * @param gameId id of game to find images for.
+     * @return list of images belonging to game
+     */
     public List<Image> fetchGameImages(int gameId) {
         List<Image> images = imageFileRepository.findImagesToGameId(gameId);
-        for (int i = 0; i < images.size(); i++) {
-            System.out.println("Fant bilde: " + images);
-        }
         return images;
     }
 
+    /**
+     * Gets the path for folder to upload
+     * @return path of folder
+     */
     public String getPath() {
         return rootLocation.toString();
     }
-
-    public Path load(String filename) {
-        return rootLocation.resolve(filename);
-    }
-
-    public Resource loadAsResource(String filename) {
-        try {
-            Path file = load(filename);
-            Resource resource = new UrlResource(file.toUri());
-            if (resource.exists() || resource.isReadable()) {
-                return resource;
-            }
-            else {
-                throw new StorageException(
-                        "Could not read file: " + filename);
-
-            }
-        }
-        catch (MalformedURLException e) {
-            throw new StorageException("Could not read file: " + filename, e);
-        }
-    }
-
 }
