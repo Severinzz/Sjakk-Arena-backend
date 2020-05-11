@@ -59,7 +59,7 @@ public class ChessmenColorDistributor {
             chessmenColorDistribution = distributeBasedOnWhiteGameRatio(player1, player2);
         } else {
             Player nextWhite = player1.getLastPlayedColor().equals("black") ? player1 : player2;
-            Player nextBlack = player1.getLastPlayedColor().equals("white") ? player1 : player2;
+            Player nextBlack = nextWhite == player1 ? player2 : player1;
             chessmenColorDistribution = new ChessmenColorDistribution(nextWhite, nextBlack);
         }
         return chessmenColorDistribution;

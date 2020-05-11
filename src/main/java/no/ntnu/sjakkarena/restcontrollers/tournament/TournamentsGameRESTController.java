@@ -2,6 +2,7 @@ package no.ntnu.sjakkarena.restcontrollers.tournament;
 
 import no.ntnu.sjakkarena.JSONCreator;
 import no.ntnu.sjakkarena.data.Game;
+import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.services.tournament.TournamentsGameService;
 import no.ntnu.sjakkarena.utils.RESTSession;
@@ -57,5 +58,22 @@ public class TournamentsGameRESTController {
     public ResponseEntity<String> getGames() {
         Collection<? extends Game> games = tournamentsGameService.getGames(RESTSession.getUserId());
         return new ResponseEntity<>(jsonCreator.writeValueAsString(games), HttpStatus.OK);
+    }
+
+    /**
+     * Returns the specified player's inactive games
+     *
+     * @param playerId The id of the player
+     * @return the specified player's inactive games + 200 OK.
+     */
+    @RequestMapping(value="/inactive/{playerId}", method = RequestMethod.GET)
+    public ResponseEntity<String> getInactiveGames(@PathVariable("playerId") int playerId){
+        try {
+            Collection<? extends Game> inactiveGames = tournamentsGameService.getPlayersInactiveGames(playerId);
+            return new ResponseEntity<>(jsonCreator.filterGameInformationAndReturnAsJson(inactiveGames, playerId),
+                    HttpStatus.OK);
+        } catch(NotInDatabaseException e){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
     }
 }

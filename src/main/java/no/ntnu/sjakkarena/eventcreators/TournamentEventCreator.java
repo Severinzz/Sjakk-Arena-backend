@@ -2,7 +2,9 @@ package no.ntnu.sjakkarena.eventcreators;
 
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.events.tournamentevents.TournamentEndedEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TournamentPausedEvent;
 import no.ntnu.sjakkarena.events.tournamentevents.TournamentStartedEvent;
+import no.ntnu.sjakkarena.events.tournamentevents.TournamentResumedEvent;
 import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -43,5 +45,14 @@ public class TournamentEventCreator {
         applicationEventPublisher.publishEvent((new TournamentEndedEvent(this, tournamentId, players)));
     }
 
+    public void createAndPublishTournamentPausedEvent(int tournamentId){
+        List<Player> players = playerRepository.getPlayersInTournament(tournamentId);
+        applicationEventPublisher.publishEvent((new TournamentPausedEvent(this, tournamentId, players)));
+    }
+
+    public void createAndPublishTournamentResumedEvent(int tournamentId){
+        List<Player> players = playerRepository.getPlayersInTournament(tournamentId);
+        applicationEventPublisher.publishEvent((new TournamentResumedEvent(this, tournamentId, players)));
+    }
 
 }

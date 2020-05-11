@@ -37,17 +37,17 @@ public class TournamentRepository {
         if (tournament.getEnd() == null) {
             values = DBInteractionHelper.toValuesString(tournament.getId(),
                     tournament.getTournamentName(), tournament.getAdminEmail(), tournament.getStart(),
-                    tournament.getTables(), tournament.getMaxRounds(), tournament.getAdminUUID(),
-                    tournament.isEarlyStart());
+                    tournament.getTables(), tournament.getMaxRounds(), tournament.getHashedAdminUUID(),
+                    tournament.isEarlyStart(), tournament.getSalt());
             attributes = "(`tournament_id`, `tournament_name`, `admin_email`, `start`, " +
-                    "`tables`, `max_rounds`, `admin_uuid`, `early_start`)";
+                    "`tables`, `max_rounds`, `admin_uuid`, `early_start`, `salt`)";
         } else {
             values = DBInteractionHelper.toValuesString(tournament.getId(),
                     tournament.getTournamentName(), tournament.getAdminEmail(), tournament.getStart(), tournament.getEnd(),
-                    tournament.getTables(), tournament.getMaxRounds(), tournament.getAdminUUID(),
-                    tournament.isEarlyStart());
+                    tournament.getTables(), tournament.getMaxRounds(), tournament.getHashedAdminUUID(),
+                    tournament.isEarlyStart(), tournament.getSalt());
             attributes = "(`tournament_id`, `tournament_name`, `admin_email`, `start`, `end`, " +
-                    "`tables`, `max_rounds`, `admin_uuid`, `early_start`)";
+                    "`tables`, `max_rounds`, `admin_uuid`, `early_start`, `salt`)";
         }
         insertTournament(attributes, values);
     }
@@ -222,6 +222,15 @@ public class TournamentRepository {
         } catch (DataAccessException e) {
             throw new TroubleUpdatingDBException("Could not finish tournament");
         }
+    }
+
+    /**
+     * Returns all tournaments stored in the database
+     *
+     * @return all tournaments stored in the database
+     */
+    public List<Tournament> getAll() {
+        return jdbcTemplate.query("SELECT * FROM sjakkarena.tournament", tournamentRowMapper);
     }
 }
 

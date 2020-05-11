@@ -1,5 +1,7 @@
 package no.ntnu.sjakkarena.services.player;
 
+import no.ntnu.sjakkarena.GameCreator;
+import no.ntnu.sjakkarena.adaptedmonrad.AfterTournamentStartAdaptedMonrad;
 import no.ntnu.sjakkarena.eventcreators.PlayerEventCreator;
 import no.ntnu.sjakkarena.data.Player;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
@@ -19,6 +21,9 @@ public class PlayerService {
 
     @Autowired
     private PlayerEventCreator playerEventCreator;
+
+    @Autowired
+    private GameCreator gameCreator;
 
 
     /**
@@ -56,9 +61,21 @@ public class PlayerService {
     public void unpausePlayer(int playerId) {
         try {
             playerRepository.unpausePlayer(playerId);
+            onPlayerUnpaused(playerId);
         } catch (TroubleUpdatingDBException e) {
             throw new TroubleUpdatingDBException(e);
         }
+    }
+
+    /**
+     * Executes necessary tasks after the specified player is paused.
+     * - Creates and publishes games
+     *
+     * @param playerId The id of the paused player
+     */
+    private void onPlayerUnpaused(int playerId){
+        int tournamentId = playerRepository.getPlayer(playerId).getTournamentId();
+        gameCreator.createAndPublishNewGames(tournamentId, new AfterTournamentStartAdaptedMonrad());
     }
 
     /**
@@ -69,9 +86,23 @@ public class PlayerService {
     public void leaveTournament(int playerId) {
         try {
             playerRepository.leaveTournament(playerId);
+            onPlayerLeftTournament(playerId);
         } catch (TroubleUpdatingDBException e) {
             throw new TroubleUpdatingDBException(e);
         }
+    }
+
+    /**
+     * Executes necessary tasks after the specified player has left the tournament.
+     * - Creates and publishes events
+     * - Creates and publishes games
+     *
+     * @param playerId The id of the player who left the tournament
+     */
+    private void onPlayerLeftTournament(int playerId) {
+        playerEventCreator.createAndSendPlayerRemovedEvent(playerId, "", false);
+        Player player = playerRepository.getPlayer(playerId);
+        gameCreator.createAndPublishNewGames(player.getTournamentId(), new AfterTournamentStartAdaptedMonrad());
     }
 
     /**

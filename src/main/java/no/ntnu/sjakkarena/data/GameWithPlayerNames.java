@@ -29,7 +29,7 @@ public class GameWithPlayerNames extends Game {
      * @param validResult       Whether the result is regarded as valid
      */
     public GameWithPlayerNames(int gameId, int table, String start, String end, int whitePlayerId, int blackPlayerId,
-                               Integer whitePlayerPoints, boolean active, String whitePlayerName, String blackPlayerName,
+                               double whitePlayerPoints, boolean active, String whitePlayerName, String blackPlayerName,
                                boolean validResult) {
         super(gameId, table, start, end, whitePlayerId, blackPlayerId, whitePlayerPoints, active, validResult);
         this.whitePlayerName = whitePlayerName;

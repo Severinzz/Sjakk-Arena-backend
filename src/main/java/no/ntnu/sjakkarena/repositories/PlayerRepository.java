@@ -131,8 +131,8 @@ public class PlayerRepository {
      * @param tournamentId The id of the tournament
      * @return players enrolled in a tournament that doesn't play a game of chess
      */
-    public List<Player> getPlayersInTournamentNotPlaying(int tournamentId) {
-        List<Player> players = jdbcTemplate.query("CALL get_players_in_tournament_not_playing(" + tournamentId + ")",
+    public List<Player> getPlayersInTournamentReadyToPlay(int tournamentId) {
+        List<Player> players = jdbcTemplate.query("CALL get_players_in_tournament_ready_to_play(" + tournamentId + ")",
                 playerRowMapper);
         addPreviousOpponents(players);
         return players;

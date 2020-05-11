@@ -49,7 +49,9 @@ public class PlayerController{
      */
     @EventListener
     public void onPlayerRemoved(PlayerRemovedEvent playerRemovedEvent){
-        sendRemovedMessage(playerRemovedEvent.getPlayerId(), playerRemovedEvent.getRemoveReason());
+        if(playerRemovedEvent.getWasKicked()){
+            sendRemovedMessage(playerRemovedEvent.getPlayerId(), playerRemovedEvent.getRemoveReason());
+        }
     }
 
     /**

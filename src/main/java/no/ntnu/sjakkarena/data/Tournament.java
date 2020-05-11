@@ -29,14 +29,16 @@ public class Tournament extends User {
     @Min(0)
     private int maxRounds;
     private boolean active;
-
-    @JsonAlias("admin_uuid")
     private String adminUUID;
+    private String hashedAdminUUID;
 
     @JsonAlias("early_start")
     private boolean earlyStart;
 
     private boolean finished;
+
+    private String salt;
+
     /**
      * Constructs a tournament with no data
      */
@@ -46,20 +48,22 @@ public class Tournament extends User {
     /**
      * Constructs a tournament with the specified data
      *
-     * @param tournamentId   The id of the tournament
-     * @param tournamentName The name of the tournament
-     * @param adminEmail     The email of the tournament administrator
-     * @param start          The point in time when the tournament starts
-     * @param end            The point in time when the tournament ends
-     * @param tables         The number of tables in the tournament
-     * @param maxRounds      The maximum number of rounds in the tournament.
-     * @param active         Whether the tournament is active
-     * @param adminUUID      An unique id the admin can use to sign in
-     * @param earlyStart     Whether to start the tournament when two players are enrolled
-     * @param finished       Wheter the tournament is finished
+     * @param tournamentId    The id of the tournament
+     * @param tournamentName  The name of the tournament
+     * @param adminEmail      The email of the tournament administrator
+     * @param start           The point in time when the tournament starts
+     * @param end             The point in time when the tournament ends
+     * @param tables          The number of tables in the tournament
+     * @param maxRounds       The maximum number of rounds in the tournament.
+     * @param active          Whether the tournament is active
+     * @param hashedAdminUUID A hash of the admin UUID
+     * @param earlyStart      Whether to start the tournament when two players are enrolled
+     * @param finished        Whether the tournament is finished
+     * @param salt            The salt used in the hashing of the adminUUID
      */
     public Tournament(int tournamentId, String tournamentName, String adminEmail, String start, String end,
-                      int tables, int maxRounds, boolean active, String adminUUID, boolean earlyStart, boolean finished) {
+                      int tables, int maxRounds, boolean active, String hashedAdminUUID,
+                      boolean earlyStart, boolean finished, String salt) {
         super(tournamentId);
         this.tournamentName = tournamentName;
         this.adminEmail = adminEmail;
@@ -68,9 +72,10 @@ public class Tournament extends User {
         this.tables = tables;
         this.maxRounds = maxRounds;
         this.active = active;
-        this.adminUUID = adminUUID;
+        this.hashedAdminUUID = hashedAdminUUID;
         this.earlyStart = earlyStart;
         this.finished = finished;
+        this.salt = salt;
     }
 
     @JsonProperty("tournament_name")
@@ -156,5 +161,23 @@ public class Tournament extends User {
 
     public void setFinished(boolean finished) {
         this.finished = finished;
+    }
+
+    @JsonIgnore
+    public String getHashedAdminUUID() {
+        return hashedAdminUUID;
+    }
+
+    public void setHashedAdminUUID(String hashedAdminUUID) {
+        this.hashedAdminUUID = hashedAdminUUID;
+    }
+
+    @JsonIgnore
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 }
