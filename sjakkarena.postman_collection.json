@@ -9,101 +9,6 @@
 			"name": "PlayerAPITests",
 			"item": [
 				{
-					"name": "Player set inactive",
-					"item": [
-						{
-							"name": "Inactivate player successfully",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "6c1135ef-679d-42d7-92d9-75aea44bebb7",
-										"exec": [
-											"pm.test(\"Status code is 200\", function () {",
-											"    pm.response.to.have.status(200);",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{playerToken}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PATCH",
-								"header": [],
-								"url": {
-									"raw": "http://localhost:8080/player/inactivate",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"player",
-										"inactivate"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Inactivate player not in DB",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "306df85f-b37a-40de-b842-4e301750689f",
-										"exec": [
-											"pm.test(\"Status code is 403\", function () {",
-											"    pm.response.to.have.status(403);",
-											"});"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"auth": {
-									"type": "bearer",
-									"bearer": [
-										{
-											"key": "token",
-											"value": "{{playerNotInDBToken}}",
-											"type": "string"
-										}
-									]
-								},
-								"method": "PATCH",
-								"header": [],
-								"url": {
-									"raw": "http://localhost:8080/player/inactivate",
-									"protocol": "http",
-									"host": [
-										"localhost"
-									],
-									"port": "8080",
-									"path": [
-										"player",
-										"inactivate"
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"protocolProfileBehavior": {},
-					"_postman_isSubFolder": true
-				},
-				{
 					"name": "Active tournament?",
 					"item": [
 						{
@@ -232,7 +137,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTEFZRVIiLCJqdGkiOiI0OCJ9.-kZd6IlAA1f6nYPxyQWH3-6KfXSFRWBdwE9oH7TqqoA",
+											"value": "{{playerToken}}",
 											"type": "string"
 										}
 									]
@@ -291,7 +196,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTEFZRVIiLCJqdGkiOiI0OCJ9.-kZd6IlAA1f6nYPxyQWH3-6KfXSFRWBdwE9oH7TqqoA",
+											"value": "{{playerToken}}",
 											"type": "string"
 										}
 									]
@@ -350,7 +255,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTEFZRVIiLCJqdGkiOiI0OCJ9.-kZd6IlAA1f6nYPxyQWH3-6KfXSFRWBdwE9oH7TqqoA",
+											"value": "{{playerToken}}",
 											"type": "string"
 										}
 									]
@@ -406,7 +311,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTEFZRVIiLCJqdGkiOiI0OCJ9.-kZd6IlAA1f6nYPxyQWH3-6KfXSFRWBdwE9oH7TqqoA",
+											"value": "{{playerToken}}",
 											"type": "string"
 										}
 									]
@@ -436,6 +341,101 @@
 				{
 					"name": "Player's tournament",
 					"item": [
+						{
+							"name": "Player set inactive",
+							"item": [
+								{
+									"name": "Inactivate player successfully",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "6c1135ef-679d-42d7-92d9-75aea44bebb7",
+												"exec": [
+													"pm.test(\"Status code is 200\", function () {",
+													"    pm.response.to.have.status(200);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{playerToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/player/inactivate",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"player",
+												"inactivate"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Inactivate player not in DB",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"id": "306df85f-b37a-40de-b842-4e301750689f",
+												"exec": [
+													"pm.test(\"Status code is 400\", function () {",
+													"    pm.response.to.have.status(400);",
+													"});"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{playerNotInDBToken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "PATCH",
+										"header": [],
+										"url": {
+											"raw": "http://localhost:8080/player/inactivate",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "8080",
+											"path": [
+												"player",
+												"inactivate"
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
 						{
 							"name": "players tournament success",
 							"event": [
@@ -1130,8 +1130,13 @@
 									"script": {
 										"id": "3bc28022-d4b3-478a-a8ca-cc925609bf1a",
 										"exec": [
-											"pm.test(\"Status code is 403\", function () {",
-											"    pm.response.to.have.status(403);",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Empty result\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.eql(0);",
 											"});"
 										],
 										"type": "text/javascript"
@@ -1277,8 +1282,13 @@
 									"script": {
 										"id": "38943b19-b621-444e-821b-6815e19a4991",
 										"exec": [
-											"pm.test(\"Status code is 403\", function () {",
-											"    pm.response.to.have.status(403);",
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"pm.test(\"Empty result\", function () {",
+											"    var jsonData = pm.response.json();",
+											"    pm.expect(jsonData.length).to.eql(0);",
 											"});"
 										],
 										"type": "text/javascript"
@@ -1722,7 +1732,7 @@
 											"",
 											"pm.test(\"Tournament test\", function () {",
 											"    var jsonData = pm.response.json();",
-											"    pm.expect(jsonData.tournament_id).to.eql(535937);",
+											"    pm.expect(jsonData.tournament_id).to.eql(530508);",
 											"});",
 											"",
 											""
@@ -1819,7 +1829,7 @@
 					"name": "Sign in with adminUUID",
 					"item": [
 						{
-							"name": "get tournamnet information",
+							"name": "Sign in successfully",
 							"event": [
 								{
 									"listen": "test",
@@ -1840,7 +1850,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "http://localhost:8080/sign-in/fsa32",
+									"raw": "http://localhost:8080/sign-in/ugKon",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -1848,14 +1858,14 @@
 									"port": "8080",
 									"path": [
 										"sign-in",
-										"fsa32"
+										"ugKon"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "get tournamnet information invalid UUID",
+							"name": "Sign in with invalid adminUUID",
 							"event": [
 								{
 									"listen": "test",
@@ -1867,7 +1877,7 @@
 											"});",
 											"",
 											"pm.test(\"Body matches string\", function () {",
-											"    pm.expect(pm.response.text()).to.include(\"AdminUUID is incorrect\");",
+											"    pm.expect(pm.response.text()).to.include(\"Couldn't find a tournament with the given adminUUID \");",
 											"});"
 										],
 										"type": "text/javascript"
@@ -1943,7 +1953,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"tournament_name\": \"test\",\n\t\"admin_email\": \"test@test.com\",\n\t\"start\": \"2020-02-23T20:01\",\n\t\"end\": \"2020-02-23T22:02\",\n\t\"tables\": 0,\n\t\"max_rounds\": 1,\n\t\"early_start\": \"true\"\n}",
+									"raw": "{\n\t\"tournament_name\": \"test\",\n\t\"admin_email\": \"test@test.no\",\n\t\"start\": \"2020-02-23T20:01\",\n\t\"end\": \"2020-02-23T22:02\",\n\t\"tables\": 0,\n\t\"max_rounds\": 1,\n\t\"early_start\": \"true\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2283,7 +2293,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"name\": \"Andreas\", \n\t\"tournament\": {{tournamentId}}\n}",
+									"raw": "{\n\t\"name\": \"Dole\", \n\t\"tournament\": {{tournamentId}}\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2412,31 +2422,31 @@
 	],
 	"variable": [
 		{
-			"id": "45923216-06d6-49c3-a9e4-38c32b279254",
+			"id": "5edd9548-a7b8-4fd2-b085-dc99ca9e0ab4",
 			"key": "tournamentId",
 			"value": 535937,
 			"type": "number"
 		},
 		{
-			"id": "21ca056e-4dc0-4644-9573-e2d2c0ec73b2",
+			"id": "629c7a08-dc55-4b0a-9be3-8eb3cc1c7caa",
 			"key": "jwt",
 			"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJUT1VSTkFNRU5UIiwianRpIjoiMjA2MTYwIn0.yDz2PB9ij8E5TgWMUaKwyOPaPkrTA25f56D6tW3crPc",
 			"type": "string"
 		},
 		{
-			"id": "a312f05a-a3ba-4942-a0a3-bf19833318d1",
+			"id": "084bdab3-e69c-4613-b38c-7fa479c8568c",
 			"key": "playerName",
 			"value": "mCarlsen",
 			"type": "string"
 		},
 		{
-			"id": "c5b79c93-f6e0-4d88-9b08-f435da7512fd",
+			"id": "3fd69dc2-7574-4a6d-aefb-4b774e3dfd38",
 			"key": "tournamentJwt",
 			"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJUT1VSTkFNRU5UIiwianRpIjoiNTM1OTM3In0.wct6xzanPitCfQ7nSMa4KMq1bIsFnp0vthRcZhRhG18",
 			"type": "string"
 		},
 		{
-			"id": "242ca2f3-74ca-4f29-acf1-a5fb130fe151",
+			"id": "4ef583b3-dfbb-47ea-b151-90135e60e7fa",
 			"key": "playerJwt",
 			"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQTEFZRVIiLCJqdGkiOiI2In0.yzYL_ydia9riWSFzSQMa7Kr9EIxSGyEeVVkxfOIdQ_E",
 			"type": "string"
