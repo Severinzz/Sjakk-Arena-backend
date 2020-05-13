@@ -9,6 +9,7 @@ import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
 import no.ntnu.sjakkarena.repositories.GameRepository;
 import no.ntnu.sjakkarena.repositories.GameWithPlayerNamesRepository;
+import no.ntnu.sjakkarena.repositories.ImageFileRepository;
 import no.ntnu.sjakkarena.utils.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,9 @@ public class TournamentsGameService {
 
     @Autowired
     private GameWithPlayerNamesRepository gameWithPlayerNamesRepository;
+
+    @Autowired
+    private ImageFileRepository imageFileRepository;
 
     @Autowired
     private GameCreator gameCreator;
@@ -99,7 +103,21 @@ public class TournamentsGameService {
      * @return The games with invalid result associated with the specified tournament
      */
     public List<? extends Game> getGamesWithInvalidResult(int tournamentId) {
-        return gameWithPlayerNamesRepository.getGamesWithInvalidResult(tournamentId);
+        List<? extends Game> gamesWithInvalidResult =  gameWithPlayerNamesRepository
+                                                                                .getGamesWithInvalidResult(tournamentId);
+        setHasImageValue(gamesWithInvalidResult);
+        return gamesWithInvalidResult;
+    }
+
+    /**
+     * Set hasImage value to games with invalid results
+     *
+     * @param gamesWithInvalidResult A collection of games with invalid results
+     */
+    private void setHasImageValue(List<? extends Game> gamesWithInvalidResult) {
+        for (Game game : gamesWithInvalidResult){
+            game.setHasImage(imageFileRepository.hasImage(game));
+        }
     }
 
     /**

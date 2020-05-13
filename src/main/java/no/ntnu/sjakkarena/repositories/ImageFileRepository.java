@@ -1,5 +1,6 @@
 package no.ntnu.sjakkarena.repositories;
 
+import no.ntnu.sjakkarena.data.Game;
 import no.ntnu.sjakkarena.data.Image;
 import no.ntnu.sjakkarena.exceptions.NotInDatabaseException;
 import no.ntnu.sjakkarena.exceptions.TroubleUpdatingDBException;
@@ -61,4 +62,15 @@ public class ImageFileRepository {
         }
     }
 
+    /**
+     * Returns true if there is a image associated with the specified game
+     *
+     * @param game
+     * @return true if there is a image associated with the specified game
+     */
+    public boolean hasImage(Game game) {
+        List<Image> images = jdbcTemplate.query("SELECT * FROM sjakkarena.image WHERE gameId = " + game.getGameId(),
+                imageRowMapper);
+        return !images.isEmpty();
+    }
 }
