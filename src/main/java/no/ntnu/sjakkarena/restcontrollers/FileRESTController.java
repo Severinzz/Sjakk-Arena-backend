@@ -35,7 +35,7 @@ public class FileRESTController {
      * @throws IOException
      */
     // code adapted from: https://www.callicoder.com/spring-boot-file-upload-download-jpa-hibernate-mysql-database-example/
-    @RequestMapping(value = "/playerFile/Upload", method = RequestMethod.POST)
+    @RequestMapping(value = "/player/file/upload", method = RequestMethod.POST)
     public ResponseEntity uploadFile(@RequestParam("Image")MultipartFile file) throws IOException {
         try {
             int playerId = RESTSession.getUserId();
@@ -55,14 +55,14 @@ public class FileRESTController {
      * @throws IOException
      */
     // code adapted from: https://www.devglan.com/spring-boot/spring-boot-file-upload-download
-    @RequestMapping(value = "/playerFile/Download/{gameId}", method = RequestMethod.GET, produces="application/zip")
+    @RequestMapping(value = "/tournament/file/download/{gameId}", method = RequestMethod.GET, produces="application/zip")
     public void downloadFiles(@PathVariable ("gameId") int gameId, HttpServletResponse response) throws IOException {
         try {
             List<Image> images = storageService.fetchGameImages(gameId);
 
         ZipOutputStream zipOut = new ZipOutputStream(response.getOutputStream());
         for (Image image : images) {
-            FileSystemResource resource = new FileSystemResource(storageService.getPath() + "\\" + image.getFilename());
+            FileSystemResource resource = new FileSystemResource(storageService.getPath() + "/" + image.getFilename());
             ZipEntry zipEntry = new ZipEntry(Objects.requireNonNull(resource.getFilename()));
             zipEntry.setSize(resource.contentLength());
             zipOut.putNextEntry(zipEntry);
