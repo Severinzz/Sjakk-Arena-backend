@@ -16,6 +16,7 @@ public class Game {
     private double whitePlayerPoints;
     private boolean active;
     private boolean validResult;
+    private boolean hasImage = false;
 
     private Game(boolean active) {
         this.active = active;
@@ -153,5 +154,14 @@ public class Game {
 
     public boolean isValidResult() {
         return validResult;
+    }
+
+    public void setHasImage(boolean hasImage){
+        this.hasImage = hasImage;
+    }
+
+    @JsonProperty("has_image")
+    public boolean hasImage() {
+        return hasImage;
     }
 }
