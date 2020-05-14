@@ -3,7 +3,7 @@
 Sjakkarena is an app for organizing chess tournaments.
 
 
-##Setup
+## Setup
 
 ### Requirements: 
 
@@ -29,6 +29,9 @@ Add username and password of the database role in the
 
 Add email-account credentials to the [EmailSender](src/main/java/no/ntnu/sjakkarena/EmailSender.java)
 file.
+
+Add public key and private key to the [KeyHelper](src/main/java/no/ntnu/sjakkarena/utils/KeyHelper) file to use 
+push notifications. Public and private key kan be generated [here](https://web-push-codelab.glitch.me/)
 
 ## Running the application
 
