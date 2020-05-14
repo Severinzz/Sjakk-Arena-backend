@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.time.LocalDateTime;
@@ -46,19 +47,23 @@ public class FileStorageService {
      */
     public void saveFile(MultipartFile file, int playerId) throws IOException, IllegalStateException, NullPointerException {
         String fileName = getFileName(file);
+        Path savePath = provideUniquePath(file);
         try {
             // Check if name is invalid
             if (fileName.contains("..")) {
                 throw new FileSystemException("Invalid name!");
             }
-            Path savePath = provideUniquePath(file);
             if (!savePath.getParent().equals(this.rootLocation.toAbsolutePath())) {
                 // This is a security check
                 throw new StorageException("Cannot store file outside current directory.");
             }
             Files.copy(file.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
             fileToDB(savePath.getFileName().toString(), playerId);
-        } catch (IOException | NullPointerException e) {
+        } catch(NoSuchFileException e) {
+            makeDirectories(savePath, fileName);
+            saveFile(file, playerId);
+        }
+        catch (IOException | NullPointerException e) {
             throw new IOException(e);
         }
     }
@@ -84,7 +89,7 @@ public class FileStorageService {
         String fileName = file.getOriginalFilename();
         Path path = getSavePath(fileName);
         while (Files.exists(path)) {
-            path = getSavePath("(" + i + ")" + fileName);
+            path = getSavePath("(" + i + ") " + fileName);
             i++;
         }
         return path;
@@ -102,6 +107,17 @@ public class FileStorageService {
         return this.rootLocation.resolve(
                 Paths.get(filename))
                 .normalize().toAbsolutePath();
+    }
+
+    /**
+     * Create a directories described by the specified path without the specified filename
+     *
+     * @param path
+     * @param fileName
+     */
+    private void makeDirectories(Path path, String fileName){
+        String dirPath  = path.toAbsolutePath().toString().replace("/" + fileName, "");
+        new File(dirPath).mkdirs();
     }
 
     /**
