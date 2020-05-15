@@ -48,7 +48,7 @@ public class PlayerRepository {
                     new PreparedStatementCreator() {
                         public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                             PreparedStatement ps =
-                                    connection.prepareStatement("INSERT INTO sjakkarena.player (`player`.`name`, " +
+                                    connection.prepareStatement("INSERT INTO " + DATABASE + ".player (`player`.`name`, " +
                                             "`player`.`tournament`, `player`.`icon`, `player`.`bib_number`) " +
                                             "VALUES (\"" + player.getName() + "\", " + player.getTournamentId() + ", \"" +
                                             player.getIcon() + "\", get_random_bib_number(" + player.getTournamentId() +
@@ -74,7 +74,7 @@ public class PlayerRepository {
      */
     public Player getPlayer(int playerId) {
         try {
-            return jdbcTemplate.queryForObject("CALL sjakkarena.get_player(" + playerId + ")", playerRowMapper);
+            return jdbcTemplate.queryForObject("CALL " + DATABASE + ".get_player(" + playerId + ")", playerRowMapper);
         } catch (IncorrectResultSizeDataAccessException e) {
             throw new NotInDatabaseException("Could not find player in the database");
         }
@@ -86,7 +86,7 @@ public class PlayerRepository {
      * @param playerId The id of the player to delete
      */
     public void deletePlayer(int playerId) {
-        int affectedRows = jdbcTemplate.update("DELETE FROM sjakkarena.player WHERE `player_id` = " + playerId);
+        int affectedRows = jdbcTemplate.update("DELETE FROM " + DATABASE + ".player WHERE `player_id` = " + playerId);
         if (affectedRows != 1) {
             throw new TroubleUpdatingDBException("Some problem occurred when trying to delete player");
         }
@@ -110,7 +110,7 @@ public class PlayerRepository {
      * @param playerId The id of the player to unpause.
      */
     public void unpausePlayer(int playerId) {
-        int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.player SET paused = 0 WHERE player_id = " + playerId);
+        int affectedRows = jdbcTemplate.update("UPDATE " + DATABASE + ".player SET paused = 0 WHERE player_id = " + playerId);
         if (affectedRows != 1) {
             throw new TroubleUpdatingDBException("Some problem occurred when trying to unpause player");
         }
@@ -122,7 +122,7 @@ public class PlayerRepository {
      * @param playerId The id of the player to remove from the tournament
      */
     public void leaveTournament(int playerId) {
-        int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.player SET in_tournament = 0 WHERE player_id = " + playerId);
+        int affectedRows = jdbcTemplate.update("UPDATE " + DATABASE + ".player SET in_tournament = 0 WHERE player_id = " + playerId);
         if (affectedRows != 1) {
             throw new TroubleUpdatingDBException("Some problem occurred when trying to leave tournament");
         }
@@ -183,7 +183,7 @@ public class PlayerRepository {
     public boolean doesPlayerExist(Player player) {
         // Adapted from: https://stackoverflow.com/questions/48546574/query-to-check-if-the-record-exists-in-spring-jdbc-template
         boolean exist = false;
-        String sql = "SELECT * FROM sjakkarena.player WHERE player.name = ? AND player.tournament = ? LIMIT 1";
+        String sql = "SELECT * FROM " + DATABASE + ".player WHERE player.name = ? AND player.tournament = ? LIMIT 1";
         List<Map<String, Object>> players = jdbcTemplate.queryForList(sql, new Object[]{player.getName(), player.getTournamentId()});
         if (players.size() != 0) {
             exist = true;

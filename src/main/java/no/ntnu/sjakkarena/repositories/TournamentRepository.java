@@ -240,7 +240,7 @@ public class TournamentRepository {
      * @return all tournaments stored in the database
      */
     public List<Tournament> getAll() {
-        return jdbcTemplate.query("SELECT * FROM sjakkarena.tournament", tournamentRowMapper);
+        return jdbcTemplate.query("SELECT * FROM " + DATABASE + ".tournament", tournamentRowMapper);
     }
 }
 

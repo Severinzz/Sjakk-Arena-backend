@@ -139,7 +139,7 @@ public class GameRepository {
      * @param gameID The id of the game which will have an invalid result.
      */
     public void makeResultInvalid(int gameID) {
-        int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.game SET valid_result = 0 " +
+        int affectedRows = jdbcTemplate.update("UPDATE " + DATABASE + ".game SET valid_result = 0 " +
                 "WHERE game_id = " + gameID);
         if (affectedRows != 1) {
             throw new TroubleUpdatingDBException("Some problems occurred while trying to make result invalid");
@@ -152,7 +152,7 @@ public class GameRepository {
      * @param gameID The id of the game which will have a valid result.
      */
     public void makeResultValid(int gameID) {
-        int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.game SET valid_result = 1 " +
+        int affectedRows = jdbcTemplate.update("UPDATE " + DATABASE + ".game SET valid_result = 1 " +
                 "WHERE game_id = " + gameID);
         if (affectedRows != 1) {
             throw new TroubleUpdatingDBException("Some problems occurred while trying to make result valid");
@@ -165,7 +165,7 @@ public class GameRepository {
      * @param gameId The id of the game to be deactivated
      */
     public void deactivateGame(int gameId) {
-        int affectedRows = jdbcTemplate.update("UPDATE sjakkarena.game SET `active` = 0 " +
+        int affectedRows = jdbcTemplate.update("UPDATE " + DATABASE + ".game SET `active` = 0 " +
                 "WHERE game_id = " + gameId);
         if (affectedRows != 1) {
             throw new TroubleUpdatingDBException("Some problems occurred while trying to deactivate game");
@@ -179,6 +179,6 @@ public class GameRepository {
      * @return a game
      */
     public Game getGame(int gameId) {
-        return jdbcTemplate.queryForObject("SELECT * FROM sjakkarena.game WHERE game_id = " + gameId, gameRowMapper);
+        return jdbcTemplate.queryForObject("SELECT * FROM " + DATABASE + ".game WHERE game_id = " + gameId, gameRowMapper);
     }
 }

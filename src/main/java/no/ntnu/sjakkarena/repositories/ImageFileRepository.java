@@ -23,6 +23,8 @@ public class ImageFileRepository {
 
     private RowMapper<Image> imageRowMapper = new ImageRowMapper();
 
+    private static final String DATABASE = System.getenv("SJAKK_ARENA_DATABASE");
+
     /**
      * Adds a image name to the database
      *
@@ -30,7 +32,7 @@ public class ImageFileRepository {
      */
     public void addNewImage(Image image) {
         try {
-            jdbcTemplate.update("INSERT INTO `sjakkarena`.`image` " +
+            jdbcTemplate.update("INSERT INTO " + DATABASE + ".`image` " +
                     "(playerId, gameId, fileName, time_Uploaded)" +
                     "VALUES (" + "'" + image.getPlayerId() + "', '" + image.getGameId() +
                     "', '" + image.getFilename() + "', '" + image.getTimeUploaded() +
@@ -49,7 +51,7 @@ public class ImageFileRepository {
      * @return images names of images belonging to specified game
      */
     public List<Image> findImagesToGameId(int gameId) {
-        String sql = "select * from `sjakkarena`.`image`" +
+        String sql = "select * from " + DATABASE + ".`image`" +
                 " where gameId = " + gameId;
         try {
             List<Image> images = jdbcTemplate.query(sql, imageRowMapper);
@@ -69,7 +71,7 @@ public class ImageFileRepository {
      * @return true if there is a image associated with the specified game
      */
     public boolean hasImage(Game game) {
-        List<Image> images = jdbcTemplate.query("SELECT * FROM sjakkarena.image WHERE gameId = " + game.getGameId(),
+        List<Image> images = jdbcTemplate.query("SELECT * FROM " + DATABASE + ".image WHERE gameId = " + game.getGameId(),
                 imageRowMapper);
         return !images.isEmpty();
     }
