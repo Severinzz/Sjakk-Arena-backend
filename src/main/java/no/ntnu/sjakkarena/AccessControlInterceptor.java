@@ -114,12 +114,8 @@ public class AccessControlInterceptor extends HandlerInterceptorAdapter {
      */
     private List<String> getURIsWithLimitedAccess(){
         List<String> uris = new ArrayList<>();
-        uris.add("/player/inactivate");
-        uris.add("/player/games");
         uris.add("/tournament/end");
         uris.add("/tournament/pause");
-        uris.add("/tournament/games");
-        uris.add("/tournament/player/inactivate");
         return uris;
     }
 }

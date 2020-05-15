@@ -61,9 +61,21 @@ public class PlayerService {
     public void unpausePlayer(int playerId) {
         try {
             playerRepository.unpausePlayer(playerId);
+            onPlayerUnpaused(playerId);
         } catch (TroubleUpdatingDBException e) {
             throw new TroubleUpdatingDBException(e);
         }
+    }
+
+    /**
+     * Executes necessary tasks after the specified player is paused.
+     * - Creates and publishes games
+     *
+     * @param playerId The id of the paused player
+     */
+    private void onPlayerUnpaused(int playerId){
+        int tournamentId = playerRepository.getPlayer(playerId).getTournamentId();
+        gameCreator.createAndPublishNewGames(tournamentId, new AfterTournamentStartAdaptedMonrad());
     }
 
     /**
@@ -88,7 +100,7 @@ public class PlayerService {
      * @param playerId The id of the player who left the tournament
      */
     private void onPlayerLeftTournament(int playerId) {
-        playerEventCreator.createAndSendPlayerRemovedEvent(playerId, "");
+        playerEventCreator.createAndSendPlayerRemovedEvent(playerId, "", false);
         Player player = playerRepository.getPlayer(playerId);
         gameCreator.createAndPublishNewGames(player.getTournamentId(), new AfterTournamentStartAdaptedMonrad());
     }

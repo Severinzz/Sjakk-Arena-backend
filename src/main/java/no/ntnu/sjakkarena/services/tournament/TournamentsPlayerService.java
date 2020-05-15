@@ -54,7 +54,7 @@ public class TournamentsPlayerService {
      */
     private void onPlayerDeleted(int playerId, String msg) {
         playerEventCreator.createAndPublishPlayerListChangeEvent(RESTSession.getUserId());
-        playerEventCreator.createAndSendPlayerRemovedEvent(playerId, msg);
+        playerEventCreator.createAndSendPlayerRemovedEvent(playerId, msg, true);
     }
 
     /**
@@ -112,7 +112,7 @@ public class TournamentsPlayerService {
     private void onPlayerRemovedFromTournament(int playerId, String msg) {
         gameCreator.createAndPublishNewGames(RESTSession.getUserId(), new AfterTournamentStartAdaptedMonrad());
         playerEventCreator.createAndPublishPlayerListChangeEvent(RESTSession.getUserId());
-        playerEventCreator.createAndSendPlayerRemovedEvent(playerId, msg);
+        playerEventCreator.createAndSendPlayerRemovedEvent(playerId, msg, true);
     }
 
     /**

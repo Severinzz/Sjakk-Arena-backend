@@ -9,7 +9,10 @@ import no.ntnu.sjakkarena.repositories.PlayerRepository;
 import no.ntnu.sjakkarena.repositories.TournamentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,6 +40,7 @@ public class GameCreator {
      * @param tournamentId The tournament the new games will be associated with
      * @param adaptedMonrad The object containing the algorithms for creating new games
      */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void createAndPublishNewGames(int tournamentId, AdaptedMonrad adaptedMonrad){
         List<Integer> gameIds = createNewGames(tournamentId, adaptedMonrad);
         gameEventCreator.createAndPublishGamesCreatedEvent(tournamentId, gameIds);
@@ -50,10 +54,14 @@ public class GameCreator {
      * @return new games
      */
     private List<Integer> createNewGames(int tournamentId, AdaptedMonrad adaptedMonrad){
-        List<Player> playersInTournamentNotPlaying = playerRepository.getPlayersInTournamentReadyToPlay(tournamentId);
-        List<Integer> availableTables = tournamentRepository.getAvailableTables(tournamentId);
-        List<Game> createdGames = adaptedMonrad.getNewGames(playersInTournamentNotPlaying, availableTables);
-        List<Integer> gameIds = gameRepository.addGames(createdGames);
-        return gameIds;
+        if(tournamentRepository.isActive(tournamentId)){
+            List<Player> playersInTournamentNotPlaying = playerRepository.getPlayersInTournamentReadyToPlay(tournamentId);
+            List<Integer> availableTables = tournamentRepository.getAvailableTables(tournamentId);
+            List<Game> createdGames = adaptedMonrad.getNewGames(playersInTournamentNotPlaying, availableTables);
+            List<Integer> gameIds = gameRepository.addGames(createdGames);
+            return gameIds;
+        } else {
+            return new ArrayList<>();
+        }
     }
 }
