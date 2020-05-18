@@ -17,6 +17,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.stereotype.Service;
 
+import javax.mail.AuthenticationFailedException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
@@ -42,6 +43,9 @@ public class UnauthenticatedTournamentService {
 
     @Autowired
     private JSONCreator jsonCreator;
+
+    @Autowired
+    private EmailSender emailSender;
 
     /**
      * Signs in as a tournament using an adminUUID
@@ -116,7 +120,7 @@ public class UnauthenticatedTournamentService {
         hashAdminUUID(tournament);
         tournamentRepository.addNewTournament(tournament);
         scheduleTournamentTasks(tournament);
-        //sendEmailToTournamentAdmin(tournament); //Remove comment to send email
+        sendEmailToTournamentAdmin(tournament); //Remove comment to send email
         return jsonCreator.createResponseToNewTournament(tournament);
     }
 
@@ -151,10 +155,9 @@ public class UnauthenticatedTournamentService {
      * @param tournament a tournament
      */
     private void sendEmailToTournamentAdmin(Tournament tournament) {
-        EmailSender emailSender = new EmailSender();
-        emailSender.sendEmail(tournament.getAdminEmail(), tournament.getTournamentName(),
-                "Her er din adminID: " + tournament.getAdminUUID() +
-                        ". Bruk denne til å gå til din turneringsside");
+            emailSender.sendEmail(tournament.getAdminEmail(), tournament.getTournamentName(),
+                    "Her er din adminID: " + tournament.getAdminUUID() +
+                            ". Bruk denne til å gå til din turneringsside");
     }
 
     /**
