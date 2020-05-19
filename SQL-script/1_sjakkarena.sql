@@ -196,7 +196,7 @@ BEGIN
                              ELSE (1 - white_player_points)
                 END)
                 FROM `sjakkarena`.`game`
-                WHERE (`white_player` = player_id OR `black_player` = player_id)
+                WHERE (`white_player` = player_id OR `black_player` = player_id) AND `active` = 0
   );
   RETURN points;
 END//
